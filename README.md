@@ -78,3 +78,12 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack
 channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
 If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+
+
+### Using hot reload mode
+Explicit Reload Mode:
+* Use `./gradlew reload` to hot reload the application
+* Use `./gradlew :composeApp:hotReloadJvmMain` to hot reload the application (alternative)
+* Use `./gradlew :composeApp:hotRunJvm --auto` to automatically reload the application on source changes
+
+Note: It will work only with JB runtime
