@@ -96,11 +96,17 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+compose.resources {
+    publicResClass = false
+    generateResClass = auto
+}
+
 compose.desktop {
     application {
         mainClass = "com.example.brainagator.MainKt"
 
         nativeDistributions {
+            // Macos + Windows + Linux
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.example.brainagator"
             packageVersion = "1.0.0"
