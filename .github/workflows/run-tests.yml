@@ -2,11 +2,10 @@ name: CI
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main
-      - chore/gha-setup
-  pull_request:
 
 jobs:
   build:
