@@ -2,7 +2,6 @@
 
 **Generated:** 2026-01-26
 **Commit:** 2a785c7
-**Branch:** chore/migrate-to-android-lib
 
 ## OVERVIEW
 Kotlin Multiplatform project targeting Android, iOS, Web, and Desktop (JVM). Uses Compose Multiplatform for shared UI code across all platforms.
