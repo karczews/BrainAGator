@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.brainagator"
+    namespace = "io.github.karczews.brainagator"
     compileSdk {
         version = release(libs.versions.android.compileSdk.get().toInt())
     }
     defaultConfig {
-        applicationId = "com.example.brainagator"
+        applicationId = "io.github.karczews.brainagator"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

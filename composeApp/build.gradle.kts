@@ -13,7 +13,7 @@ plugins {
 
 kotlin {
     androidLibrary {
-        namespace = "com.example.brainagator"
+        namespace = "io.github.karczews.brainagator"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -96,12 +96,12 @@ compose.resources {
 
 compose.desktop {
     application {
-        mainClass = "com.example.brainagator.MainKt"
+        mainClass = "io.github.karczews.brainagator.MainKt"
 
         nativeDistributions {
             // Macos + Windows + Linux
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.example.brainagator"
+            packageName = "io.github.karczews.brainagator"
             packageVersion = "1.0.0"
         }
     }

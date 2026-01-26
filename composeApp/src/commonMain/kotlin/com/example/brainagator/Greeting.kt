@@ -1,4 +1,4 @@
-package com.example.brainagator
+package io.github.karczews.brainagator
 
 class Greeting {
     private val platform = getPlatform()
