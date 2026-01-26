@@ -1,3 +1,5 @@
+[![Qodana](https://github.com/karczews/BrainAGator/actions/workflows/qodana_code_quality.yml/badge.svg?branch=main)](https://github.com/karczews/BrainAGator/actions/workflows/qodana_code_quality.yml)
+
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
