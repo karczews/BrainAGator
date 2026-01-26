@@ -40,7 +40,6 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 
 ### Code Quality
 - **Qodana**: Static analysis via `qodana_code_quality.yml` workflow
-- **Qodana token**: `secrets.QODANA_TOKEN_689838719` (hardcoded instance ID)
 - **License checking**: Enforced via Qodana
 
 ## ANTI-PATTERNS (THIS PROJECT)
