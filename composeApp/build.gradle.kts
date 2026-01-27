@@ -103,6 +103,10 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.karczews.brainagator"
             packageVersion = "1.0.0"
+            
+            macOS {
+                entitlementsFile.set(project.file("../entitlements.plist"))
+            }
         }
     }
 }
