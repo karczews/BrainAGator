@@ -1,6 +1,5 @@
-package com.example.androidapp.ui.theme
+package io.github.karczews.brainagator.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

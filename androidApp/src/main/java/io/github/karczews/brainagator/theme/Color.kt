@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.theme
+package io.github.karczews.brainagator.theme
 
 import androidx.compose.ui.graphics.Color
 
