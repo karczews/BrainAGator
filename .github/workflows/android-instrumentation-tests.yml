@@ -25,6 +25,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run instrumentation tests
+        timeout-minutes: 30
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
@@ -32,3 +33,7 @@ jobs:
           arch: arm64-v8a
           profile: Nexus 6
           script: ./gradlew connectedAndroidTest
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+          disable-animations: true
+          channel: canary
+          working-directory: .
