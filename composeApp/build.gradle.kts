@@ -105,7 +105,11 @@ compose.desktop {
             packageVersion = "1.0.0"
             
             macOS {
-                entitlementsFile.set(project.file("../entitlements.plist"))
+                val entitlementsFile = project.rootProject.file("entitlements.plist")
+                if (!entitlementsFile.exists()) {
+                    throw GradleException("entitlements.plist not found at ${entitlementsFile.absolutePath}")
+                }
+                this.entitlementsFile.set(entitlementsFile)
             }
         }
     }
