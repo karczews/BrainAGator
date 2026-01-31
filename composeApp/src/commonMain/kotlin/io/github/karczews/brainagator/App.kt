@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.compose_multiplatform
+import io.github.karczews.brainagator.ui.FireworksAnimation
 
 @Composable
 @Preview
@@ -60,9 +60,9 @@ fun App() {
                 FireworksAnimation(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
+                        .fillMaxHeight()
                         .padding(16.dp),
-                    particleCount = 60,
+                    particleCount = 150,
                     explosionCount = 0 // Infinite explosions
                 )
             }
