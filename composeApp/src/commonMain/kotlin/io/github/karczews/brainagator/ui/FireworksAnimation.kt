@@ -53,6 +53,7 @@ fun FireworksAnimation(
             val color = colors.random()
             explosions.add(
                 Explosion(
+                    id = Random.nextLong(),
                     center = Offset(centerX, centerY),
                     color = color,
                     particleCount = particleCount
@@ -62,34 +63,29 @@ fun FireworksAnimation(
         }
         // Wait for all explosions to finish before calling complete
         if (!infiniteExplosions) {
+            // Wait for the last explosion to finish (1.5s animation + buffer)
             delay(2000)
             onAnimationComplete?.invoke()
         }
     }
 
-    // Clean up finished explosions
-    LaunchedEffect(explosions.size) {
-        if (explosions.isNotEmpty()) {
-            delay(2000)
-            explosions.removeAll { it.isFinished }
-        }
-    }
-
     Box(modifier = modifier) {
         explosions.forEach { explosion ->
-            ExplosionParticles(
-                explosion = explosion,
-                onFinished = { explosion.isFinished = true }
-            )
+            key(explosion.id) {
+                ExplosionParticles(
+                    explosion = explosion,
+                    onFinished = { explosions.remove(explosion) }
+                )
+            }
         }
     }
 }
 
 private data class Explosion(
+    val id: Long,
     val center: Offset,
     val color: Color,
-    val particleCount: Int,
-    var isFinished: Boolean = false
+    val particleCount: Int
 )
 
 @Composable
@@ -97,19 +93,15 @@ private fun ExplosionParticles(
     explosion: Explosion,
     onFinished: () -> Unit
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "fireworks")
-    
-    // Animation progress from 0 to 1
-    val progress by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = EaseOutQuart),
-        ),
-        label = "progress"
-    )
+    val progress = remember { Animatable(0f) }
 
-    println("progress: $progress")
+    LaunchedEffect(explosion) {
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(1500, easing = EaseOutQuart)
+        )
+        onFinished()
+    }
 
     // Generate particles with random velocities
     val particles = remember(explosion) {
@@ -124,14 +116,6 @@ private fun ExplosionParticles(
         }
     }
 
-    // Mark as finished after one cycle
-    LaunchedEffect(progress) {
-        if (progress > 0.95f) {
-            delay(100)
-            onFinished()
-        }
-    }
-
     Canvas(modifier = Modifier.fillMaxSize()) {
         val centerX = explosion.center.x * size.width
         val centerY = explosion.center.y * size.height
@@ -141,7 +125,7 @@ private fun ExplosionParticles(
                 centerX = centerX,
                 centerY = centerY,
                 particle = particle,
-                progress = progress,
+                progress = progress.value,
                 color = explosion.color
             )
         }
@@ -162,9 +146,10 @@ private fun DrawScope.drawParticle(
     color: Color
 ) {
     // Calculate position with gravity effect
+    val gravity = progress * progress * size.height * 0.15f
     val distance = particle.velocity * progress * size.minDimension * 0.5f
     val x = centerX + cos(particle.angle) * distance
-    val y = centerY + sin(particle.angle) * distance + progress * progress * 100f // Gravity
+    val y = centerY + sin(particle.angle) * distance + gravity
 
     // Fade out and shrink
     val alpha = (1f - progress).coerceIn(0f, 1f)
@@ -180,9 +165,10 @@ private fun DrawScope.drawParticle(
     // Draw trail for larger particles
     if (particle.size > 4f && progress > 0.1f) {
         val trailProgress = (progress - 0.1f).coerceIn(0f, 1f)
+        val trailGravity = trailProgress * trailProgress * size.height * 0.15f
         val trailDistance = particle.velocity * trailProgress * size.minDimension * 0.5f
         val trailX = centerX + cos(particle.angle) * trailDistance
-        val trailY = centerY + sin(particle.angle) * trailDistance + trailProgress * trailProgress * 100f
+        val trailY = centerY + sin(particle.angle) * trailDistance + trailGravity
 
         drawLine(
             color = color.copy(alpha = alpha * 0.5f),
