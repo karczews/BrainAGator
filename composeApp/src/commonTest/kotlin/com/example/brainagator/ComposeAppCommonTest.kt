@@ -1,4 +1,4 @@
-package com.example.brainagator
+package io.github.karczews.brainagator
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

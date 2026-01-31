@@ -1,4 +1,4 @@
-package com.example.brainagator
+package io.github.karczews.brainagator
 
 interface Platform {
     val name: String
