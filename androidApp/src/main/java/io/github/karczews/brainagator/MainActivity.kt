@@ -17,7 +17,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             BrainagatorTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
                     App()
                 }
             }
