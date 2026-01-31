@@ -1,19 +1,37 @@
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+    androidLibrary {
+        namespace = "io.github.karczews.brainagator"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+
+        packaging.resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+
+        localDependencySelection {
+            selectBuildTypeFrom.set(listOf("debug", "release"))
+        }
+
+        androidResources.enable = true
+
+        optimization {
+            minify = false
         }
     }
 
@@ -63,37 +81,12 @@ kotlin {
             implementation(libs.kotlinx.coroutinesSwing)
         }
     }
+    jvmToolchain(21)
 }
 
-android {
-    namespace = "com.example.brainagator"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.example.brainagator"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
+// For local development and testing adding Compose Preview tool - AGP 9.0.0-beta01 or higher
 dependencies {
-    debugImplementation(compose.uiTooling)
+    "androidRuntimeClasspath"(compose.uiTooling)
 }
 
 compose.resources {
@@ -103,12 +96,12 @@ compose.resources {
 
 compose.desktop {
     application {
-        mainClass = "com.example.brainagator.MainKt"
+        mainClass = "io.github.karczews.brainagator.MainKt"
 
         nativeDistributions {
             // Macos + Windows + Linux
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.example.brainagator"
+            packageName = "io.github.karczews.brainagator"
             packageVersion = "1.0.0"
         }
     }
