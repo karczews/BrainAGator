@@ -1,0 +1,5 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Use Big Pickle as the main model for this project
+  "model": "opencode/big-pickle"
+}
