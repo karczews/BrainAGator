@@ -21,7 +21,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "Finding existing opencode bot comments..."
-          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.type == "Bot" and (.body | test("opencode"; "i"))) | .id')
+          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.type == "Bot" and (.body | test("opencode"; "i")) and (.body | test("Code Review"; "i"))) | .id')
           
           if [ -n "$COMMENTS" ]; then
             echo "Found existing bot comments, deleting them..."
