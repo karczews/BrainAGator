@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.theme
+package io.github.karczews.brainagator.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
