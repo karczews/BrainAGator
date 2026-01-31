@@ -15,6 +15,28 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+      
+      - name: Find and delete existing bot comments
+        id: cleanup
+        continue-on-error: true
+        run: |
+          echo "Finding existing opencode bot comments..."
+          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.type == "Bot" and (.body | test("opencode"; "i"))) | .id')
+          
+          if [ -n "$COMMENTS" ]; then
+            echo "Found existing bot comments, deleting them..."
+            echo "$COMMENTS" | while read comment_id; do
+              if [ -n "$comment_id" ]; then
+                gh api --method DELETE repos/${{ github.repository }}/issues/comments/$comment_id
+                echo "Deleted comment $comment_id"
+              fi
+            done
+          else
+            echo "No existing opencode bot comments found"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
       - uses: anomalyco/opencode/github@latest
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
