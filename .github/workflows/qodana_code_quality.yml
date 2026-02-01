@@ -10,6 +10,9 @@ on:
       sha:
         required: false
         type: string
+    secrets:
+      QODANA_TOKEN:
+        required: true
 
 jobs:
   qodana:
@@ -28,5 +31,5 @@ jobs:
         with:
           pr-mode: false
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_689838719 }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
