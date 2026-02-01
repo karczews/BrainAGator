@@ -2,9 +2,6 @@ name: Android Instrumentation Tests
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
   workflow_call:
 
 jobs:
