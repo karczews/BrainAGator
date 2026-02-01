@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - chore/gha-setup
-  pull_request:
+  workflow_call:
 
 jobs:
   build:
