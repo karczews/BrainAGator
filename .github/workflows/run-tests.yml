@@ -3,9 +3,6 @@ name: Unit Tests
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - chore/gha-setup
   workflow_call:
 
 jobs:
