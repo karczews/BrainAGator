@@ -1,7 +1,13 @@
 name: opencode-review
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_call:
+    inputs:
+      pr-number:
+        required: true
+        type: number
+    secrets:
+      OPENCODE_API_KEY:
+        required: true
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -21,7 +27,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "Finding existing opencode bot comments..."
-          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --jq '.[] | select(.user.type == "Bot" and (.body | test("opencode"; "i")) and (.body | test("review"; "i"))) | .id')
+          COMMENTS=$(gh api repos/${{ github.repository }}/issues/${{ inputs.pr-number || github.event.pull_request.number }}/comments --jq '.[] | select(.user.type == "Bot" and (.body | test("opencode"; "i")) and (.body | test("review"; "i"))) | .id')
           
           if [ -n "$COMMENTS" ]; then
             echo "Found existing bot comments, deleting them..."
