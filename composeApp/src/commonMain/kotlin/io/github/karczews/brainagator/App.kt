@@ -1,69 +1,58 @@
 package io.github.karczews.brainagator
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.compose_multiplatform
 import io.github.karczews.brainagator.ui.FireworksAnimation
+
+import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
+        var selectedGame by remember { mutableStateOf<String?>(null) }
         var showFireworks by remember { mutableStateOf(false) }
 
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (selectedGame == null) {
+                GameSelectionScreen(onGameSelected = { game ->
+                    selectedGame = game.title
+                    showFireworks = true
+                })
+            } else {
+                // Game Screen Placeholder
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+                    Text("Playing ${selectedGame}", style = MaterialTheme.typography.headlineMedium)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { 
+                        selectedGame = null
+                        showFireworks = false
+                    }) {
+                        Text("Back to Menu")
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Fireworks demo button
-            Button(
-                onClick = { showFireworks = !showFireworks },
-                modifier = Modifier.padding(horizontal = 16.dp)
+            // Global Fireworks animation
+            AnimatedVisibility(
+                visible = showFireworks,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(if (showFireworks) "Stop Fireworks" else "Show Fireworks!")
-            }
-
-            // Fireworks animation
-            AnimatedVisibility(visible = showFireworks) {
                 FireworksAnimation(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(16.dp),
+                    modifier = Modifier.fillMaxSize(),
                     particleCount = 150,
-                    explosionCount = 0 // Infinite explosions
+                    explosionCount = 0
                 )
             }
         }

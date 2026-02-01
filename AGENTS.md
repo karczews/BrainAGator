@@ -43,7 +43,7 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - **License checking**: Enforced via Qodana
 
 ## ANTI-PATTERNS (THIS PROJECT)
-- Package name mismatch: `androidApp` uses `com.example.androidapp`, `composeApp` uses `com.example.brainagator`
+- Package name mismatch: `androidApp` uses `com.example.androidapp`, `composeApp` uses `io.github.karczews.brainagator`
 - Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
 
 ## UNIQUE STYLES

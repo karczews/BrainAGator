@@ -28,7 +28,6 @@ androidApp/
 
 ## ANTI-PATTERNS
 - Don't implement UI directly - use shared composeApp components
-- Package name mismatch: uses `com.example.androidapp` while composeApp uses `com.example.brainagator`
 
 ## NOTES
 - Depends on composeApp as project dependency: `implementation(projects.composeApp)`
