@@ -19,41 +19,56 @@ fun App() {
     MaterialTheme {
         var selectedGame by remember { mutableStateOf<String?>(null) }
         var showFireworks by remember { mutableStateOf(false) }
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (selectedGame == null) {
-                GameSelectionScreen(onGameSelected = { game ->
-                    selectedGame = game.title
-                    showFireworks = true
-                })
-            } else {
-                // Game Screen Placeholder
-                Column(
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("Playing ${selectedGame}", style = MaterialTheme.typography.headlineMedium)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { 
-                        selectedGame = null
-                        showFireworks = false
-                    }) {
-                        Text("Back to Menu")
+            },
+            bottomBar = {
+            },
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                if (selectedGame == null) {
+                    GameSelectionScreen(onGameSelected = { game ->
+                        selectedGame = game.title
+                        showFireworks = true
+                    })
+                } else {
+                    // Game Screen Placeholder
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            "Playing $selectedGame",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            selectedGame = null
+                            showFireworks = false
+                        }) {
+                            Text("Back to Menu")
+                        }
                     }
                 }
-            }
 
-            // Global Fireworks animation
-            AnimatedVisibility(
-                visible = showFireworks,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                FireworksAnimation(
-                    modifier = Modifier.fillMaxSize(),
-                    particleCount = 150,
-                    explosionCount = 0
-                )
+                // Global Fireworks animation
+                AnimatedVisibility(
+                    visible = showFireworks,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    FireworksAnimation(
+                        modifier = Modifier.fillMaxSize(),
+                        particleCount = 150,
+                        explosionCount = 0
+                    )
+                }
             }
         }
     }
