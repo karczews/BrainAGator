@@ -60,7 +60,6 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.jetbrains.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
@@ -68,9 +67,9 @@ kotlin {
             implementation(libs.jetbrains.compose.foundation)
             implementation(libs.jetbrains.compose.material3)
             implementation(libs.jetbrains.compose.materialIconsExtended)
-            implementation(libs.jetbrains.compose.ui)
+            //implementation(libs.jetbrains.compose.ui)
+            implementation(libs.jetbrains.compose.ui.tooling.preview)
             implementation(libs.jetbrains.compose.components.resources)
-            implementation(libs.jetbrains.compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
         }
@@ -87,6 +86,7 @@ kotlin {
 
 // For local development and testing adding Compose Preview tool - AGP 9.0.0-beta01 or higher
 dependencies {
+    //androidRuntimeClasspath(libs.jetbrains.compose.ui.tooling.preview)
     "androidRuntimeClasspath"(libs.jetbrains.compose.ui.tooling)
 }
 
