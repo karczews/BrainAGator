@@ -25,7 +25,7 @@ iosApp/
 ## CONVENTIONS
 - **Entry Point**: SwiftUI App struct in iOSApp.swift
 - **Compose Integration**: ContentView.swift embeds Compose framework from composeApp
-- **Bundle ID**: `com.example.brainagator.brainagator$(TEAM_ID)`
+- **Bundle ID**: `io.github.karczews.brainagator.brainagator$(TEAM_ID)`
 - **Version**: MARKETING_VERSION=1.0, CURRENT_PROJECT_VERSION=1
 
 ## NOTES
