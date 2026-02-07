@@ -15,11 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BrainagatorTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    App()
-                }
-            }
+            App()
         }
     }
 }
