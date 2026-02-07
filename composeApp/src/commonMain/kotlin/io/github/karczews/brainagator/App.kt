@@ -16,6 +16,7 @@ import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
 @Composable
 @Preview
 fun App() {
+    // @Preview annotation is for development tools only and not included in release builds
     MaterialTheme {
         var selectedGame by remember { mutableStateOf<String?>(null) }
         var showFireworks by remember { mutableStateOf(false) }
