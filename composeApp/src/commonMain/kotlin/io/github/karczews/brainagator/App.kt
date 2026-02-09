@@ -8,7 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import io.github.karczews.brainagator.ui.FireworksAnimation
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -29,79 +29,96 @@ fun App() {
             // Create a lookup map for GameInfo by GameType
             val gameInfoMap = remember { games.associateBy { it.gameType } }
 
-            // NavDisplay manages the mapping from routes to content
+            // NavDisplay manages the mapping from routes to content using entryProvider DSL
             NavDisplay(
                 backStack = backStack,
-                onBack = { backStack.removeLastOrNull() },
-                entryProvider = { route ->
-                    when (route) {
-                        is Route.GameSelection -> NavEntry(route) {
+                entryProvider =
+                    entryProvider {
+                        entry<Route.GameSelection> {
                             GameSelectionScreen(
                                 onGameSelected = { game ->
                                     showFireworks = true
                                     backStack.add(Route.Game(game.gameType))
-                                }
+                                },
                             )
                         }
-                        is Route.Game -> {
-                            val gameInfo = gameInfoMap[route.gameType]
-                                ?: error("Unknown game type: ${route.gameType}")
-                            NavEntry(route) {
-                                when (route.gameType) {
-                                    GameType.ShapeMatch -> ShapeMatchGameScreen(
+                        entry<Route.Game> { route ->
+                            val gameInfo =
+                                gameInfoMap[route.gameType]
+                                    ?: error("Unknown game type: ${route.gameType}")
+                            when (route.gameType) {
+                                GameType.ShapeMatch -> {
+                                    ShapeMatchGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.NumberOrder -> NumberOrderGameScreen(
+                                }
+
+                                GameType.NumberOrder -> {
+                                    NumberOrderGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.ColorMatch -> ColorMatchGameScreen(
+                                }
+
+                                GameType.ColorMatch -> {
+                                    ColorMatchGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.SizeOrder -> SizeOrderGameScreen(
+                                }
+
+                                GameType.SizeOrder -> {
+                                    SizeOrderGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.Pattern -> PatternGameScreen(
+                                }
+
+                                GameType.Pattern -> {
+                                    PatternGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.OddOneOut -> OddOneOutGameScreen(
+                                }
+
+                                GameType.OddOneOut -> {
+                                    OddOneOutGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
-                                    GameType.SpotDifference -> SpotDifferenceGameScreen(
+                                }
+
+                                GameType.SpotDifference -> {
+                                    SpotDifferenceGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
                                             showFireworks = false
                                             backStack.removeLastOrNull()
-                                        }
+                                        },
                                     )
                                 }
                             }
                         }
-                    }
-                }
+                    },
             )
 
             // Global Fireworks animation overlay
