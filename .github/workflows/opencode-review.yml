@@ -1,13 +1,13 @@
 name: opencode-review
 on:
-  workflow_call:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
     inputs:
       pr-number:
+        description: 'Pull request number to review'
         required: true
         type: number
-    secrets:
-      OPENCODE_API_KEY:
-        required: true
 jobs:
   review:
     runs-on: ubuntu-latest

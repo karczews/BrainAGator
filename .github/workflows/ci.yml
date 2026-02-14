@@ -8,14 +8,6 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  opencode-review:
-    if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/opencode-review.yml
-    secrets:
-      OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
-    with:
-      pr-number: ${{ github.event.pull_request.number }}
-
   unit-tests:
     uses: ./.github/workflows/run-tests.yml
 
@@ -33,6 +25,6 @@ jobs:
     name: Required Checks Validation
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [opencode-review, unit-tests, qodana, android-instrumentation-tests]
+    needs: [unit-tests, qodana, android-instrumentation-tests]
     steps:
       - run: echo "All required checks passed"
