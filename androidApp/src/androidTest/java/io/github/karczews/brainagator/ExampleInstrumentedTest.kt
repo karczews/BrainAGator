@@ -21,14 +21,14 @@ class ExampleInstrumentedTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun useAppContext() {
+    fun testAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         Assert.assertEquals("io.github.karczews.brainagator", appContext.packageName)
     }
 
     @Test
-    fun appLaunchesSuccessfully() {
+    fun testAppLaunchesSuccessfully() {
         composeTestRule.onRoot().assertIsDisplayed()
     }
 }
