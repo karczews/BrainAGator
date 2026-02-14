@@ -3,6 +3,9 @@ package io.github.karczews.brainagator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,6 +35,16 @@ fun App() {
             // NavDisplay manages the mapping from routes to content using entryProvider DSL
             NavDisplay(
                 backStack = backStack,
+                transitionSpec = {
+                    // Slide in from right with fade when entering
+                    (slideInHorizontally { width -> width } + fadeIn()) togetherWith
+                        (slideOutHorizontally { width -> -width / 2 } + fadeOut())
+                },
+                popTransitionSpec = {
+                    // Slide in from left with fade when popping back
+                    (slideInHorizontally { width -> -width } + fadeIn()) togetherWith
+                        (slideOutHorizontally { width -> width } + fadeOut())
+                },
                 entryProvider =
                     entryProvider {
                         entry<Route.GameSelection> {
