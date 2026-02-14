@@ -33,7 +33,7 @@ fun App() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("Playing ${selectedGame}", style = MaterialTheme.typography.headlineMedium)
+                    Text("Playing $selectedGame", style = MaterialTheme.typography.headlineMedium)
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = { 
                         selectedGame = null
