@@ -1,13 +1,7 @@
 name: opencode-review
 on:
-  workflow_call:
-    inputs:
-      pr-number:
-        required: true
-        type: number
-    secrets:
-      OPENCODE_API_KEY:
-        required: true
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   review:
     runs-on: ubuntu-latest
