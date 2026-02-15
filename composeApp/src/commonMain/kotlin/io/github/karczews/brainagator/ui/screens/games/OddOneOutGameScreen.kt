@@ -28,5 +28,6 @@ fun OddOneOutGameScreen(
     GamePlaceholder(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        onGameWon = onGameWon,
     )
 }

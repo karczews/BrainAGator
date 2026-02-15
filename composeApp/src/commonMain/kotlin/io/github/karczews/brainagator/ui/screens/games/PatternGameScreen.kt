@@ -28,5 +28,6 @@ fun PatternGameScreen(
     GamePlaceholder(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        onGameWon = onGameWon,
     )
 }

@@ -21,3 +21,9 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
+
+/**
+ * Build-time flag indicating if this is a debug build.
+ * Should be true in development/debug builds and false in release builds.
+ */
+expect val isDebugBuild: Boolean

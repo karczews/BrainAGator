@@ -51,7 +51,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.back_to_main
+import brainagator.composeapp.generated.resources.congratulations
+import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.ui.FireworksAnimation
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameWonScreen(onBackToMainClick: () -> Unit) {
@@ -109,7 +114,7 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
 
             // Congratulations text
             Text(
-                text = "Congratulations!",
+                text = stringResource(Res.string.congratulations),
                 style =
                     MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.ExtraBold,
@@ -121,7 +126,7 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "You won the game!",
+                text = stringResource(Res.string.you_won),
                 style =
                     MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
@@ -163,7 +168,7 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Back to Main Screen",
+                    text = stringResource(Res.string.back_to_main),
                     style =
                         MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,

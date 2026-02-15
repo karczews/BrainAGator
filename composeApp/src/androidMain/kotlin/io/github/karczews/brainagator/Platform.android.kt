@@ -23,3 +23,9 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
+
+/**
+ * For Android, this is set at compile time based on the build configuration.
+ * In debug builds, this is true; in release builds, false.
+ */
+actual val isDebugBuild: Boolean = true

@@ -21,3 +21,12 @@ class JVMPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()
+
+/**
+ * For JVM/Desktop, debug builds are determined by the "debug" system property.
+ * Set -Ddebug=true for debug builds, or omit for release builds.
+ */
+actual val isDebugBuild: Boolean =
+    // hardcode to true as passing property does not work from ide
+    true
+// System.getProperty("debug", "false").toBoolean()
