@@ -124,6 +124,63 @@ To re-enable:
 mv .git/hooks/pre-commit.disabled .git/hooks/pre-commit
 ```
 
+## Logging
+
+This project uses [Kermit](https://kermit.touchlab.co/) for logging across all platforms. To maintain flexibility and allow for future logging library changes, we use a **Logger facade** pattern.
+
+### Logger Typealias
+
+A `Logger` typealias is defined in `composeApp/src/commonMain/kotlin/io/github/karczews/brainagator/Logger.kt`:
+
+```kotlin
+typealias Logger = co.touchlab.kermit.Logger
+```
+
+### Usage Guidelines
+
+**Always use the Logger typealias, not Kermit directly:**
+
+```kotlin
+// Correct
+import io.github.karczews.brainagator.Logger
+
+Logger.i { "Application started" }
+Logger.e(e) { "Error occurred" }
+```
+
+```kotlin
+// Incorrect - don't import Kermit directly
+import co.touchlab.kermit.Logger
+```
+
+### Exception Logging
+
+When logging exceptions, pass the exception as the first parameter. Kermit automatically includes the full stacktrace, so you don't need to include `${e.message}` in the log message:
+
+```kotlin
+// Correct - message describes context, exception provides details
+try {
+    riskyOperation()
+} catch (e: Exception) {
+    Logger.e(e) { "Failed to execute risky operation" }
+}
+
+// Avoid - redundant, Kermit already logs the exception details
+try {
+    riskyOperation()
+} catch (e: Exception) {
+    Logger.e(e) { "Failed to execute risky operation: ${e.message}" }
+}
+```
+
+### Logging Levels
+
+- `Logger.v { }` - Verbose (most detailed)
+- `Logger.d { }` - Debug
+- `Logger.i { }` - Info
+- `Logger.w { }` - Warning
+- `Logger.e { }` - Error (use with exception when available)
+
 ## Development Workflow
 
 ### Project Structure
