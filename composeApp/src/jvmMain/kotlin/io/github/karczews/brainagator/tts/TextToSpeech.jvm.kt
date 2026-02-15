@@ -50,7 +50,8 @@ class DesktopTextToSpeech : TextToSpeech {
                     ) -> {
                         listOf(
                             "powershell.exe",
-                            "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$text')",
+                            "Add-Type -AssemblyName System.Speech; " +
+                                "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$text')",
                         )
                     }
 
