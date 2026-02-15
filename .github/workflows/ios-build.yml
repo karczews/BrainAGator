@@ -27,7 +27,7 @@ jobs:
           xcodebuild build \
             -project iosApp.xcodeproj \
             -scheme iosApp \
-            -destination 'platform=iOS Simulator,name=Any iOS Simulator Device' \
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4' \
             -derivedDataPath DerivedData \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
