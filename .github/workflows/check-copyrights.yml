@@ -1,0 +1,52 @@
+name: Check Copyright Headers
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  check-copyrights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check for missing copyright headers
+        run: |
+          # Find all Kotlin files that don't have the copyright header
+          MISSING_COPYRIGHT=0
+          COPYRIGHT_PATTERN="Copyright 2026 Krzysztof Karczewski"
+
+          # Find all .kt files excluding build directories
+          while IFS= read -r file; do
+            if ! grep -q "$COPYRIGHT_PATTERN" "$file"; then
+              echo "Missing copyright: $file"
+              MISSING_COPYRIGHT=1
+            fi
+          done < <(find . -name "*.kt" -type f ! -path "*/build/*" ! -path "*/.gradle/*")
+
+          if [ $MISSING_COPYRIGHT -eq 1 ]; then
+            echo ""
+            echo "❌ Error: Some files are missing copyright headers!"
+            echo "Please add the following header to all Kotlin files:"
+            echo ""
+            echo "/*"
+            echo " * Copyright 2026 Krzysztof Karczewski"
+            echo " *"
+            echo " * Licensed under the Apache License, Version 2.0 (the \"License\");"
+            echo " * you may not use this file except in compliance with the License."
+            echo " * You may obtain a copy of the License at"
+            echo " *"
+            echo " *     http://www.apache.org/licenses/LICENSE-2.0"
+            echo " *"
+            echo " * Unless required by applicable law or agreed to in writing, software"
+            echo " * distributed under the License is distributed on an \"AS IS\" BASIS,"
+            echo " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."
+            echo " * See the License for the specific language governing permissions and"
+            echo " * limitations under the License."
+            echo " */"
+            exit 1
+          fi
+
+          echo "✅ All Kotlin files have copyright headers"
