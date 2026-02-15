@@ -23,10 +23,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -100,6 +105,7 @@ fun GameScreenScaffold(
 fun GamePlaceholder(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
+    onGameWon: (() -> Unit)? = null,
 ) {
     GameScreenScaffold(
         gameInfo = gameInfo,
@@ -145,6 +151,30 @@ fun GamePlaceholder(
                         modifier = Modifier.padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge,
                     )
+                }
+
+                if (onGameWon != null) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Button(
+                        onClick = onGameWon,
+                        modifier = Modifier.fillMaxWidth(0.7f).height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = "Test: Trigger Win",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
                 }
             }
         }
