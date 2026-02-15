@@ -7,4 +7,19 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.ktlint) apply false
+}
+
+allprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+}
+
+subprojects {
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        filter {
+            exclude("**/generated/**")
+            exclude("**/build/**")
+        }
+        version.set("1.5.0")
+    }
 }
