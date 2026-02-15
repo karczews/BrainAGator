@@ -79,6 +79,8 @@ import brainagator.composeapp.generated.resources.subtitle_shape_match
 import brainagator.composeapp.generated.resources.subtitle_size_order
 import brainagator.composeapp.generated.resources.subtitle_spot_difference
 import brainagator.composeapp.generated.resources.welcome_message
+import io.github.karczews.brainagator.getPlatform
+import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.navigation.GameType
 import org.jetbrains.compose.resources.StringResource
@@ -267,15 +269,34 @@ fun GameSelectionScreen(
                 }
             }
 
-            // Balloon at the bottom
-            Text(
-                text = "🎈",
-                fontSize = 48.sp,
+            // Balloon and build info at the bottom
+            Row(
                 modifier =
                     Modifier
-                        .padding(bottom = 32.dp)
-                        .offset(y = 10.dp),
-            )
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Balloon on the left
+                Text(
+                    text = "🎈",
+                    fontSize = 48.sp,
+                    modifier = Modifier.offset(y = 10.dp),
+                )
+
+                // Build info on the right
+                val platform = getPlatform()
+                val buildType = if (isDebugBuild) "debug" else "release"
+                Text(
+                    text = "${platform.name} • $buildType",
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            color = Color.DarkGray.copy(alpha = 0.6f),
+                            fontSize = 10.sp,
+                        ),
+                )
+            }
         }
     }
 }
