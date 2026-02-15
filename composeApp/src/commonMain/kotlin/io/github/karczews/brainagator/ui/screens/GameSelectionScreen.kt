@@ -17,15 +17,38 @@
 package io.github.karczews.brainagator.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.navigation.GameType
 
 data class GameInfo(
@@ -104,6 +128,12 @@ val games =
 
 @Composable
 fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
+    val tts = rememberTextToSpeech()
+
+    // Speak welcome message when screen loads
+    LaunchedEffect(Unit) {
+        tts.speak("Welcome to Brainagator! Select a game to play.")
+    }
     Box(
         modifier =
             Modifier
@@ -175,11 +205,33 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
                 chunkedGames.forEach { rowGames ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = if (rowGames.size == 1) Arrangement.Center else Arrangement.spacedBy(16.dp),
+                        horizontalArrangement =
+                            if (rowGames.size == 1) {
+                                Arrangement.Center
+                            } else {
+                                Arrangement.spacedBy(
+                                    16.dp,
+                                )
+                            },
                     ) {
                         rowGames.forEach { game ->
-                            Box(modifier = if (rowGames.size == 1) Modifier.fillMaxWidth(0.5f) else Modifier.weight(1f)) {
-                                GameCard(game = game, onClick = { onGameSelected(game) })
+                            Box(
+                                modifier =
+                                    if (rowGames.size == 1) {
+                                        Modifier.fillMaxWidth(0.5f)
+                                    } else {
+                                        Modifier.weight(
+                                            1f,
+                                        )
+                                    },
+                            ) {
+                                GameCard(
+                                    game = game,
+                                    onClick = {
+                                        tts.speak("${game.title}. ${game.subtitle}")
+                                        onGameSelected(game)
+                                    },
+                                )
                             }
                         }
                     }
