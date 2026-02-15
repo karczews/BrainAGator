@@ -8,6 +8,11 @@ Thank you for your interest in contributing to BrainAGator! This guide will help
 - [Project Setup](#project-setup)
 - [Code Style](#code-style)
   - [Pre-commit Hook](#pre-commit-hook)
+- [Development Workflow](#development-workflow)
+  - [Project Structure](#project-structure)
+  - [Building and Running](#building-and-running)
+  - [Hot Reload](#hot-reload-desktop-development)
+  - [Running Checks](#running-checks-before-committing)
 - [Submitting Changes](#submitting-changes)
 
 ## Prerequisites
@@ -116,6 +121,103 @@ mv .git/hooks/pre-commit .git/hooks/pre-commit.disabled
 To re-enable:
 ```bash
 mv .git/hooks/pre-commit.disabled .git/hooks/pre-commit
+```
+
+## Development Workflow
+
+### Project Structure
+
+Understanding the project structure helps you know where to make changes:
+
+- **`/composeApp/src/commonMain`** - Code shared across all platforms (Android, iOS, Web, Desktop)
+- **`/composeApp/src/{platform}Main`** - Platform-specific code (e.g., `androidMain`, `iosMain`, `jvmMain`, `jsMain`)
+- **`/iosApp`** - iOS application entry point (contains Swift code for iOS-specific features)
+- **`/androidApp`** - Android application entry point
+
+### Building and Running
+
+Before submitting changes, test your code by building and running the application:
+
+#### Android Application
+
+**macOS/Linux:**
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+**Windows:**
+```shell
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+#### Desktop (JVM) Application
+
+**macOS/Linux:**
+```bash
+./gradlew :composeApp:run
+```
+
+**Windows:**
+```shell
+.\gradlew.bat :composeApp:run
+```
+
+#### Web Application
+
+**Wasm target** (faster, modern browsers) - **macOS/Linux:**
+```bash
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+**Wasm target** (faster, modern browsers) - **Windows:**
+```shell
+.\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+```
+
+**JS target** (slower, supports older browsers) - **macOS/Linux:**
+```bash
+./gradlew :composeApp:jsBrowserDevelopmentRun
+```
+
+**JS target** (slower, supports older browsers) - **Windows:**
+```shell
+.\gradlew.bat :composeApp:jsBrowserDevelopmentRun
+```
+
+#### iOS Application
+
+Open the `/iosApp` directory in Xcode and run it from there, or use the run configuration in your IDE.
+
+### Hot Reload (Desktop Development)
+
+For rapid iteration during desktop development:
+
+```bash
+# Explicit reload
+./gradlew reload
+
+# Alternative
+./gradlew :composeApp:hotReloadJvmMain
+
+# Auto-reload on source changes
+./gradlew :composeApp:hotRunJvm --auto
+```
+
+**Note:** Hot reload requires the JetBrains Runtime (JB runtime).
+
+### Running Checks Before Committing
+
+Always run these commands before pushing your changes:
+
+```bash
+# Check code style
+./gradlew ktlintCheck
+
+# Build the project
+./gradlew build
+
+# Run tests (if available)
+./gradlew test
 ```
 
 ## Submitting Changes
