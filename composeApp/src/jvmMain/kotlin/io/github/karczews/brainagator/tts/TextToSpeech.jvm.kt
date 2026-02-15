@@ -21,6 +21,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Data class representing a voice with its language code.
@@ -37,6 +38,7 @@ private data class Voice(
  */
 class DesktopTextToSpeech : TextToSpeech {
     private val isSpeakingState = AtomicBoolean(false)
+    private val currentProcess = AtomicReference<Process?>(null)
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
     private val osName = System.getProperty("os.name").lowercase()
@@ -124,12 +126,21 @@ class DesktopTextToSpeech : TextToSpeech {
 
             isSpeakingState.set(true)
             Thread {
+                val process =
+                    try {
+                        ProcessBuilder(command).start()
+                    } catch (e: Exception) {
+                        println("TTS not available on this system: ${e.message}")
+                        isSpeakingState.set(false)
+                        return@Thread
+                    }
+                currentProcess.set(process)
                 try {
-                    ProcessBuilder(command).start().waitFor()
-                } catch (e: Exception) {
-                    println("TTS not available on this system: ${e.message}")
+                    process.waitFor()
                 } finally {
-                    isSpeakingState.set(false)
+                    if (currentProcess.compareAndSet(process, null)) {
+                        isSpeakingState.set(false)
+                    }
                 }
             }.start()
         } catch (e: Exception) {
@@ -172,6 +183,7 @@ class DesktopTextToSpeech : TextToSpeech {
     }
 
     override fun stop() {
+        currentProcess.getAndSet(null)?.destroy()
         isSpeakingState.set(false)
     }
 
