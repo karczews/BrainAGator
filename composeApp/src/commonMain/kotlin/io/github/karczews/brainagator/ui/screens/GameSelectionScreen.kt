@@ -23,56 +23,65 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import io.github.karczews.brainagator.ui.navigation.GameType
 
 data class GameInfo(
     val title: String,
     val subtitle: String,
     val icon: ImageVector,
-    val gradientColors: List<Color>
+    val gradientColors: List<Color>,
+    val gameType: GameType
 )
 
 val games = listOf(
     GameInfo(
-        "Shape Match",
-        "Match shapes to colors!",
-        Icons.Default.Category,
-        listOf(Color(0xFFB06AB3), Color(0xFF4568DC))
+        title = "Shape Match",
+        subtitle = "Match shapes to colors!",
+        icon = Icons.Default.Category,
+        gradientColors = listOf(Color(0xFFB06AB3), Color(0xFF4568DC)),
+        gameType = GameType.ShapeMatch
     ),
     GameInfo(
-        "Number Order",
-        "Put numbers in order!",
-        Icons.Default.Tag,
-        listOf(Color(0xFF4FACFE), Color(0xFF00F2FE))
+        title = "Number Order",
+        subtitle = "Put numbers in order!",
+        icon = Icons.Default.Tag,
+        gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
+        gameType = GameType.NumberOrder
     ),
     GameInfo(
-        "Color Match",
-        "Find matching colors!",
-        Icons.Default.Palette,
-        listOf(Color(0xFFFA709A), Color(0xFFFEE140)) // Pink to Orange
+        title = "Color Match",
+        subtitle = "Find matching colors!",
+        icon = Icons.Default.Palette,
+        gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)), // Pink to Orange
+        gameType = GameType.ColorMatch
     ),
     GameInfo(
-        "Size Order",
-        "Order by size!",
-        Icons.Default.SwapVert,
-        listOf(Color(0xFFF093FB), Color(0xFFF5576C))
+        title = "Size Order",
+        subtitle = "Order by size!",
+        icon = Icons.Default.SwapVert,
+        gradientColors = listOf(Color(0xFFF093FB), Color(0xFFF5576C)),
+        gameType = GameType.SizeOrder
     ),
     GameInfo(
-        "Pattern Game",
-        "Complete the pattern!",
-        Icons.Default.GridView,
-        listOf(Color(0xFF667EEA), Color(0xFF764BA2))
+        title = "Pattern Game",
+        subtitle = "Complete the pattern!",
+        icon = Icons.Default.GridView,
+        gradientColors = listOf(Color(0xFF667EEA), Color(0xFF764BA2)),
+        gameType = GameType.Pattern
     ),
     GameInfo(
-        "Odd One Out",
-        "Find what's different!",
-        Icons.Default.HelpOutline,
-        listOf(Color(0xFF2AF598), Color(0xFF009EFD))
+        title = "Odd One Out",
+        subtitle = "Find what's different!",
+        icon = Icons.Default.HelpOutline,
+        gradientColors = listOf(Color(0xFF2AF598), Color(0xFF009EFD)),
+        gameType = GameType.OddOneOut
     ),
     GameInfo(
-        "Spot Difference",
-        "Find the difference!",
-        Icons.Default.Search,
-        listOf(Color(0xFF43E97B), Color(0xFF38F9D7))
+        title = "Spot Difference",
+        subtitle = "Find the difference!",
+        icon = Icons.Default.Search,
+        gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
+        gameType = GameType.SpotDifference
     )
 )
 
