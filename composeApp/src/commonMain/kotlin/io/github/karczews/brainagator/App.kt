@@ -25,10 +25,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
@@ -54,7 +56,7 @@ fun App() {
         val backStack: MutableList<Route> = remember { mutableStateListOf(Route.GameSelection) }
 
         // Track if welcome message has been spoken - persists across navigation
-        var hasSpokenWelcome = rememberSaveable { mutableStateOf(false) }
+        var hasSpokenWelcome by rememberSaveable { mutableStateOf(false) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             // Create a lookup map for GameInfo by GameType
@@ -81,9 +83,9 @@ fun App() {
                                     backStack.add(Route.Game(game.gameType))
                                 },
                                 onWelcomeSpoken = {
-                                    hasSpokenWelcome.value = true
+                                    hasSpokenWelcome = true
                                 },
-                                shouldSpeakWelcome = !hasSpokenWelcome.value,
+                                shouldSpeakWelcome = !hasSpokenWelcome,
                             )
                         }
                         entry<Route.Game> { route ->
