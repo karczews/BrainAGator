@@ -56,14 +56,22 @@ fun FireworksAnimation(
     explosionCount: Int = 0,
     colors: List<Color> =
         listOf(
-            Color(0xFFFF6B6B), // Red
-            Color(0xFF4ECDC4), // Cyan
-            Color(0xFFFFE66D), // Yellow
-            Color(0xFF95E1D3), // Mint
-            Color(0xFFF38181), // Pink
-            Color(0xFFAA96DA), // Purple
-            Color(0xFFFCBAD3), // Light Pink
-            Color(0xFFFFD93D), // Gold
+            // Red
+            Color(0xFFFF6B6B),
+            // Cyan
+            Color(0xFF4ECDC4),
+            // Yellow
+            Color(0xFFFFE66D),
+            // Mint
+            Color(0xFF95E1D3),
+            // Pink
+            Color(0xFFF38181),
+            // Purple
+            Color(0xFFAA96DA),
+            // Light Pink
+            Color(0xFFFCBAD3),
+            // Gold
+            Color(0xFFFFD93D),
         ),
     onAnimationComplete: (() -> Unit)? = null,
 ) {

@@ -93,7 +93,8 @@ val games =
             title = "Color Match",
             subtitle = "Find matching colors!",
             icon = Icons.Default.Palette,
-            gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)), // Pink to Orange
+            // Pink to Orange
+            gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)),
             gameType = GameType.ColorMatch,
         ),
         GameInfo(
@@ -142,9 +143,12 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
                     Brush.verticalGradient(
                         colors =
                             listOf(
-                                Color(0xFFFFFDE7), // Very Light Yellow
-                                Color(0xFFFFF8E1), // Cream
-                                Color(0xFFF8BBD0).copy(alpha = 0.3f), // Very Light Pink
+                                // Very Light Yellow
+                                Color(0xFFFFFDE7),
+                                // Cream
+                                Color(0xFFFFF8E1),
+                                // Very Light Pink
+                                Color(0xFFF8BBD0).copy(alpha = 0.3f),
                             ),
                     ),
                 ),

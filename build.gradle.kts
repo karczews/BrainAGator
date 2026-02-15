@@ -20,6 +20,5 @@ subprojects {
             exclude("**/generated/**")
             exclude("**/build/**")
         }
-        version.set("1.5.0")
     }
 }
