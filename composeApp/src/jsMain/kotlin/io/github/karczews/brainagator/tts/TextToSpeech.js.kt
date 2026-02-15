@@ -5,11 +5,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 
 /**
- * Web/JS implementation of Text-to-Speech using the Web Speech API.
- * Supports modern browsers that implement the SpeechSynthesis interface.
+ * JS implementation of Text-to-Speech using the Web Speech API.
+ * Similar to Wasm implementation using external interfaces.
  */
-class WebTextToSpeech : TextToSpeech {
-    private val synthesis: dynamic = js("window.speechSynthesis")
+class JsTextToSpeech : TextToSpeech {
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
 
@@ -17,15 +16,16 @@ class WebTextToSpeech : TextToSpeech {
         try {
             stop()
 
-            val utterance = js("new SpeechSynthesisUtterance()")
-            utterance.text = text
+            val synthesis = getSpeechSynthesis()
+            val utterance = createSpeechSynthesisUtterance(text)
+
             utterance.rate = currentRate.toDouble()
             utterance.pitch = currentPitch.toDouble()
             utterance.volume = 1.0
 
             // Try to use default or first available voice
             val voices = synthesis.getVoices()
-            if (voices != null && voices.length > 0) {
+            if (voices.length > 0) {
                 utterance.voice = voices[0]
             }
 
@@ -37,7 +37,7 @@ class WebTextToSpeech : TextToSpeech {
 
     override fun stop() {
         try {
-            synthesis.cancel()
+            getSpeechSynthesis().cancel()
         } catch (e: Exception) {
             console.error("TTS Stop Error: ${e.message}")
         }
@@ -45,7 +45,7 @@ class WebTextToSpeech : TextToSpeech {
 
     override fun isSpeaking(): Boolean =
         try {
-            synthesis.speaking as Boolean
+            getSpeechSynthesis().speaking
         } catch (e: Exception) {
             false
         }
@@ -64,12 +64,12 @@ class WebTextToSpeech : TextToSpeech {
 }
 
 /**
- * Creates platform-specific TTS instance for Web/JS.
+ * Creates platform-specific TTS instance for JS.
  */
-actual fun createTextToSpeech(): TextToSpeech = WebTextToSpeech()
+actual fun createTextToSpeech(): TextToSpeech = JsTextToSpeech()
 
 /**
- * Composable remember function for TTS in Web.
+ * Composable remember function for TTS in JS.
  * Automatically handles lifecycle and cleanup.
  */
 @Composable
@@ -84,3 +84,33 @@ actual fun rememberTextToSpeech(): TextToSpeech {
 
     return tts
 }
+
+// External declarations for Web Speech API
+
+external class SpeechSynthesis {
+    fun speak(utterance: SpeechSynthesisUtterance)
+
+    fun cancel()
+
+    fun getVoices(): JsArray<SpeechSynthesisVoice>
+
+    val speaking: Boolean
+}
+
+external class SpeechSynthesisUtterance {
+    constructor(text: String)
+
+    var text: String
+    var rate: Double
+    var pitch: Double
+    var volume: Double
+    var voice: SpeechSynthesisVoice?
+}
+
+external class SpeechSynthesisVoice
+
+@JsFun("() => { return window.speechSynthesis; }")
+external fun getSpeechSynthesis(): SpeechSynthesis
+
+@JsFun("(text) => { return new SpeechSynthesisUtterance(text); }")
+external fun createSpeechSynthesisUtterance(text: String): SpeechSynthesisUtterance

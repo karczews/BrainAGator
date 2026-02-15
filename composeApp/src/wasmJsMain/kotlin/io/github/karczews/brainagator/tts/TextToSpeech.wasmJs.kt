@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 
 /**
  * Wasm/JS implementation of Text-to-Speech using the Web Speech API.
- * Similar to JS implementation but adapted for Wasm target.
+ * Uses external interfaces for proper Kotlin/Wasm JS interop.
  */
 class WasmTextToSpeech : TextToSpeech {
     private var currentRate = 1.0f
@@ -16,18 +16,17 @@ class WasmTextToSpeech : TextToSpeech {
         try {
             stop()
 
-            // Use js() to access Web Speech API
-            val utterance = js("new SpeechSynthesisUtterance()")
-            utterance.text = text
+            val synthesis = getSpeechSynthesis()
+            val utterance = createSpeechSynthesisUtterance(text)
+
             utterance.rate = currentRate.toDouble()
             utterance.pitch = currentPitch.toDouble()
             utterance.volume = 1.0
 
             // Try to use default or first available voice
-            val synthesis = js("window.speechSynthesis")
             val voices = synthesis.getVoices()
-            if (voices != null && voices.length > 0) {
-                utterance.voice = voices[0]
+            if (voices.length > 0) {
+                utterance.voice = getVoiceAt(voices, 0)
             }
 
             synthesis.speak(utterance)
@@ -38,8 +37,7 @@ class WasmTextToSpeech : TextToSpeech {
 
     override fun stop() {
         try {
-            val synthesis = js("window.speechSynthesis")
-            synthesis.cancel()
+            getSpeechSynthesis().cancel()
         } catch (e: Exception) {
             println("TTS Stop Error: ${e.message}")
         }
@@ -47,8 +45,7 @@ class WasmTextToSpeech : TextToSpeech {
 
     override fun isSpeaking(): Boolean =
         try {
-            val synthesis = js("window.speechSynthesis")
-            synthesis.speaking as Boolean
+            getSpeechSynthesis().speaking
         } catch (e: Exception) {
             false
         }
@@ -87,3 +84,39 @@ actual fun rememberTextToSpeech(): TextToSpeech {
 
     return tts
 }
+
+// External declarations for Web Speech API
+
+external class SpeechSynthesis : JsAny {
+    fun speak(utterance: SpeechSynthesisUtterance)
+
+    fun cancel()
+
+    fun getVoices(): JsArray<SpeechSynthesisVoice>
+
+    val speaking: Boolean
+}
+
+external class SpeechSynthesisUtterance : JsAny {
+    constructor(text: String)
+
+    var text: String
+    var rate: Double
+    var pitch: Double
+    var volume: Double
+    var voice: SpeechSynthesisVoice?
+}
+
+external class SpeechSynthesisVoice : JsAny
+
+@JsFun("() => { return window.speechSynthesis; }")
+external fun getSpeechSynthesis(): SpeechSynthesis
+
+@JsFun("(text) => { return new SpeechSynthesisUtterance(text); }")
+external fun createSpeechSynthesisUtterance(text: String): SpeechSynthesisUtterance
+
+@JsFun("(voices, index) => { return voices[index]; }")
+external fun getVoiceAt(
+    voices: JsArray<SpeechSynthesisVoice>,
+    index: Int,
+): SpeechSynthesisVoice?
