@@ -115,6 +115,14 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.karczews.brainagator"
             packageVersion = "1.0.0"
+            
+            macOS {
+                val entitlementsFile = project.rootProject.file("entitlements.plist")
+                if (!entitlementsFile.exists()) {
+                    throw GradleException("entitlements.plist not found at ${entitlementsFile.absolutePath}")
+                }
+                this.entitlementsFile.set(entitlementsFile)
+            }
         }
     }
 }
