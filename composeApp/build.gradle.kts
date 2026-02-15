@@ -15,9 +15,14 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "io.github.karczews.brainagator"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
-
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
 
         compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
 
@@ -36,15 +41,15 @@ kotlin {
         }
     }
 
-    /*listOf(
+    listOf(
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
-    }*/
+    }
 
     jvm()
 
@@ -68,7 +73,7 @@ kotlin {
             implementation(libs.jetbrains.compose.foundation)
             implementation(libs.jetbrains.compose.material3)
             implementation(libs.jetbrains.compose.materialIconsExtended)
-            //implementation(libs.jetbrains.compose.ui)
+            // implementation(libs.jetbrains.compose.ui)
             implementation(libs.jetbrains.compose.ui.tooling.preview)
             implementation(libs.jetbrains.compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
@@ -83,13 +88,16 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+        iosMain.dependencies {
+            implementation(libs.jetbrains.compose.ui)
+        }
     }
     jvmToolchain(21)
 }
 
 // For local development and testing adding Compose Preview tool - AGP 9.0.0-beta01 or higher
 dependencies {
-    //androidRuntimeClasspath(libs.jetbrains.compose.ui.tooling.preview)
+    // androidRuntimeClasspath(libs.jetbrains.compose.ui.tooling.preview)
     "androidRuntimeClasspath"(libs.jetbrains.compose.ui.tooling)
 }
 
