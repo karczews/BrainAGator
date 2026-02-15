@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.AVFAudio.AVSpeechSynthesisVoice
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 
@@ -14,7 +13,7 @@ import platform.AVFAudio.AVSpeechUtterance
 @OptIn(ExperimentalForeignApi::class)
 class IosTextToSpeech : TextToSpeech {
     private val synthesizer = AVSpeechSynthesizer()
-    private var currentRate = 1.0f
+    private var currentRate = 0.5f // iOS uses 0.0 to 1.0 range, default is 0.5
     private var currentPitch = 1.0f
 
     override fun speak(text: String) {
@@ -24,16 +23,10 @@ class IosTextToSpeech : TextToSpeech {
 
         val utterance = AVSpeechUtterance(string = text)
 
-        // Get default voice for current locale
-        val voice = AVSpeechSynthesisVoice.speechVoice()
-        if (voice != null) {
-            utterance.setVoice(voice)
-        }
-
-        // Set speech parameters
-        utterance.setRate(currentRate.toDouble())
-        utterance.setPitchMultiplier(currentPitch.toDouble())
-        utterance.setVolume(1.0)
+        // Set speech parameters - iOS uses Float, not Double
+        utterance.setRate(currentRate)
+        utterance.setPitchMultiplier(currentPitch)
+        utterance.setVolume(1.0f)
 
         synthesizer.speakUtterance(utterance)
     }
@@ -45,7 +38,8 @@ class IosTextToSpeech : TextToSpeech {
     override fun isSpeaking(): Boolean = synthesizer.isSpeaking()
 
     override fun setSpeechRate(rate: Float) {
-        currentRate = rate.coerceIn(0.0f, 1.0f) // iOS uses 0.0 to 1.0 range
+        // Map external 0.1-2.0 range to iOS 0.0-1.0 range
+        currentRate = (rate / 2.0f).coerceIn(0.0f, 1.0f)
     }
 
     override fun setPitch(pitch: Float) {
