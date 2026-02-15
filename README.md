@@ -89,3 +89,13 @@ Explicit Reload Mode:
 * Use `./gradlew :composeApp:hotRunJvm --auto` to automatically reload the application on source changes
 
 Note: It will work only with JB runtime
+
+---
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for:
+- Project setup instructions
+- Code style guidelines (ktlint)
+- Pre-commit hook setup
+- How to submit changes
