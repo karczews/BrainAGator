@@ -50,7 +50,7 @@ class WasmTextToSpeech : TextToSpeech {
 
             synthesis.speak(utterance)
         } catch (e: Exception) {
-            Logger.e(e) { "TTS Error: ${e.message}" }
+            Logger.e(e) { "TTS Error" }
         }
     }
 
@@ -58,7 +58,7 @@ class WasmTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().cancel()
         } catch (e: Exception) {
-            Logger.e(e) { "TTS Stop Error: ${e.message}" }
+            Logger.e(e) { "TTS Stop Error" }
         }
     }
 
@@ -66,7 +66,7 @@ class WasmTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().speaking
         } catch (e: Exception) {
-            Logger.w(e) { "TTS isSpeaking check failed: ${e.message}" }
+            Logger.w(e) { "TTS isSpeaking check failed" }
             false
         }
 

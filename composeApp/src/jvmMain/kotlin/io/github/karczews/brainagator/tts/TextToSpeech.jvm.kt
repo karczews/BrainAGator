@@ -62,7 +62,7 @@ class DesktopTextToSpeech : TextToSpeech {
             val voices = parseVoices(output)
             matchVoiceForLanguage(voices, systemLanguage)
         } catch (e: Exception) {
-            Logger.e(e) { "Failed to query voices: ${e.message}" }
+            Logger.e(e) { "Failed to query voices" }
             null
         }
     }
@@ -131,7 +131,7 @@ class DesktopTextToSpeech : TextToSpeech {
                     try {
                         ProcessBuilder(command).start()
                     } catch (e: Exception) {
-                        Logger.w(e) { "TTS not available on this system: ${e.message}" }
+                        Logger.w(e) { "TTS not available on this system" }
                         isSpeakingState.set(false)
                         return@Thread
                     }
@@ -145,7 +145,7 @@ class DesktopTextToSpeech : TextToSpeech {
                 }
             }.start()
         } catch (e: Exception) {
-            Logger.e(e) { "TTS Error: ${e.message}" }
+            Logger.e(e) { "TTS Error" }
             isSpeakingState.set(false)
         }
     }
