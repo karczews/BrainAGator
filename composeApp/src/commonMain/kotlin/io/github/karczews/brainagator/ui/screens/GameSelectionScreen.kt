@@ -48,6 +48,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -130,7 +131,7 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
     val tts = rememberTextToSpeech()
 
     // Speak welcome message when screen loads
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         tts.speak("Welcome to Brainagator! Select a game to play.")
     }
     Box(
@@ -204,15 +205,25 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
                 chunkedGames.forEach { rowGames ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = if (rowGames.size == 1) Arrangement.Center else Arrangement.spacedBy(
-                            16.dp
-                        ),
+                        horizontalArrangement =
+                            if (rowGames.size == 1) {
+                                Arrangement.Center
+                            } else {
+                                Arrangement.spacedBy(
+                                    16.dp,
+                                )
+                            },
                     ) {
                         rowGames.forEach { game ->
                             Box(
-                                modifier = if (rowGames.size == 1) Modifier.fillMaxWidth(0.5f) else Modifier.weight(
-                                    1f
-                                )
+                                modifier =
+                                    if (rowGames.size == 1) {
+                                        Modifier.fillMaxWidth(0.5f)
+                                    } else {
+                                        Modifier.weight(
+                                            1f,
+                                        )
+                                    },
                             ) {
                                 GameCard(
                                     game = game,
