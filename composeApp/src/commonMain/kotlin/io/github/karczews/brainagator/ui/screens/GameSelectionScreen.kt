@@ -269,35 +269,32 @@ fun GameSelectionScreen(
                 }
             }
 
-            // Balloon and build info at the bottom
-            Row(
+            // Balloon at the bottom
+            Text(
+                text = "🎈",
+                fontSize = 48.sp,
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                // Balloon on the left
-                Text(
-                    text = "🎈",
-                    fontSize = 48.sp,
-                    modifier = Modifier.offset(y = 10.dp),
-                )
-
-                // Build info on the right
-                val platform = getPlatform()
-                val buildType = if (isDebugBuild) "debug" else "release"
-                Text(
-                    text = "${platform.name} • $buildType",
-                    style =
-                        MaterialTheme.typography.bodySmall.copy(
-                            color = Color.DarkGray.copy(alpha = 0.6f),
-                            fontSize = 10.sp,
-                        ),
-                )
-            }
+                        .padding(bottom = 32.dp)
+                        .offset(y = 10.dp),
+            )
         }
+
+        // Build info at bottom right (absolute positioning)
+        val platform = getPlatform()
+        val buildType = if (isDebugBuild) "debug" else "release"
+        Text(
+            text = "${platform.name} • $buildType",
+            style =
+                MaterialTheme.typography.bodySmall.copy(
+                    color = Color.DarkGray.copy(alpha = 0.6f),
+                    fontSize = 10.sp,
+                ),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 16.dp),
+        )
     }
 }
 

@@ -19,9 +19,10 @@ package io.github.karczews.brainagator
 import androidx.compose.ui.window.ComposeUIViewController
 
 @Suppress("ktlint:standard:function-naming")
-fun MainViewController(): androidx.compose.ui.window.ComposeUIViewController {
-    // Initialize logging system
-    initializeLogger()
+fun MainViewController() =
+    ComposeUIViewController {
+        // Initialize logging system
+        initializeLogger()
 
-    return ComposeUIViewController { App() }
-}
+        App()
+    }
