@@ -1,0 +1,19 @@
+name: Check Copyright Headers
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  check-copyrights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check License Header
+        uses: apache/skywalking-eyes@v0.8.0
+        with:
+          mode: check
+          config: .licenserc.yaml
