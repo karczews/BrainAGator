@@ -32,6 +32,7 @@ class WasmTextToSpeech : TextToSpeech {
     private var currentPitch = 1.0f
 
     override fun speak(text: String) {
+        Logger.v { "TTS speak called: \"$text\"" }
         try {
             stop()
 
@@ -44,11 +45,16 @@ class WasmTextToSpeech : TextToSpeech {
 
             // Try to use default or first available voice
             val voices = synthesis.getVoices()
-            if (voices.length > 0) {
+            val voiceCount = voices.length
+            Logger.d { "TTS voices available: $voiceCount, rate: $currentRate, pitch: $currentPitch" }
+            if (voiceCount > 0) {
                 utterance.voice = getVoiceAt(voices, 0)
+                Logger.v { "TTS using voice index 0" }
             }
 
+            Logger.d { "TTS starting speech synthesis" }
             synthesis.speak(utterance)
+            Logger.v { "TTS speak completed: \"$text\"" }
         } catch (e: Exception) {
             Logger.e(e) { "TTS Error" }
         }

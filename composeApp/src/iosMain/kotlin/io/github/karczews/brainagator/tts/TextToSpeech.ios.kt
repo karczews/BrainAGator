@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import io.github.karczews.brainagator.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
@@ -33,7 +34,9 @@ class IosTextToSpeech : TextToSpeech {
     private var currentPitch = 1.0f
 
     override fun speak(text: String) {
+        Logger.v { "TTS speak called: \"$text\"" }
         if (synthesizer.isSpeaking()) {
+            Logger.d { "TTS stopping previous speech" }
             synthesizer.stopSpeakingAtBoundary(platform.AVFAudio.AVSpeechBoundary.AVSpeechBoundaryImmediate)
         }
 
@@ -44,7 +47,10 @@ class IosTextToSpeech : TextToSpeech {
         utterance.setPitchMultiplier(currentPitch)
         utterance.setVolume(1.0f)
 
+        Logger.d { "TTS configured: rate=$currentRate, pitch=$currentPitch" }
+        Logger.d { "TTS starting speech synthesis" }
         synthesizer.speakUtterance(utterance)
+        Logger.v { "TTS speak completed: \"$text\"" }
     }
 
     override fun stop() {

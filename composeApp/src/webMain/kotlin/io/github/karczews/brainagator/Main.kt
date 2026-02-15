@@ -18,9 +18,14 @@ package io.github.karczews.brainagator
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.platformLogWriter
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    // Configure Kermit with platform-specific log writer for Web
+    Logger.setLogWriters(platformLogWriter())
+
     ComposeViewport {
         App()
     }

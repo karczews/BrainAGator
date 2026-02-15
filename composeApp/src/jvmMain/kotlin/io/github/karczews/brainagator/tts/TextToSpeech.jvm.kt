@@ -107,8 +107,12 @@ class DesktopTextToSpeech : TextToSpeech {
     }
 
     override fun speak(text: String) {
+        Logger.v { "TTS speak called: \"$text\"" }
         try {
             stop()
+
+            val voice = cachedVoice
+            Logger.d { "TTS using voice: ${voice ?: "system default"}, rate: $currentRate, pitch: $currentPitch" }
 
             val command =
                 when {
@@ -125,19 +129,22 @@ class DesktopTextToSpeech : TextToSpeech {
                     }
                 }
 
+            Logger.d { "TTS executing command: $command" }
+
             isSpeakingState.set(true)
             Thread {
                 val process =
                     try {
                         ProcessBuilder(command).start()
                     } catch (e: Exception) {
-                        Logger.w(e) { "TTS not available on this system" }
+                        Logger.e(e) { "TTS not available on this system" }
                         isSpeakingState.set(false)
                         return@Thread
                     }
                 currentProcess.set(process)
                 try {
                     process.waitFor()
+                    Logger.v { "TTS speak completed: \"$text\"" }
                 } finally {
                     if (currentProcess.compareAndSet(process, null)) {
                         isSpeakingState.set(false)
