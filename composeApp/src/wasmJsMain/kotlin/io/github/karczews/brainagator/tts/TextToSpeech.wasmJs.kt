@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package io.github.karczews.brainagator.tts
 
 import androidx.compose.runtime.Composable
