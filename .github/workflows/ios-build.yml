@@ -21,13 +21,16 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
 
+      - name: Download iOS Simulator platform
+        run: sudo xcodebuild -downloadPlatform iOS
+
       - name: Build iOS App
         working-directory: iosApp
         run: |
           xcodebuild build \
             -project iosApp.xcodeproj \
             -scheme iosApp \
-            -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4' \
+            -destination 'platform=iOS Simulator,name=iPhone 14' \
             -derivedDataPath DerivedData \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
