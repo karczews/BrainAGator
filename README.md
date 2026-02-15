@@ -20,7 +20,7 @@ Quick commands to build and run the application:
 
 ```bash
 # Android
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Desktop (JVM)
 ./gradlew :composeApp:run

@@ -143,12 +143,12 @@ Before submitting changes, test your code by building and running the applicatio
 
 **macOS/Linux:**
 ```bash
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 ```
 
 **Windows:**
 ```shell
-.\gradlew.bat :composeApp:assembleDebug
+.\gradlew.bat :androidApp:assembleDebug
 ```
 
 #### Desktop (JVM) Application
