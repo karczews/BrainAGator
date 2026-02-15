@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Desktop/JVM implementation of Text-to-Speech.
@@ -26,7 +27,7 @@ import androidx.compose.runtime.remember
  * Note: Desktop TTS support varies by OS. This is a basic implementation.
  */
 class DesktopTextToSpeech : TextToSpeech {
-    private var isSpeakingState = false
+    private val isSpeakingState = AtomicBoolean(false)
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
 
@@ -59,28 +60,28 @@ class DesktopTextToSpeech : TextToSpeech {
                     } // Linux fallback
                 }
 
-            isSpeakingState = true
+            isSpeakingState.set(true)
             Thread {
                 try {
                     ProcessBuilder(command).start().waitFor()
                 } catch (e: Exception) {
                     println("TTS not available on this system: ${e.message}")
                 } finally {
-                    isSpeakingState = false
+                    isSpeakingState.set(false)
                 }
             }.start()
         } catch (e: Exception) {
             println("TTS Error: ${e.message}")
-            isSpeakingState = false
+            isSpeakingState.set(false)
         }
     }
 
     override fun stop() {
         // Cannot easily stop external process speech
-        isSpeakingState = false
+        isSpeakingState.set(false)
     }
 
-    override fun isSpeaking(): Boolean = isSpeakingState
+    override fun isSpeaking(): Boolean = isSpeakingState.get()
 
     override fun setSpeechRate(rate: Float) {
         currentRate = rate.coerceIn(0.1f, 2.0f)
