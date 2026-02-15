@@ -19,7 +19,12 @@ package io.github.karczews.brainagator
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-fun main() =
+/**
+     * Launches the Compose Desktop application and opens the main window titled "brainagator".
+     *
+     * The window is configured to call `exitApplication` when closed and displays the top-level `App` composable.
+     */
+    fun main() =
     application {
         Window(
             onCloseRequest = ::exitApplication,

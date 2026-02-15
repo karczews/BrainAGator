@@ -22,4 +22,9 @@ class IOSPlatform : Platform {
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
 
+/**
+ * Provides the Platform implementation for iOS.
+ *
+ * @return A Platform instance representing the current iOS device.
+ */
 actual fun getPlatform(): Platform = IOSPlatform()

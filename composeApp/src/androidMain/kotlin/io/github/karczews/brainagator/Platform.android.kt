@@ -22,4 +22,9 @@ class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
 }
 
+/**
+ * Obtain the current Platform implementation for Android.
+ *
+ * @return An instance of `Platform` representing the Android platform.
+ */
 actual fun getPlatform(): Platform = AndroidPlatform()

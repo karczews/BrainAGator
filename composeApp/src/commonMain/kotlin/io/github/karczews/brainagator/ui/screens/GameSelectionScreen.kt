@@ -102,6 +102,14 @@ val games =
         ),
     )
 
+/**
+ * Displays a selectable grid of game option cards with a decorative header and footer.
+ *
+ * Presents the available games in rows of two (centering single items), each rendered as a gradient card.
+ * Selecting a card invokes the provided callback with the corresponding GameInfo.
+ *
+ * @param onGameSelected Callback invoked with the chosen GameInfo when a game card is tapped.
+ */
 @Composable
 fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
     Box(
@@ -199,6 +207,14 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
     }
 }
 
+/**
+ * Displays a tappable card for a game option showing its gradient background, icon, title, and subtitle.
+ *
+ * The card is clickable and invokes the provided callback when pressed.
+ *
+ * @param game Metadata describing the game (title, subtitle, icon, gradient colors, etc.) to render inside the card.
+ * @param onClick Callback invoked when the card is clicked.
+ */
 @Composable
 fun GameCard(
     game: GameInfo,

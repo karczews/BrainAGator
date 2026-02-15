@@ -18,4 +18,9 @@ package io.github.karczews.brainagator
 
 import androidx.compose.ui.window.ComposeUIViewController
 
+/**
+ * Creates a UIViewController that hosts the application's root Compose UI.
+ *
+ * @return A ComposeUIViewController containing the root Compose content.
+ */
 fun MainViewController() = ComposeUIViewController { App() }

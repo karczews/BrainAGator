@@ -49,6 +49,13 @@ private val LightColorScheme =
      */
     )
 
+/**
+ * Applies the app's Material 3 theme using an appropriate color scheme and typography.
+ *
+ * @param darkTheme If true, selects the dark color scheme; otherwise selects the light color scheme. Defaults to the system dark theme setting.
+ * @param dynamicColor If true and running on Android 12 (API 31) or later, uses the system-provided dynamic color scheme; otherwise uses the bundled color schemes.
+ * @param content Composable content that will be styled with the selected theme.
+ */
 @Composable
 fun BrainagatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

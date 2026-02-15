@@ -39,6 +39,15 @@ import kotlin.random.Random
  * @param colors List of colors for the fireworks
  * @param onAnimationComplete Callback when all explosions complete (only called if explosionCount > 0)
  */
+/**
+ * Renders a fireworks-style particle animation that periodically launches explosion bursts.
+ *
+ * @param modifier Layout and drawing modifier applied to the animation container.
+ * @param particleCount Number of particles generated for each explosion.
+ * @param explosionCount Total explosions to trigger; use `0` for infinite explosions.
+ * @param colors Palette of colors randomly chosen for each explosion.
+ * @param onAnimationComplete Optional callback invoked once all finite explosions and their animations have finished.
+ */
 @Composable
 fun FireworksAnimation(
     modifier: Modifier = Modifier,
@@ -105,6 +114,12 @@ private data class Explosion(
     val particleCount: Int,
 )
 
+/**
+ * Renders particles for a single explosion and invokes `onFinished` when the particle animation completes.
+ *
+ * @param explosion Explosion data describing the explosion's center, color, and particle count.
+ * @param onFinished Callback invoked once the particle animation finishes.
+ */
 @Composable
 private fun ExplosionParticles(
     explosion: Explosion,
@@ -156,6 +171,17 @@ private data class Particle(
     val size: Float,
 )
 
+/**
+ * Renders a single particle (and an optional trail) at the specified explosion center.
+ *
+ * The particle's position is offset radially by its angle and velocity and offset vertically by a gravity-like
+ * term that grows with `progress`. The particle fades and shrinks as `progress` increases. If the particle's
+ * size is greater than 4 and `progress` is greater than 0.1, a short trail line is drawn behind it.
+ *
+ * @param particle The particle to render (angle in radians, velocity scalar, visual size in pixels).
+ * @param progress Animation progress in the range 0..1 where 0 is the start and 1 is the end of the particle's lifetime.
+ * @param color Base color used to draw the particle and its trail; alpha is modulated by `progress`.
+ */
 private fun DrawScope.drawParticle(
     centerX: Float,
     centerY: Float,

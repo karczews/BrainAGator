@@ -20,4 +20,9 @@ class WasmPlatform : Platform {
     override val name: String = "Web with Kotlin/Wasm"
 }
 
+/**
+ * Provides the Platform implementation for the Web using Kotlin/Wasm.
+ *
+ * @return The Platform instance representing the Web (Kotlin/Wasm) environment.
+ */
 actual fun getPlatform(): Platform = WasmPlatform()

@@ -22,6 +22,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 
 class MainActivity : ComponentActivity() {
+    /**
+     * Initialize the activity, enable edge-to-edge display, and set the Jetpack Compose UI.
+     *
+     * @param savedInstanceState If non-null, contains the activity's previously saved state. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

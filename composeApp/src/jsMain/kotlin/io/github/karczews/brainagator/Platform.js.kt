@@ -20,4 +20,9 @@ class JsPlatform : Platform {
     override val name: String = "Web with Kotlin/JS"
 }
 
+/**
+ * Provides a Platform instance representing the JavaScript/Web platform for Kotlin/JS.
+ *
+ * @return A new `JsPlatform` whose `name` is "Web with Kotlin/JS".
+ */
 actual fun getPlatform(): Platform = JsPlatform()

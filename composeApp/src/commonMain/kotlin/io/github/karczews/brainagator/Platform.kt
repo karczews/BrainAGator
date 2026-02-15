@@ -20,4 +20,9 @@ interface Platform {
     val name: String
 }
 
+/**
+ * Provides the platform abstraction for the current target.
+ *
+ * @return The Platform implementation for the current platform target.
+ */
 expect fun getPlatform(): Platform

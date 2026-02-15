@@ -19,6 +19,11 @@ package io.github.karczews.brainagator
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 
+/**
+ * Application entry point that opens a Compose viewport and hosts the app UI.
+ *
+ * Launches a ComposeViewport and renders the top-level `App()` composable inside it.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {

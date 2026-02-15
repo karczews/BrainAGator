@@ -30,6 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.karczews.brainagator.ui.screens.GameInfo
 
+/**
+ * Provides a themed scaffolded game screen with a top app bar and a vertical gradient background.
+ *
+ * @param gameInfo Data used to populate the top app bar title and derive the background gradient.
+ * @param onBackClick Callback invoked when the back navigation icon in the top app bar is pressed.
+ * @param content Composable that renders the scaffold body and receives the scaffold's inner padding.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreenScaffold(
@@ -80,6 +87,15 @@ fun GameScreenScaffold(
     }
 }
 
+/**
+ * Displays a centered placeholder UI for a game that is not yet available.
+ *
+ * The screen presents a large emoji, the game's title and subtitle, and a card reading "Game coming soon!".
+ * The layout respects scaffold inner padding and the back navigation triggers `onBackClick`.
+ *
+ * @param gameInfo Data used to populate the title, subtitle, and visual appearance.
+ * @param onBackClick Callback invoked when the back navigation is pressed.
+ */
 @Composable
 fun GamePlaceholder(
     gameInfo: GameInfo,

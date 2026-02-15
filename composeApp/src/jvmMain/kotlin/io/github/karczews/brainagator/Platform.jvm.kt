@@ -20,4 +20,9 @@ class JVMPlatform : Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
 }
 
+/**
+ * Obtain the Platform implementation for the current JVM runtime.
+ *
+ * @return A `Platform` instance backed by the JVM; its `name` reflects the Java runtime version.
+ */
 actual fun getPlatform(): Platform = JVMPlatform()
