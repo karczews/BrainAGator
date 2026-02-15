@@ -45,12 +45,12 @@ fun App() {
                 transitionSpec = {
                     // Slide in from right with fade when entering
                     (slideInHorizontally { width -> width } + fadeIn()) togetherWith
-                            (slideOutHorizontally { width -> -width / 2 } + fadeOut())
+                        (slideOutHorizontally { width -> -width / 2 } + fadeOut())
                 },
                 popTransitionSpec = {
                     // Slide in from left with fade when popping back
                     (slideInHorizontally { width -> -width } + fadeIn()) togetherWith
-                            (slideOutHorizontally { width -> width } + fadeOut())
+                        (slideOutHorizontally { width -> width } + fadeOut())
                 },
                 entryProvider =
                     entryProvider {
@@ -65,90 +65,17 @@ fun App() {
                             val gameInfo =
                                 gameInfoMap[route.gameType]
                                     ?: error("Unknown game type: ${route.gameType}")
+                            val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
+                            val onGameWon: () -> Unit = { backStack.add(Route.GameWon) }
+
                             when (route.gameType) {
-                                GameType.ShapeMatch -> {
-                                    ShapeMatchGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.NumberOrder -> {
-                                    NumberOrderGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.ColorMatch -> {
-                                    ColorMatchGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.SizeOrder -> {
-                                    SizeOrderGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.Pattern -> {
-                                    PatternGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.OddOneOut -> {
-                                    OddOneOutGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
-
-                                GameType.SpotDifference -> {
-                                    SpotDifferenceGameScreen(
-                                        gameInfo = gameInfo,
-                                        onBackClick = {
-                                            backStack.removeLastOrNull()
-                                        },
-                                        onGameWon = {
-                                            backStack.add(Route.GameWon)
-                                        },
-                                    )
-                                }
+                                GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.ColorMatch -> ColorMatchGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.SizeOrder -> SizeOrderGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.Pattern -> PatternGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.OddOneOut -> OddOneOutGameScreen(gameInfo, onBackClick, onGameWon)
+                                GameType.SpotDifference -> SpotDifferenceGameScreen(gameInfo, onBackClick, onGameWon)
                             }
                         }
                         entry<Route.GameWon> {
