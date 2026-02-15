@@ -17,6 +17,7 @@ composeMaterialIcons = "1.7.3"
 junit = "4.13.2"
 kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
+kermit = "2.0.8"
 composeBom = "2026.01.01"
 navigation3 = "1.0.0-alpha06"
 
@@ -49,6 +50,7 @@ jetbrains-compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling",
 jetbrains-compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.0" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 #androidApplication = { id = "com.android.application", version.ref = "agp" }

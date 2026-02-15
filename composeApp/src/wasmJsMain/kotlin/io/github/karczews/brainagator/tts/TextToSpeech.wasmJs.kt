@@ -21,6 +21,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import co.touchlab.kermit.Logger
 
 /**
  * Wasm/JS implementation of Text-to-Speech using the Web Speech API.
@@ -49,7 +50,7 @@ class WasmTextToSpeech : TextToSpeech {
 
             synthesis.speak(utterance)
         } catch (e: Exception) {
-            println("TTS Error: ${e.message}")
+            Logger.e { "TTS Error: ${e.message}" }
         }
     }
 
@@ -57,7 +58,7 @@ class WasmTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().cancel()
         } catch (e: Exception) {
-            println("TTS Stop Error: ${e.message}")
+            Logger.e { "TTS Stop Error: ${e.message}" }
         }
     }
 

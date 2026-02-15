@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import co.touchlab.kermit.Logger
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
@@ -51,6 +52,7 @@ import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameScreen
 @Composable
 @Preview
 fun App() {
+    Logger.i { "App composable started" }
     MaterialTheme {
         // Navigation 3 back stack - simple mutable list
         val backStack: MutableList<Route> = remember { mutableStateListOf(Route.GameSelection) }

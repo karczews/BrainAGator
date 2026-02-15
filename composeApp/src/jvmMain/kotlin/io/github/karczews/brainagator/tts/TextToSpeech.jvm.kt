@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import co.touchlab.kermit.Logger
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -59,7 +60,7 @@ class DesktopTextToSpeech : TextToSpeech {
             val voices = parseVoices(output)
             matchVoiceForLanguage(voices, systemLanguage)
         } catch (e: Exception) {
-            println("Failed to query voices: ${e.message}")
+            Logger.e { "Failed to query voices: ${e.message}" }
             null
         }
     }
@@ -127,13 +128,13 @@ class DesktopTextToSpeech : TextToSpeech {
                 try {
                     ProcessBuilder(command).start().waitFor()
                 } catch (e: Exception) {
-                    println("TTS not available on this system: ${e.message}")
+                    Logger.w { "TTS not available on this system: ${e.message}" }
                 } finally {
                     isSpeakingState.set(false)
                 }
             }.start()
         } catch (e: Exception) {
-            println("TTS Error: ${e.message}")
+            Logger.e { "TTS Error: ${e.message}" }
             isSpeakingState.set(false)
         }
     }
