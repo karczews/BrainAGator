@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Krzysztof Karczewski
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.karczews.brainagator.tts
 
 import android.content.Context
@@ -85,14 +101,13 @@ class AndroidTextToSpeech(
 actual fun createTextToSpeech(): io.github.karczews.brainagator.tts.TextToSpeech =
     throw IllegalStateException(
         "Use createTextToSpeech(context) instead from Android code, " +
-                "or use rememberTextToSpeech() composable",
+            "or use rememberTextToSpeech() composable",
     )
 
 /**
  * Creates TTS with Context (for use in Android-specific code).
  */
-fun createTextToSpeech(context: Context): io.github.karczews.brainagator.tts.TextToSpeech =
-    AndroidTextToSpeech(context)
+fun createTextToSpeech(context: Context): io.github.karczews.brainagator.tts.TextToSpeech = AndroidTextToSpeech(context)
 
 /**
  * Composable remember function for TTS in Android.
