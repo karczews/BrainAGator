@@ -17,13 +17,11 @@
 package io.github.karczews.brainagator
 
 import androidx.compose.ui.window.ComposeUIViewController
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.platformLogWriter
 
 @Suppress("ktlint:standard:function-naming")
 fun MainViewController(): androidx.compose.ui.window.ComposeUIViewController {
-    // Configure Kermit with platform-specific log writer for iOS
-    Logger.setLogWriters(platformLogWriter())
+    // Initialize logging system
+    initializeLogger()
 
     return ComposeUIViewController { App() }
 }

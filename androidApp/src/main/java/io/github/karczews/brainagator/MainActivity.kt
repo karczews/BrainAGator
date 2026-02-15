@@ -20,15 +20,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.platformLogWriter
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Configure Kermit with platform-specific log writer for Android
-        Logger.setLogWriters(platformLogWriter())
+        // Initialize logging system
+        initializeLogger()
 
         enableEdgeToEdge()
         setContent {

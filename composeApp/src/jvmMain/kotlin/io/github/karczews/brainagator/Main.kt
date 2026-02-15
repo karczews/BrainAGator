@@ -18,12 +18,10 @@ package io.github.karczews.brainagator
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.platformLogWriter
 
 fun main() {
-    // Configure Kermit with platform-specific log writer for JVM
-    Logger.setLogWriters(platformLogWriter())
+    // Initialize logging system
+    initializeLogger()
 
     application {
         Window(

@@ -16,6 +16,15 @@
 
 package io.github.karczews.brainagator
 
+import co.touchlab.kermit.platformLogWriter
 import co.touchlab.kermit.Logger as KermitLogger
 
 typealias Logger = KermitLogger
+
+/**
+ * Initialize the logger with platform-specific configuration.
+ * Must be called once at application startup before any logging.
+ */
+fun initializeLogger() {
+    Logger.setLogWriters(platformLogWriter())
+}
