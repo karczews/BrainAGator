@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import io.github.karczews.brainagator.Logger
 
 /**
  * JS implementation of Text-to-Speech using the Web Speech API.
@@ -47,7 +48,7 @@ class JsTextToSpeech : TextToSpeech {
 
             synthesis.speak(utterance)
         } catch (e: Exception) {
-            console.error("TTS Error: ${e.message}")
+            Logger.e { "TTS Error: ${e.message}" }
         }
     }
 
@@ -55,7 +56,7 @@ class JsTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().cancel()
         } catch (e: Exception) {
-            console.error("TTS Stop Error: ${e.message}")
+            Logger.e { "TTS Stop Error: ${e.message}" }
         }
     }
 
@@ -63,6 +64,7 @@ class JsTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().speaking
         } catch (e: Exception) {
+            Logger.w { "TTS isSpeaking check failed: ${e.message}" }
             false
         }
 

@@ -66,6 +66,7 @@ class WasmTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().speaking
         } catch (e: Exception) {
+            Logger.w { "TTS isSpeaking check failed: ${e.message}" }
             false
         }
 
