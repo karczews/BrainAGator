@@ -53,6 +53,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.test_trigger_win
+import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import org.jetbrains.compose.resources.stringResource
 
@@ -161,7 +162,7 @@ fun GamePlaceholder(
                     )
                 }
 
-                if (onGameWon != null) {
+                if (isDebugBuild && onGameWon != null) {
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
                         onClick = onGameWon,

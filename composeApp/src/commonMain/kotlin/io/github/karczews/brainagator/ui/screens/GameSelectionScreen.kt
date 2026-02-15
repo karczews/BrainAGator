@@ -146,13 +146,20 @@ val games =
     )
 
 @Composable
-fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
+fun GameSelectionScreen(
+    onGameSelected: (GameInfo) -> Unit = {},
+    onWelcomeSpoken: () -> Unit = {},
+    shouldSpeakWelcome: Boolean = true,
+) {
     val tts = rememberTextToSpeech()
     val welcomeText = stringResource(Res.string.welcome_message)
 
-    // Speak welcome message when screen loads
+    // Speak welcome message only once per app session
     LaunchedEffect(Unit) {
-        tts.speak(welcomeText)
+        if (shouldSpeakWelcome) {
+            tts.speak(welcomeText)
+            onWelcomeSpoken()
+        }
     }
     Box(
         modifier =

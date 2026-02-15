@@ -70,12 +70,14 @@ class DesktopTextToSpeech : TextToSpeech {
      */
     private fun parseVoices(output: String): List<Voice> =
         output.lines().mapNotNull { line ->
-            // Match pattern: "VoiceName    lang_CODE    # ..."
-            val regex = """^(\S+)\s+(\w{2}(_\w{2})?)\s+""".toRegex()
-            regex.find(line)?.let { match ->
-                val name = match.groupValues[1]
-                val langCode = match.groupValues[2]
+            // Split on two or more spaces to handle multi-word voice names
+            val parts = line.split(Regex("\\s{2,}")).map { it.trim() }
+            if (parts.size >= 2) {
+                val name = parts[0]
+                val langCode = parts[1]
                 Voice(name, langCode.lowercase())
+            } else {
+                null
             }
         }
 
@@ -153,9 +155,11 @@ class DesktopTextToSpeech : TextToSpeech {
      * Uses Base64 encoding to prevent command injection.
      */
     private fun buildWindowsCommand(text: String): List<String> {
+        // Escape single quotes by replacing each ' with ''
+        val safeText = text.replace("'", "''")
         val script =
             "Add-Type -AssemblyName System.Speech; " +
-                "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$text')"
+                "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$safeText')"
         val encodedScript =
             script
                 .toByteArray(Charsets.UTF_16LE)

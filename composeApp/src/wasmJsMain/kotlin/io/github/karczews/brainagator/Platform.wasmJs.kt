@@ -21,3 +21,9 @@ class WasmPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = WasmPlatform()
+
+/**
+ * For Wasm/JS, debug builds are determined at compile time.
+ * This is set based on the build configuration.
+ */
+actual val isDebugBuild: Boolean = false // Set to true in debug builds via compiler configuration
