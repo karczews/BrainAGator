@@ -43,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -54,6 +55,7 @@ import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.test_trigger_win
 import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import org.jetbrains.compose.resources.stringResource
 
@@ -115,6 +117,12 @@ fun GamePlaceholder(
 ) {
     val title = stringResource(gameInfo.titleRes)
     val subtitle = stringResource(gameInfo.subtitleRes)
+    val tts = rememberTextToSpeech()
+
+    // Speak game title and subtitle when screen opens
+    LaunchedEffect(Unit) {
+        tts.speak("$title. $subtitle")
+    }
 
     GameScreenScaffold(
         gameInfo = gameInfo,

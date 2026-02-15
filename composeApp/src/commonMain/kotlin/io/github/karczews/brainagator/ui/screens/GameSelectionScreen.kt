@@ -257,8 +257,7 @@ fun GameSelectionScreen(
                             ) {
                                 GameCard(
                                     game = game,
-                                    onClick = { title, subtitle ->
-                                        tts.speak("$title. $subtitle")
+                                    onClick = {
                                         onGameSelected(game)
                                     },
                                 )
@@ -284,13 +283,13 @@ fun GameSelectionScreen(
 @Composable
 fun GameCard(
     game: GameInfo,
-    onClick: (String, String) -> Unit,
+    onClick: () -> Unit,
 ) {
     val title = stringResource(game.titleRes)
     val subtitle = stringResource(game.subtitleRes)
 
     Card(
-        onClick = { onClick(title, subtitle) },
+        onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         modifier =
             Modifier
