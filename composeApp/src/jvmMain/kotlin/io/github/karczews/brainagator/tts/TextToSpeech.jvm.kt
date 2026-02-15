@@ -19,7 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import co.touchlab.kermit.Logger
+import io.github.karczews.brainagator.Logger
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
