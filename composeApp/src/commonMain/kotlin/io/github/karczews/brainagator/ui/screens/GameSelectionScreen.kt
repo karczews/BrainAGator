@@ -62,12 +62,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.app_tagline
+import brainagator.composeapp.generated.resources.game_color_match
+import brainagator.composeapp.generated.resources.game_number_order
+import brainagator.composeapp.generated.resources.game_odd_one_out
+import brainagator.composeapp.generated.resources.game_pattern
+import brainagator.composeapp.generated.resources.game_shape_match
+import brainagator.composeapp.generated.resources.game_size_order
+import brainagator.composeapp.generated.resources.game_spot_difference
+import brainagator.composeapp.generated.resources.subtitle_color_match
+import brainagator.composeapp.generated.resources.subtitle_number_order
+import brainagator.composeapp.generated.resources.subtitle_odd_one_out
+import brainagator.composeapp.generated.resources.subtitle_pattern
+import brainagator.composeapp.generated.resources.subtitle_shape_match
+import brainagator.composeapp.generated.resources.subtitle_size_order
+import brainagator.composeapp.generated.resources.subtitle_spot_difference
+import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.navigation.GameType
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 data class GameInfo(
-    val title: String,
-    val subtitle: String,
+    val titleRes: StringResource,
+    val subtitleRes: StringResource,
     val icon: ImageVector,
     val gradientColors: List<Color>,
     val gameType: GameType,
@@ -76,51 +95,50 @@ data class GameInfo(
 val games =
     listOf(
         GameInfo(
-            title = "Shape Match",
-            subtitle = "Match shapes to colors!",
+            titleRes = Res.string.game_shape_match,
+            subtitleRes = Res.string.subtitle_shape_match,
             icon = Icons.Default.Category,
             gradientColors = listOf(Color(0xFFB06AB3), Color(0xFF4568DC)),
             gameType = GameType.ShapeMatch,
         ),
         GameInfo(
-            title = "Number Order",
-            subtitle = "Put numbers in order!",
+            titleRes = Res.string.game_number_order,
+            subtitleRes = Res.string.subtitle_number_order,
             icon = Icons.Default.Tag,
             gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
             gameType = GameType.NumberOrder,
         ),
         GameInfo(
-            title = "Color Match",
-            subtitle = "Find matching colors!",
+            titleRes = Res.string.game_color_match,
+            subtitleRes = Res.string.subtitle_color_match,
             icon = Icons.Default.Palette,
-            // Pink to Orange
             gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)),
             gameType = GameType.ColorMatch,
         ),
         GameInfo(
-            title = "Size Order",
-            subtitle = "Order by size!",
+            titleRes = Res.string.game_size_order,
+            subtitleRes = Res.string.subtitle_size_order,
             icon = Icons.Default.SwapVert,
             gradientColors = listOf(Color(0xFFF093FB), Color(0xFFF5576C)),
             gameType = GameType.SizeOrder,
         ),
         GameInfo(
-            title = "Pattern Game",
-            subtitle = "Complete the pattern!",
+            titleRes = Res.string.game_pattern,
+            subtitleRes = Res.string.subtitle_pattern,
             icon = Icons.Default.GridView,
             gradientColors = listOf(Color(0xFF667EEA), Color(0xFF764BA2)),
             gameType = GameType.Pattern,
         ),
         GameInfo(
-            title = "Odd One Out",
-            subtitle = "Find what's different!",
+            titleRes = Res.string.game_odd_one_out,
+            subtitleRes = Res.string.subtitle_odd_one_out,
             icon = Icons.Default.HelpOutline,
             gradientColors = listOf(Color(0xFF2AF598), Color(0xFF009EFD)),
             gameType = GameType.OddOneOut,
         ),
         GameInfo(
-            title = "Spot Difference",
-            subtitle = "Find the difference!",
+            titleRes = Res.string.game_spot_difference,
+            subtitleRes = Res.string.subtitle_spot_difference,
             icon = Icons.Default.Search,
             gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
             gameType = GameType.SpotDifference,
@@ -130,10 +148,11 @@ val games =
 @Composable
 fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
     val tts = rememberTextToSpeech()
+    val welcomeText = stringResource(Res.string.welcome_message)
 
     // Speak welcome message when screen loads
     LaunchedEffect(Unit) {
-        tts.speak("Welcome to Brainagator! Select a game to play.")
+        tts.speak(welcomeText)
     }
     Box(
         modifier =
@@ -187,7 +206,7 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
             }
 
             Text(
-                text = "Let's Learn & Play!",
+                text = stringResource(Res.string.app_tagline),
                 style =
                     MaterialTheme.typography.titleMedium.copy(
                         color = Color.DarkGray.copy(alpha = 0.8f),
@@ -231,8 +250,8 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
                             ) {
                                 GameCard(
                                     game = game,
-                                    onClick = {
-                                        tts.speak("${game.title}. ${game.subtitle}")
+                                    onClick = { title, subtitle ->
+                                        tts.speak("$title. $subtitle")
                                         onGameSelected(game)
                                     },
                                 )
@@ -258,10 +277,13 @@ fun GameSelectionScreen(onGameSelected: (GameInfo) -> Unit = {}) {
 @Composable
 fun GameCard(
     game: GameInfo,
-    onClick: () -> Unit,
+    onClick: (String, String) -> Unit,
 ) {
+    val title = stringResource(game.titleRes)
+    val subtitle = stringResource(game.subtitleRes)
+
     Card(
-        onClick = onClick,
+        onClick = { onClick(title, subtitle) },
         shape = RoundedCornerShape(24.dp),
         modifier =
             Modifier
@@ -300,7 +322,7 @@ fun GameCard(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = game.title,
+                    text = title,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -308,7 +330,7 @@ fun GameCard(
                 )
 
                 Text(
-                    text = game.subtitle,
+                    text = subtitle,
                     color = Color.White.copy(alpha = 0.9f),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,

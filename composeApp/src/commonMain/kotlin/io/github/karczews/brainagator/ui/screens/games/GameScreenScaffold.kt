@@ -49,7 +49,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.game_coming_soon
+import brainagator.composeapp.generated.resources.go_back
+import brainagator.composeapp.generated.resources.test_trigger_win
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +68,7 @@ fun GameScreenScaffold(
             TopAppBar(
                 title = {
                     Text(
-                        text = gameInfo.title,
+                        text = stringResource(gameInfo.titleRes),
                         style =
                             MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
@@ -74,7 +79,7 @@ fun GameScreenScaffold(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Go back",
+                            contentDescription = stringResource(Res.string.go_back),
                         )
                     }
                 },
@@ -107,6 +112,9 @@ fun GamePlaceholder(
     onBackClick: () -> Unit,
     onGameWon: (() -> Unit)? = null,
 ) {
+    val title = stringResource(gameInfo.titleRes)
+    val subtitle = stringResource(gameInfo.subtitleRes)
+
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
@@ -127,14 +135,14 @@ fun GamePlaceholder(
                     style = MaterialTheme.typography.displayLarge,
                 )
                 Text(
-                    text = gameInfo.title,
+                    text = title,
                     style =
                         MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.Bold,
                         ),
                 )
                 Text(
-                    text = gameInfo.subtitle,
+                    text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -147,7 +155,7 @@ fun GamePlaceholder(
                         ),
                 ) {
                     Text(
-                        text = "Game coming soon!",
+                        text = stringResource(Res.string.game_coming_soon),
                         modifier = Modifier.padding(24.dp),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -170,7 +178,7 @@ fun GamePlaceholder(
                             contentDescription = null,
                         )
                         Text(
-                            text = "Test: Trigger Win",
+                            text = stringResource(Res.string.test_trigger_win),
                             modifier = Modifier.padding(start = 8.dp),
                             style = MaterialTheme.typography.titleMedium,
                         )
