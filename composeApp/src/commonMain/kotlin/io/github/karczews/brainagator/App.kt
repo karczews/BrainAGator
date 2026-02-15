@@ -1,24 +1,32 @@
 package io.github.karczews.brainagator
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import io.github.karczews.brainagator.ui.FireworksAnimation
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
+import io.github.karczews.brainagator.ui.screens.GameWonScreen
 import io.github.karczews.brainagator.ui.screens.games
-import io.github.karczews.brainagator.ui.screens.games.*
+import io.github.karczews.brainagator.ui.screens.games.ColorMatchGameScreen
+import io.github.karczews.brainagator.ui.screens.games.NumberOrderGameScreen
+import io.github.karczews.brainagator.ui.screens.games.OddOneOutGameScreen
+import io.github.karczews.brainagator.ui.screens.games.PatternGameScreen
+import io.github.karczews.brainagator.ui.screens.games.ShapeMatchGameScreen
+import io.github.karczews.brainagator.ui.screens.games.SizeOrderGameScreen
+import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameScreen
 
 @Composable
 @Preview
@@ -26,7 +34,6 @@ fun App() {
     MaterialTheme {
         // Navigation 3 back stack - simple mutable list
         val backStack: MutableList<Route> = remember { mutableStateListOf(Route.GameSelection) }
-        var showFireworks by remember { mutableStateOf(false) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             // Create a lookup map for GameInfo by GameType
@@ -38,19 +45,18 @@ fun App() {
                 transitionSpec = {
                     // Slide in from right with fade when entering
                     (slideInHorizontally { width -> width } + fadeIn()) togetherWith
-                        (slideOutHorizontally { width -> -width / 2 } + fadeOut())
+                            (slideOutHorizontally { width -> -width / 2 } + fadeOut())
                 },
                 popTransitionSpec = {
                     // Slide in from left with fade when popping back
                     (slideInHorizontally { width -> -width } + fadeIn()) togetherWith
-                        (slideOutHorizontally { width -> width } + fadeOut())
+                            (slideOutHorizontally { width -> width } + fadeOut())
                 },
                 entryProvider =
                     entryProvider {
                         entry<Route.GameSelection> {
                             GameSelectionScreen(
                                 onGameSelected = { game ->
-                                    showFireworks = true
                                     backStack.add(Route.Game(game.gameType))
                                 },
                             )
@@ -64,8 +70,10 @@ fun App() {
                                     ShapeMatchGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -74,8 +82,10 @@ fun App() {
                                     NumberOrderGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -84,8 +94,10 @@ fun App() {
                                     ColorMatchGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -94,8 +106,10 @@ fun App() {
                                     SizeOrderGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -104,8 +118,10 @@ fun App() {
                                     PatternGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -114,8 +130,10 @@ fun App() {
                                     OddOneOutGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
@@ -124,32 +142,25 @@ fun App() {
                                     SpotDifferenceGameScreen(
                                         gameInfo = gameInfo,
                                         onBackClick = {
-                                            showFireworks = false
                                             backStack.removeLastOrNull()
+                                        },
+                                        onGameWon = {
+                                            backStack.add(Route.GameWon)
                                         },
                                     )
                                 }
                             }
                         }
+                        entry<Route.GameWon> {
+                            GameWonScreen(
+                                onBackToMainClick = {
+                                    backStack.clear()
+                                    backStack.add(Route.GameSelection)
+                                },
+                            )
+                        }
                     },
             )
-
-            // Global Fireworks animation overlay
-            /*AnimatedVisibility(
-                visible = showFireworks,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                FireworksAnimation(
-                    modifier = Modifier.fillMaxSize(),
-                    particleCount = 150,
-                    explosionCount = 3,
-                    onAnimationComplete = {
-                        showFireworks = false
-                    }
-                )
-            }*/
         }
     }
 }

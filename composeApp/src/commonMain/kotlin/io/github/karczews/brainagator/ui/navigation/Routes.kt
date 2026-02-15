@@ -13,7 +13,7 @@ enum class GameType {
     SizeOrder,
     Pattern,
     OddOneOut,
-    SpotDifference
+    SpotDifference,
 }
 
 /**
@@ -26,5 +26,10 @@ sealed interface Route {
     data object GameSelection : Route
 
     @Serializable
-    data class Game(val gameType: GameType) : Route
+    data class Game(
+        val gameType: GameType,
+    ) : Route
+
+    @Serializable
+    data object GameWon : Route
 }

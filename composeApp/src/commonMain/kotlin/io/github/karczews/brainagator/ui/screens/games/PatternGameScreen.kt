@@ -6,10 +6,11 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 @Composable
 fun PatternGameScreen(
     gameInfo: GameInfo,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onGameWon: () -> Unit,
 ) {
     GamePlaceholder(
         gameInfo = gameInfo,
-        onBackClick = onBackClick
+        onBackClick = onBackClick,
     )
 }
