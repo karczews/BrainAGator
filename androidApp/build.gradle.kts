@@ -8,12 +8,23 @@ plugins {
 android {
     namespace = "io.github.karczews.brainagator.app"
     compileSdk {
-        version = release(libs.versions.android.compileSdk.get().toInt())
+        version =
+            release(
+                libs.versions.android.compileSdk
+                    .get()
+                    .toInt(),
+            )
     }
     defaultConfig {
         applicationId = "io.github.karczews.brainagator"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.android.targetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -25,7 +36,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -44,7 +55,6 @@ kotlin {
     }
 }
 
-
 dependencies {
     implementation(projects.composeApp)
 
@@ -57,10 +67,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3)
 
-
     testImplementation(libs.junit)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.testExt.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
