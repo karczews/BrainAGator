@@ -49,9 +49,17 @@ class DesktopTextToSpeech : TextToSpeech {
                     osName.contains(
                         "win",
                     ) -> {
+                        // Use PowerShell with encoded command to avoid injection
+                        // Base64 encode the PowerShell script to safely pass text
+                        val script = "Add-Type -AssemblyName System.Speech; \$synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; \$synth.Speak(\"$text\")"
+                        val encodedScript =
+                            java.util.Base64
+                                .getEncoder()
+                                .encodeToString(script.toByteArray(Charsets.UTF_16LE))
                         listOf(
                             "powershell.exe",
-                            "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('$text')",
+                            "-EncodedCommand",
+                            encodedScript,
                         )
                     }
 
