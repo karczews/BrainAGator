@@ -227,7 +227,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 ### Format
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
@@ -262,7 +262,7 @@ The header is required. Scope is optional. Keep all lines under 100 characters.
 ### Examples
 
 **Simple feature:**
-```
+```text
 feat: Add user authentication
 
 Implement JWT-based authentication for API endpoints.
@@ -270,7 +270,7 @@ Adds login, logout, and token refresh functionality.
 ```
 
 **Bug fix with scope:**
-```
+```text
 fix(api): Handle null response in user endpoint
 
 The user API could return null for deleted accounts,
@@ -279,7 +279,7 @@ before accessing user properties.
 ```
 
 **Breaking change:**
-```
+```text
 feat(api)!: Remove deprecated v1 endpoints
 
 Remove all v1 API endpoints that were deprecated
@@ -289,7 +289,7 @@ BREAKING CHANGE: v1 endpoints no longer available
 ```
 
 **Reference issue:**
-```
+```text
 fix: Correct calculation in price formatter
 
 The formatter was using wrong decimal places
