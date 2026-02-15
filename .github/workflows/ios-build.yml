@@ -1,0 +1,42 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      sha:
+        required: false
+        type: string
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Build iOS App
+        working-directory: iosApp
+        run: |
+          xcodebuild build \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -destination 'platform=iOS Simulator,OS=latest' \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload build logs on failure
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-logs
+          path: iosApp/DerivedData/Logs/
+          retention-days: 7
