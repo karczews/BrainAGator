@@ -94,8 +94,4 @@ Note: It will work only with JB runtime
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for:
-- Project setup instructions
-- Code style guidelines (ktlint)
-- Pre-commit hook setup
-- How to submit changes
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) to get started.
