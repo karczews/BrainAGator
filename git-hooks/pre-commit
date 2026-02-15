@@ -12,10 +12,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Check if any files were modified by ktlintFormat
-if [ -n "$(git diff --name-only)" ]; then
-    echo "✅ ktlint format applied changes. Staging modified files..."
-    git add -A
+# Check if any Kotlin files were modified by ktlintFormat
+STAGED_FILES=$(git diff --name-only --diff-filter=M | grep -E '\.(kt|kts)$' || true)
+
+if [ -n "$STAGED_FILES" ]; then
+    echo "✅ ktlint format applied changes to:"
+    echo "$STAGED_FILES"
+    echo ""
+    echo "⚠️  Please review the changes and stage them manually with:"
+    echo "   git add <files>"
+    echo ""
+    echo "Then commit again."
+    exit 1
 fi
 
 echo "✅ ktlint format complete."
