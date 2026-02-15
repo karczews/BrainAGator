@@ -1,0 +1,22 @@
+#!/bin/sh
+# Pre-commit hook to run ktlint format
+# This hook automatically formats Kotlin files before committing
+
+echo "Running ktlint format..."
+
+./gradlew ktlintFormat --quiet
+
+# Check if ktlintFormat succeeded
+if [ $? -ne 0 ]; then
+    echo "❌ ktlint format failed. Please fix the issues above and try again."
+    exit 1
+fi
+
+# Check if any files were modified by ktlintFormat
+if [ -n "$(git diff --name-only)" ]; then
+    echo "✅ ktlint format applied changes. Staging modified files..."
+    git add -A
+fi
+
+echo "✅ ktlint format complete."
+exit 0
