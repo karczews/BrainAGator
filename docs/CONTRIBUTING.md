@@ -13,6 +13,7 @@ Thank you for your interest in contributing to BrainAGator! This guide will help
   - [Building and Running](#building-and-running)
   - [Hot Reload](#hot-reload-desktop-development)
   - [Running Checks](#running-checks-before-committing)
+- [Commit Message Guidelines](#commit-message-guidelines)
 - [Submitting Changes](#submitting-changes)
 
 ## Prerequisites
@@ -220,6 +221,90 @@ Always run these commands before pushing your changes:
 ./gradlew test
 ```
 
+## Commit Message Guidelines
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for commit messages. This format helps generate changelogs and makes the project history easier to understand.
+
+### Format
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+The header is required. Scope is optional. Keep all lines under 100 characters.
+
+### Commit Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `feat` | New feature | `feat: Add offline map support` |
+| `fix` | Bug fix | `fix: Resolve crash on null response` |
+| `docs` | Documentation changes | `docs: Update API usage examples` |
+| `style` | Code style changes (formatting, semicolons, etc.) | `style: Fix indentation in utils` |
+| `refactor` | Code refactoring (no behavior change) | `refactor: Extract common validation logic` |
+| `perf` | Performance improvements | `perf: Optimize image loading` |
+| `test` | Adding or updating tests | `test: Add unit tests for parser` |
+| `chore` | Build process or auxiliary tool changes | `chore: Update Gradle wrapper` |
+| `ci` | CI/CD configuration changes | `ci: Add GitHub Actions workflow` |
+
+### Subject Line Rules
+
+- Use imperative, present tense: "Add feature" not "Added feature"
+- Capitalize the first letter
+- No period at the end
+- Maximum 70 characters
+- Be concise but descriptive
+
+### Examples
+
+**Simple feature:**
+```
+feat: Add user authentication
+
+Implement JWT-based authentication for API endpoints.
+Adds login, logout, and token refresh functionality.
+```
+
+**Bug fix with scope:**
+```
+fix(api): Handle null response in user endpoint
+
+The user API could return null for deleted accounts,
+causing a crash in the dashboard. Add null check
+before accessing user properties.
+```
+
+**Breaking change:**
+```
+feat(api)!: Remove deprecated v1 endpoints
+
+Remove all v1 API endpoints that were deprecated
+in version 23.1. Clients should migrate to v2.
+
+BREAKING CHANGE: v1 endpoints no longer available
+```
+
+**Reference issue:**
+```
+fix: Correct calculation in price formatter
+
+The formatter was using wrong decimal places
+for currencies with 3+ decimals.
+
+Closes #123
+```
+
+### Tips
+
+- **Single purpose**: Each commit should do one thing
+- **Explain why**: Describe why the change was made, not just what
+- **Reference issues**: Use "Fixes #123", "Closes #456", or "Relates to #789"
+- **Breaking changes**: Mark with `!` after type/scope or use `BREAKING CHANGE:` footer
+
 ## Submitting Changes
 
 1. **Create a feature branch**
@@ -235,7 +320,7 @@ Always run these commands before pushing your changes:
    ./gradlew build
    ```
 
-4. **Commit your changes** (the pre-commit hook will run automatically)
+4. **Commit your changes** using [Conventional Commits](https://www.conventionalcommits.org/) format (the pre-commit hook will run automatically)
 
 5. **Push to your fork** and create a Pull Request
 
