@@ -5,6 +5,8 @@
     ":dependencyDashboard"
   ],
 
+  "autodiscover": true,
+
   "labels": ["dependencies"],
 
   "schedule": ["before 9am on monday"],
