@@ -21,6 +21,10 @@ jobs:
     uses: ./.github/workflows/check-formatting.yml
 
   qodana:
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
     uses: ./.github/workflows/qodana_code_quality.yml
     secrets:
       QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_689838719 }}
