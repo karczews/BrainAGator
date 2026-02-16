@@ -11,6 +11,7 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.user.type != 'Bot'
     permissions:
       id-token: write
       contents: read
