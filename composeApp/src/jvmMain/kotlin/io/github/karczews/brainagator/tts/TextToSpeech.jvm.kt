@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import io.github.karczews.brainagator.Logger
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -61,7 +62,7 @@ class DesktopTextToSpeech : TextToSpeech {
             val voices = parseVoices(output)
             matchVoiceForLanguage(voices, systemLanguage)
         } catch (e: Exception) {
-            println("Failed to query voices: ${e.message}")
+            Logger.e(e) { "Failed to query voices" }
             null
         }
     }
@@ -106,8 +107,12 @@ class DesktopTextToSpeech : TextToSpeech {
     }
 
     override fun speak(text: String) {
+        Logger.v { "TTS speak called: \"$text\"" }
         try {
             stop()
+
+            val voice = cachedVoice
+            Logger.d { "TTS using voice: ${voice ?: "system default"}, rate: $currentRate, pitch: $currentPitch" }
 
             val command =
                 when {
@@ -124,19 +129,22 @@ class DesktopTextToSpeech : TextToSpeech {
                     }
                 }
 
+            Logger.d { "TTS executing command: $command" }
+
             isSpeakingState.set(true)
             Thread {
                 val process =
                     try {
                         ProcessBuilder(command).start()
                     } catch (e: Exception) {
-                        println("TTS not available on this system: ${e.message}")
+                        Logger.e(e) { "TTS not available on this system" }
                         isSpeakingState.set(false)
                         return@Thread
                     }
                 currentProcess.set(process)
                 try {
                     process.waitFor()
+                    Logger.v { "TTS speak completed: \"$text\"" }
                 } finally {
                     if (currentProcess.compareAndSet(process, null)) {
                         isSpeakingState.set(false)
@@ -144,7 +152,7 @@ class DesktopTextToSpeech : TextToSpeech {
                 }
             }.start()
         } catch (e: Exception) {
-            println("TTS Error: ${e.message}")
+            Logger.e(e) { "TTS Error" }
             isSpeakingState.set(false)
         }
     }

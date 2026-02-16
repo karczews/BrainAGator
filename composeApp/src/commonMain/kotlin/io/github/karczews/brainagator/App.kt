@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,9 @@ import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameScreen
 @Composable
 @Preview
 fun App() {
+    LaunchedEffect(Unit) {
+        Logger.i { "App composable started" }
+    }
     MaterialTheme {
         // Navigation 3 back stack - simple mutable list
         val backStack: MutableList<Route> = remember { mutableStateListOf(Route.GameSelection) }

@@ -21,6 +21,9 @@ import androidx.compose.ui.window.ComposeViewport
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    // Initialize logging system
+    initializeLogger()
+
     ComposeViewport {
         App()
     }

@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import io.github.karczews.brainagator.Logger
 
 /**
  * JS implementation of Text-to-Speech using the Web Speech API.
@@ -29,6 +30,7 @@ class JsTextToSpeech : TextToSpeech {
     private var currentPitch = 1.0f
 
     override fun speak(text: String) {
+        Logger.v { "TTS speak called: \"$text\"" }
         try {
             stop()
 
@@ -41,13 +43,18 @@ class JsTextToSpeech : TextToSpeech {
 
             // Try to use default or first available voice
             val voices = synthesis.getVoices()
-            if (voices.length > 0) {
+            val voiceCount = voices.length
+            Logger.d { "TTS voices available: $voiceCount, rate: $currentRate, pitch: $currentPitch" }
+            if (voiceCount > 0) {
                 utterance.voice = voices[0]
+                Logger.v { "TTS using voice index 0" }
             }
 
+            Logger.d { "TTS starting speech synthesis" }
             synthesis.speak(utterance)
+            Logger.v { "TTS speak completed: \"$text\"" }
         } catch (e: Exception) {
-            console.error("TTS Error: ${e.message}")
+            Logger.e(e) { "TTS Error" }
         }
     }
 
@@ -55,7 +62,7 @@ class JsTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().cancel()
         } catch (e: Exception) {
-            console.error("TTS Stop Error: ${e.message}")
+            Logger.e(e) { "TTS Stop Error" }
         }
     }
 
@@ -63,6 +70,7 @@ class JsTextToSpeech : TextToSpeech {
         try {
             getSpeechSynthesis().speaking
         } catch (e: Exception) {
+            Logger.w(e) { "TTS isSpeaking check failed" }
             false
         }
 

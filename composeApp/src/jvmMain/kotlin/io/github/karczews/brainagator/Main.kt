@@ -19,7 +19,10 @@ package io.github.karczews.brainagator
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-fun main() =
+fun main() {
+    // Initialize logging system
+    initializeLogger()
+
     application {
         Window(
             onCloseRequest = ::exitApplication,
@@ -28,3 +31,4 @@ fun main() =
             App()
         }
     }
+}

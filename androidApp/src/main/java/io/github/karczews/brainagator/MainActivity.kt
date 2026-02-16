@@ -24,6 +24,10 @@ import androidx.activity.enableEdgeToEdge
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize logging system
+        initializeLogger()
+
         enableEdgeToEdge()
         setContent {
             App()

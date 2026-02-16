@@ -16,13 +16,15 @@
 
 package io.github.karczews.brainagator
 
-import androidx.compose.ui.window.ComposeUIViewController
+import co.touchlab.kermit.platformLogWriter
+import co.touchlab.kermit.Logger as KermitLogger
 
-@Suppress("ktlint:standard:function-naming")
-fun MainViewController() =
-    ComposeUIViewController {
-        // Initialize logging system
-        initializeLogger()
+typealias Logger = KermitLogger
 
-        App()
-    }
+/**
+ * Initialize the logger with platform-specific configuration.
+ * Must be called once at application startup before any logging.
+ */
+fun initializeLogger() {
+    Logger.setLogWriters(platformLogWriter())
+}
