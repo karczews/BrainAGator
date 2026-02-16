@@ -7,6 +7,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+
 jobs:
   unit-tests:
     uses: ./.github/workflows/run-tests.yml
@@ -25,12 +28,21 @@ jobs:
       sha: ${{ github.event.pull_request.head.sha }}
 
   android-instrumentation-tests:
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/android-instrumentation-tests.yml
 
   ios-build:
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/ios-build.yml
 
   wasm-build:
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/wasm-build.yml
 
   gate:
