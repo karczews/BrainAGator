@@ -24,11 +24,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build WASM
+        id: build
         run: ./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack
 
       - name: Upload WASM artifacts
         uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ steps.build.outcome == 'success' }}
         with:
           name: wasm-build
           path: composeApp/build/dist/wasmJs/
