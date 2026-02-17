@@ -7,6 +7,9 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+
 jobs:
   unit-tests:
     uses: ./.github/workflows/run-tests.yml
@@ -18,6 +21,10 @@ jobs:
     uses: ./.github/workflows/check-formatting.yml
 
   qodana:
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
     uses: ./.github/workflows/qodana_code_quality.yml
     secrets:
       QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_689838719 }}
@@ -25,15 +32,27 @@ jobs:
       sha: ${{ github.event.pull_request.head.sha }}
 
   android-instrumentation-tests:
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/android-instrumentation-tests.yml
 
   ios-build:
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/ios-build.yml
+
+  wasm-build:
+    permissions:
+      contents: write
+      actions: write
+    uses: ./.github/workflows/wasm-build.yml
 
   gate:
     name: Required Checks Validation
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [unit-tests, check-copyrights, check-formatting, qodana, android-instrumentation-tests, ios-build]
+    needs: [unit-tests, check-copyrights, check-formatting, qodana, android-instrumentation-tests, ios-build, wasm-build]
     steps:
       - run: echo "All required checks passed"
