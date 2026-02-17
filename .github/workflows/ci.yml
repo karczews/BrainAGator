@@ -45,7 +45,7 @@ jobs:
 
   wasm-build:
     permissions:
-      contents: read
+      contents: write
       actions: write
     uses: ./.github/workflows/wasm-build.yml
 
