@@ -61,7 +61,8 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 ./gradlew :composeApp:run
 
 # Web Wasm
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Start dev server (local development)
+./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack  # Build WASM bundle (CI/artifacts)
 
 # Web JS
 ./gradlew :composeApp:jsBrowserDevelopmentRun
