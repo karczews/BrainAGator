@@ -18,7 +18,7 @@ junit = "4.13.2"
 kotlin = "2.3.10"
 kotlinx-coroutines = "1.10.2"
 kermit = "2.0.8"
-composeBom = "2026.01.01"
+composeBom = "2026.02.00"
 navigation3 = "1.1.0-alpha02"
 
 [libraries]
