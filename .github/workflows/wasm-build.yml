@@ -28,7 +28,7 @@ jobs:
         run: ./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack
 
       - name: Upload WASM artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ steps.build.outcome == 'success' }}
         with:
           name: wasm-build
