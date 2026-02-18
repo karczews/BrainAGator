@@ -28,5 +28,6 @@ fun SizeOrderGameScreen(
     GamePlaceholder(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        onGameWon = onGameWon,
     )
 }

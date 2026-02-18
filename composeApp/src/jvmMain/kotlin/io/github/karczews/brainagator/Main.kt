@@ -16,12 +16,19 @@
 
 package io.github.karczews.brainagator
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.ComposeViewport
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    ComposeViewport {
-        App()
+    // Initialize logging system
+    initializeLogger()
+
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "brainagator",
+        ) {
+            App()
+        }
     }
 }

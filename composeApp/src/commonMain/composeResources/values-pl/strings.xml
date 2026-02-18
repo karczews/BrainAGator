@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Brainagator</string>
+    <string name="app_tagline">Uczmy się i bawmy!</string>
+
+    <!-- Game Selection Screen -->
+    <string name="welcome_message">Witaj w Brainagator! Wybierz grę do zagrania.</string>
+
+    <!-- Game Titles -->
+    <string name="game_shape_match">Dopasuj Kształty</string>
+    <string name="game_number_order">Porządek Liczb</string>
+    <string name="game_color_match">Dopasuj Kolory</string>
+    <string name="game_size_order">Porządek Wielkości</string>
+    <string name="game_pattern">Gra w Wzory</string>
+    <string name="game_odd_one_out">Znajdź Inny</string>
+    <string name="game_spot_difference">Znajdź Różnice</string>
+
+    <!-- Game Subtitles -->
+    <string name="subtitle_shape_match">Dopasuj kształty do kolorów!</string>
+    <string name="subtitle_number_order">Ułóż liczby w kolejności!</string>
+    <string name="subtitle_color_match">Znajdź pasujące kolory!</string>
+    <string name="subtitle_size_order">Ułóż według wielkości!</string>
+    <string name="subtitle_pattern">Uzupełnij wzór!</string>
+    <string name="subtitle_odd_one_out">Znajdź to, co inne!</string>
+    <string name="subtitle_spot_difference">Znajdź różnicę!</string>
+
+    <!-- Game Won Screen -->
+    <string name="congratulations">Gratulacje!</string>
+    <string name="you_won">Wygrałeś grę!</string>
+    <string name="back_to_main">Wróć do Ekranu Głównego</string>
+
+    <!-- Game Screen -->
+    <string name="go_back">Wróć</string>
+    <string name="game_coming_soon">Gra wkrótce dostępna!</string>
+    <string name="test_trigger_win">Test: Wygraj</string>
+</resources>

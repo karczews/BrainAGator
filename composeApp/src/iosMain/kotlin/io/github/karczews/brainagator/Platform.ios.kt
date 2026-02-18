@@ -17,9 +17,19 @@
 package io.github.karczews.brainagator
 
 import platform.UIKit.UIDevice
+import kotlin.native.Platform as NativePlatform
 
 class IOSPlatform : Platform {
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+
+/**
+ * For iOS, we use a compile-time constant.
+ * In a real project, this should be set via compiler flags or build configuration.
+ * For now, we default to false for release builds.
+ * To enable debug builds, set the compiler flag: -Dkotlin.native.isDebugBuild=true
+ */
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+actual val isDebugBuild: Boolean = NativePlatform.isDebugBinary

@@ -25,8 +25,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
@@ -47,9 +52,15 @@ import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameScreen
 @Composable
 @Preview
 fun App() {
+    LaunchedEffect(Unit) {
+        Logger.i { "App composable started" }
+    }
     MaterialTheme {
         // Navigation 3 back stack - simple mutable list
         val backStack: MutableList<Route> = remember { mutableStateListOf(Route.GameSelection) }
+
+        // Track if welcome message has been spoken - persists across navigation
+        var hasSpokenWelcome by rememberSaveable { mutableStateOf(false) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             // Create a lookup map for GameInfo by GameType
@@ -75,6 +86,10 @@ fun App() {
                                 onGameSelected = { game ->
                                     backStack.add(Route.Game(game.gameType))
                                 },
+                                onWelcomeSpoken = {
+                                    hasSpokenWelcome = true
+                                },
+                                shouldSpeakWelcome = !hasSpokenWelcome,
                             )
                         }
                         entry<Route.Game> { route ->

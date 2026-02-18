@@ -1,3 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_name">Click me!</string>
+    <!-- App -->
+    <string name="app_name">Brainagator</string>
+    <string name="app_tagline">Let's Learn &amp; Play!</string>
+
+    <!-- Game Selection Screen -->
+    <string name="welcome_message">Welcome to Brainagator! Select a game to play.</string>
+
+    <!-- Game Titles -->
+    <string name="game_shape_match">Shape Match</string>
+    <string name="game_number_order">Number Order</string>
+    <string name="game_color_match">Color Match</string>
+    <string name="game_size_order">Size Order</string>
+    <string name="game_pattern">Pattern Game</string>
+    <string name="game_odd_one_out">Odd One Out</string>
+    <string name="game_spot_difference">Spot Difference</string>
+
+    <!-- Game Subtitles -->
+    <string name="subtitle_shape_match">Match shapes to colors!</string>
+    <string name="subtitle_number_order">Put numbers in order!</string>
+    <string name="subtitle_color_match">Find matching colors!</string>
+    <string name="subtitle_size_order">Order by size!</string>
+    <string name="subtitle_pattern">Complete the pattern!</string>
+    <string name="subtitle_odd_one_out">Find what's different!</string>
+    <string name="subtitle_spot_difference">Find the difference!</string>
+
+    <!-- Game Won Screen -->
+    <string name="congratulations">Congratulations!</string>
+    <string name="you_won">You won the game!</string>
+    <string name="back_to_main">Back to Main Screen</string>
+
+    <!-- Game Screen -->
+    <string name="go_back">Go back</string>
+    <string name="game_coming_soon">Game coming soon!</string>
+    <string name="test_trigger_win">Test: Trigger Win</string>
 </resources>

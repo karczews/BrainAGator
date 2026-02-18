@@ -21,3 +21,9 @@ class JsPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = JsPlatform()
+
+/**
+ * For JS, this is set to true for development builds.
+ * In production builds, change this to false.
+ */
+actual val isDebugBuild: Boolean = true
