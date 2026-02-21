@@ -43,4 +43,5 @@
     <string name="go_back">Go back</string>
     <string name="game_coming_soon">Game coming soon!</string>
     <string name="test_trigger_win">Test: Trigger Win</string>
+    <string name="repeat_instruction">Repeat instructions</string>
 </resources>

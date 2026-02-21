@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,13 +32,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
+import brainagator.composeapp.generated.resources.repeat_instruction
+import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +53,15 @@ fun GameScreenScaffold(
     onBackClick: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val tts = rememberTextToSpeech()
+    val scope = rememberCoroutineScope()
+    val description = stringResource(gameInfo.descriptionRes)
+
+    // Speak game description when screen opens
+    LaunchedEffect(gameInfo) {
+        tts.speak(description)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,6 +79,20 @@ fun GameScreenScaffold(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.go_back),
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                tts.speak(description)
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                            contentDescription = stringResource(Res.string.repeat_instruction),
                         )
                     }
                 },

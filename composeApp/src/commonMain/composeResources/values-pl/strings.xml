@@ -43,4 +43,5 @@
     <string name="go_back">Wróć</string>
     <string name="game_coming_soon">Gra wkrótce dostępna!</string>
     <string name="test_trigger_win">Test: Wygraj</string>
+    <string name="repeat_instruction">Powtórz instrukcje</string>
 </resources>
