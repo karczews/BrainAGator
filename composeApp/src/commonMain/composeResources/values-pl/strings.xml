@@ -44,4 +44,14 @@
     <string name="game_coming_soon">Gra wkrótce dostępna!</string>
     <string name="test_trigger_win">Test: Wygraj</string>
     <string name="repeat_instruction">Powtórz instrukcje</string>
+
+    <!-- Colors -->
+    <string name="color_red">Czerwony</string>
+    <string name="color_blue">Niebieski</string>
+    <string name="color_yellow">Żółty</string>
+    <string name="color_green">Zielony</string>
+    <string name="color_orange">Pomarańczowy</string>
+    <string name="color_purple">Fioletowy</string>
+    <string name="color_pink">Różowy</string>
+    <string name="color_cyan">Cyjan</string>
 </resources>

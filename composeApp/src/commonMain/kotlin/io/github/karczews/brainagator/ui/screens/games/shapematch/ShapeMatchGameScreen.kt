@@ -57,6 +57,7 @@ import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
+import org.jetbrains.compose.resources.stringResource
 
 val ShapeMatchGameInfo =
     GameInfo(
@@ -155,7 +156,7 @@ fun ShapeMatchGameScreen(
             selectedShape?.let { shape ->
                 selectedColor?.let { color ->
                     Text(
-                        text = "You selected: ${shape.name.lowercase()} + ${color.name}",
+                        text = "You selected: ${shape.name.lowercase()} + ${stringResource(color.nameRes)}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )

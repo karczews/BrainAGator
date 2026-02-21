@@ -17,20 +17,30 @@
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
 import androidx.compose.ui.graphics.Color
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.color_blue
+import brainagator.composeapp.generated.resources.color_cyan
+import brainagator.composeapp.generated.resources.color_green
+import brainagator.composeapp.generated.resources.color_orange
+import brainagator.composeapp.generated.resources.color_pink
+import brainagator.composeapp.generated.resources.color_purple
+import brainagator.composeapp.generated.resources.color_red
+import brainagator.composeapp.generated.resources.color_yellow
+import org.jetbrains.compose.resources.StringResource
 
 internal data class GameColor(
     val color: Color,
-    val name: String,
+    val nameRes: StringResource,
 )
 
 internal val gameColors =
     listOf(
-        GameColor(Color(0xFFE53935), "Red"),
-        GameColor(Color(0xFF1E88E5), "Blue"),
-        GameColor(Color(0xFFFDD835), "Yellow"),
-        GameColor(Color(0xFF43A047), "Green"),
-        GameColor(Color(0xFFFB8C00), "Orange"),
-        GameColor(Color(0xFF8E24AA), "Purple"),
-        GameColor(Color(0xFFF06292), "Pink"),
-        GameColor(Color(0xFF00ACC1), "Cyan"),
+        GameColor(Color(0xFFE53935), Res.string.color_red),
+        GameColor(Color(0xFF1E88E5), Res.string.color_blue),
+        GameColor(Color(0xFFFDD835), Res.string.color_yellow),
+        GameColor(Color(0xFF43A047), Res.string.color_green),
+        GameColor(Color(0xFFFB8C00), Res.string.color_orange),
+        GameColor(Color(0xFF8E24AA), Res.string.color_purple),
+        GameColor(Color(0xFFF06292), Res.string.color_pink),
+        GameColor(Color(0xFF00ACC1), Res.string.color_cyan),
     )
