@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.desc_odd_one_out
 import brainagator.composeapp.generated.resources.game_odd_one_out
 import brainagator.composeapp.generated.resources.subtitle_odd_one_out
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -30,6 +31,7 @@ val OddOneOutGameInfo =
     GameInfo(
         titleRes = Res.string.game_odd_one_out,
         subtitleRes = Res.string.subtitle_odd_one_out,
+        descriptionRes = Res.string.desc_odd_one_out,
         icon = Icons.AutoMirrored.Default.HelpOutline,
         gradientColors = listOf(Color(0xFF2AF598), Color(0xFF009EFD)),
         gameType = GameType.OddOneOut,

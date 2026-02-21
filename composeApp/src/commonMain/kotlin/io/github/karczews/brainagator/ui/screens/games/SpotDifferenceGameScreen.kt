@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.desc_spot_difference
 import brainagator.composeapp.generated.resources.game_spot_difference
 import brainagator.composeapp.generated.resources.subtitle_spot_difference
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -30,6 +31,7 @@ val SpotDifferenceGameInfo =
     GameInfo(
         titleRes = Res.string.game_spot_difference,
         subtitleRes = Res.string.subtitle_spot_difference,
+        descriptionRes = Res.string.desc_spot_difference,
         icon = Icons.Default.Search,
         gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
         gameType = GameType.SpotDifference,

@@ -25,6 +25,15 @@
     <string name="subtitle_odd_one_out">Znajdź to, co inne!</string>
     <string name="subtitle_spot_difference">Znajdź różnicę!</string>
 
+    <!-- Game Descriptions for TTS -->
+    <string name="desc_shape_match">Dopasuj Kształty. Dopasuj każdy kształt do jego prawidłowego koloru.</string>
+    <string name="desc_number_order">Porządek Liczb. Ułóż liczby od najmniejszej do największej.</string>
+    <string name="desc_color_match">Dopasuj Kolory. Znajdź i dopasuj te same kolory razem.</string>
+    <string name="desc_size_order">Porządek Wielkości. Ułóż obiekty od najmniejszego do największego.</string>
+    <string name="desc_pattern">Gra w Wzory. Uzupełnij wzór, wybierając odpowiedni kształt.</string>
+    <string name="desc_odd_one_out">Znajdź Inny. Znajdź obiekt, który nie pasuje do pozostałych.</string>
+    <string name="desc_spot_difference">Znajdź Różnice. Znajdź różnice między dwoma obrazkami.</string>
+
     <!-- Game Won Screen -->
     <string name="congratulations">Gratulacje!</string>
     <string name="you_won">Wygrałeś grę!</string>

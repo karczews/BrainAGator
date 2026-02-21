@@ -16,27 +16,23 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
 import brainagator.composeapp.generated.resources.subtitle_shape_match
-import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
-import org.jetbrains.compose.resources.stringResource
 
 val ShapeMatchGameInfo =
     GameInfo(
         titleRes = Res.string.game_shape_match,
         subtitleRes = Res.string.subtitle_shape_match,
+        descriptionRes = Res.string.desc_shape_match,
         icon = Icons.Default.Category,
         gradientColors = listOf(Color(0xFFB06AB3), Color(0xFF4568DC)),
         gameType = GameType.ShapeMatch,
@@ -48,15 +44,7 @@ fun ShapeMatchGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
-    val title = stringResource(gameInfo.titleRes)
-    val subtitle = stringResource(gameInfo.subtitleRes)
-    val tts = rememberTextToSpeech()
-
-    // Speak game title and subtitle when screen opens
-    LaunchedEffect(Unit) {
-        tts.speak("$title. $subtitle")
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
+    GameScreenScaffold(gameInfo, onBackClick) {
     }
 }
 

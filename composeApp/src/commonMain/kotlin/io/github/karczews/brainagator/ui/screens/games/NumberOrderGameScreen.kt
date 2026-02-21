@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Tag
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
 import brainagator.composeapp.generated.resources.subtitle_number_order
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -30,6 +31,7 @@ val NumberOrderGameInfo =
     GameInfo(
         titleRes = Res.string.game_number_order,
         subtitleRes = Res.string.subtitle_number_order,
+        descriptionRes = Res.string.desc_number_order,
         icon = Icons.Default.Tag,
         gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
         gameType = GameType.NumberOrder,

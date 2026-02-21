@@ -24,6 +24,7 @@ import org.jetbrains.compose.resources.StringResource
 data class GameInfo(
     val titleRes: StringResource,
     val subtitleRes: StringResource,
+    val descriptionRes: StringResource,
     val icon: ImageVector,
     val gradientColors: List<Color>,
     val gameType: GameType,

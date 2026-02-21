@@ -22,8 +22,17 @@
     <string name="subtitle_color_match">Find matching colors!</string>
     <string name="subtitle_size_order">Order by size!</string>
     <string name="subtitle_pattern">Complete the pattern!</string>
-    <string name="subtitle_odd_one_out">Find what's different!</string>
+    <string name="subtitle_odd_one_out">Find what\'s different!</string>
     <string name="subtitle_spot_difference">Find the difference!</string>
+
+    <!-- Game Descriptions for TTS -->
+    <string name="desc_shape_match">Shape Match. Match each shape with its correct color.</string>
+    <string name="desc_number_order">Number Order. Arrange the numbers from smallest to largest.</string>
+    <string name="desc_color_match">Color Match. Find and match the same colors together.</string>
+    <string name="desc_size_order">Size Order. Arrange objects from smallest to largest.</string>
+    <string name="desc_pattern">Pattern Game. Complete the pattern by choosing the right shape.</string>
+    <string name="desc_odd_one_out">Odd One Out. Find the object that does not belong with the others.</string>
+    <string name="desc_spot_difference">Spot the Difference. Find what is different between two pictures.</string>
 
     <!-- Game Won Screen -->
     <string name="congratulations">Congratulations!</string>

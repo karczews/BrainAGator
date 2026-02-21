@@ -55,11 +55,12 @@ fun GamePlaceholder(
 ) {
     val title = stringResource(gameInfo.titleRes)
     val subtitle = stringResource(gameInfo.subtitleRes)
+    val description = stringResource(gameInfo.descriptionRes)
     val tts = rememberTextToSpeech()
 
-    // Speak game title and subtitle when screen opens
+    // Speak game description when screen opens
     LaunchedEffect(Unit) {
-        tts.speak("$title. $subtitle")
+        tts.speak(description)
     }
 
     GameScreenScaffold(
