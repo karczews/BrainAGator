@@ -16,13 +16,14 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,12 +39,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
+import brainagator.composeapp.generated.resources.ic_replay_speaker
 import brainagator.composeapp.generated.resources.repeat_instruction
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,9 +93,11 @@ fun GameScreenScaffold(
                                 tts.speak(description)
                             }
                         },
+                        modifier = Modifier.size(60.dp),
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Repeat,
+                        Image(
+                            modifier = Modifier.size(60.dp),
+                            painter = painterResource(Res.drawable.ic_replay_speaker),
                             contentDescription = stringResource(Res.string.repeat_instruction),
                         )
                     }
