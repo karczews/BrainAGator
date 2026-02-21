@@ -57,34 +57,6 @@ interface TextToSpeech {
 }
 
 /**
- * Dummy TTS implementation for Compose Preview that does nothing.
- * Used when LocalInspectionMode.current is true (in preview).
- */
-class DummyTextToSpeech : TextToSpeech {
-    override fun speak(text: String) {
-        // No-op in preview mode
-    }
-
-    override fun stop() {
-        // No-op in preview mode
-    }
-
-    override fun isSpeaking(): Boolean = false
-
-    override fun setSpeechRate(rate: Float) {
-        // No-op in preview mode
-    }
-
-    override fun setPitch(pitch: Float) {
-        // No-op in preview mode
-    }
-
-    override fun shutdown() {
-        // No-op in preview mode
-    }
-}
-
-/**
  * Factory to create platform-specific TTS instance.
  */
 expect fun createTextToSpeech(): TextToSpeech
