@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens.games.sizeorder
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapVert
@@ -26,6 +26,7 @@ import brainagator.composeapp.generated.resources.game_size_order
 import brainagator.composeapp.generated.resources.subtitle_size_order
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
 
 val SizeOrderGameInfo =
     GameInfo(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens.games.pattern
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
@@ -26,6 +26,7 @@ import brainagator.composeapp.generated.resources.game_pattern
 import brainagator.composeapp.generated.resources.subtitle_pattern
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
 
 val PatternGameInfo =
     GameInfo(

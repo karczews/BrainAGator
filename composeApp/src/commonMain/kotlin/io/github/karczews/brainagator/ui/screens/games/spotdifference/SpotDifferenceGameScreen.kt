@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens.games.spotdifference
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.desc_number_order
-import brainagator.composeapp.generated.resources.game_number_order
-import brainagator.composeapp.generated.resources.subtitle_number_order
+import brainagator.composeapp.generated.resources.desc_spot_difference
+import brainagator.composeapp.generated.resources.game_spot_difference
+import brainagator.composeapp.generated.resources.subtitle_spot_difference
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
 
-val NumberOrderGameInfo =
+val SpotDifferenceGameInfo =
     GameInfo(
-        titleRes = Res.string.game_number_order,
-        subtitleRes = Res.string.subtitle_number_order,
-        descriptionRes = Res.string.desc_number_order,
-        icon = Icons.Default.Tag,
-        gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
-        gameType = GameType.NumberOrder,
+        titleRes = Res.string.game_spot_difference,
+        subtitleRes = Res.string.subtitle_spot_difference,
+        descriptionRes = Res.string.desc_spot_difference,
+        icon = Icons.Default.Search,
+        gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
+        gameType = GameType.SpotDifference,
     )
 
 @Composable
-fun NumberOrderGameScreen(
+fun SpotDifferenceGameScreen(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,

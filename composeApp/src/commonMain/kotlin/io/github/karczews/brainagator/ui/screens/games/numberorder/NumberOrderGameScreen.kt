@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens.games.numberorder
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.desc_color_match
-import brainagator.composeapp.generated.resources.game_color_match
-import brainagator.composeapp.generated.resources.subtitle_color_match
+import brainagator.composeapp.generated.resources.desc_number_order
+import brainagator.composeapp.generated.resources.game_number_order
+import brainagator.composeapp.generated.resources.subtitle_number_order
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
 
-val ColorMatchGameInfo =
+val NumberOrderGameInfo =
     GameInfo(
-        titleRes = Res.string.game_color_match,
-        subtitleRes = Res.string.subtitle_color_match,
-        descriptionRes = Res.string.desc_color_match,
-        icon = Icons.Default.Palette,
-        gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)),
-        gameType = GameType.ColorMatch,
+        titleRes = Res.string.game_number_order,
+        subtitleRes = Res.string.subtitle_number_order,
+        descriptionRes = Res.string.desc_number_order,
+        icon = Icons.Default.Tag,
+        gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
+        gameType = GameType.NumberOrder,
     )
 
 @Composable
-fun ColorMatchGameScreen(
+fun NumberOrderGameScreen(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
@@ -48,15 +48,5 @@ fun ColorMatchGameScreen(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
         onGameWon = onGameWon,
-    )
-}
-
-@Preview
-@Composable
-private fun ColorMatchGameScreenPreview() {
-    ColorMatchGameScreen(
-        gameInfo = ColorMatchGameInfo,
-        onBackClick = {},
-        onGameWon = {},
     )
 }

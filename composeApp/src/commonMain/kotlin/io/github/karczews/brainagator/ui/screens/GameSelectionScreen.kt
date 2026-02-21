@@ -59,13 +59,13 @@ import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.getPlatform
 import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
-import io.github.karczews.brainagator.ui.screens.games.ColorMatchGameInfo
-import io.github.karczews.brainagator.ui.screens.games.NumberOrderGameInfo
-import io.github.karczews.brainagator.ui.screens.games.OddOneOutGameInfo
-import io.github.karczews.brainagator.ui.screens.games.PatternGameInfo
-import io.github.karczews.brainagator.ui.screens.games.ShapeMatchGameInfo
-import io.github.karczews.brainagator.ui.screens.games.SizeOrderGameInfo
-import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameInfo
+import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
+import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
+import io.github.karczews.brainagator.ui.screens.games.oddoneout.OddOneOutGameInfo
+import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
+import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
+import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
+import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
 import org.jetbrains.compose.resources.stringResource
 
 val games =

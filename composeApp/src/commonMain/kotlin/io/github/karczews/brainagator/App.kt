@@ -41,13 +41,13 @@ import io.github.karczews.brainagator.ui.navigation.Route
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
 import io.github.karczews.brainagator.ui.screens.GameWonScreen
 import io.github.karczews.brainagator.ui.screens.games
-import io.github.karczews.brainagator.ui.screens.games.ColorMatchGameScreen
-import io.github.karczews.brainagator.ui.screens.games.NumberOrderGameScreen
-import io.github.karczews.brainagator.ui.screens.games.OddOneOutGameScreen
-import io.github.karczews.brainagator.ui.screens.games.PatternGameScreen
-import io.github.karczews.brainagator.ui.screens.games.ShapeMatchGameScreen
-import io.github.karczews.brainagator.ui.screens.games.SizeOrderGameScreen
-import io.github.karczews.brainagator.ui.screens.games.SpotDifferenceGameScreen
+import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameScreen
+import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameScreen
+import io.github.karczews.brainagator.ui.screens.games.oddoneout.OddOneOutGameScreen
+import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameScreen
+import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameScreen
+import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameScreen
+import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameScreen
 
 @Composable
 @Preview

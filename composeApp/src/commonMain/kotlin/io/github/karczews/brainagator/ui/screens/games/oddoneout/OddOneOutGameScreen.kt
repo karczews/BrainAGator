@@ -14,31 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens.games.oddoneout
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.desc_spot_difference
-import brainagator.composeapp.generated.resources.game_spot_difference
-import brainagator.composeapp.generated.resources.subtitle_spot_difference
+import brainagator.composeapp.generated.resources.desc_odd_one_out
+import brainagator.composeapp.generated.resources.game_odd_one_out
+import brainagator.composeapp.generated.resources.subtitle_odd_one_out
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
 
-val SpotDifferenceGameInfo =
+val OddOneOutGameInfo =
     GameInfo(
-        titleRes = Res.string.game_spot_difference,
-        subtitleRes = Res.string.subtitle_spot_difference,
-        descriptionRes = Res.string.desc_spot_difference,
-        icon = Icons.Default.Search,
-        gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
-        gameType = GameType.SpotDifference,
+        titleRes = Res.string.game_odd_one_out,
+        subtitleRes = Res.string.subtitle_odd_one_out,
+        descriptionRes = Res.string.desc_odd_one_out,
+        icon = Icons.AutoMirrored.Default.HelpOutline,
+        gradientColors = listOf(Color(0xFF2AF598), Color(0xFF009EFD)),
+        gameType = GameType.OddOneOut,
     )
 
 @Composable
-fun SpotDifferenceGameScreen(
+fun OddOneOutGameScreen(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
