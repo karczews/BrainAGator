@@ -22,14 +22,91 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.shape_circle
+import brainagator.composeapp.generated.resources.shape_diamond
+import brainagator.composeapp.generated.resources.shape_heart
+import brainagator.composeapp.generated.resources.shape_square
+import brainagator.composeapp.generated.resources.shape_star
+import brainagator.composeapp.generated.resources.shape_triangle
+import org.jetbrains.compose.resources.StringResource
 
-enum class GameShape {
-    CIRCLE,
-    SQUARE,
-    TRIANGLE,
-    STAR,
-    DIAMOND,
-    HEART,
+internal data class GameShape(
+    val shape: Shape,
+    val nameRes: StringResource,
+)
+
+internal val gameShapes =
+    listOf(
+        GameShape(CircleShape(), Res.string.shape_circle),
+        GameShape(SquareShape(), Res.string.shape_square),
+        GameShape(TriangleShape(), Res.string.shape_triangle),
+        GameShape(StarShape(), Res.string.shape_star),
+        GameShape(DiamondShape(), Res.string.shape_diamond),
+        GameShape(HeartShape(), Res.string.shape_heart),
+    )
+
+class CircleShape : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline {
+        val path =
+            Path().apply {
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+                val radius = size.width / 2f
+
+                moveTo(centerX + radius, centerY)
+                for (i in 1..360) {
+                    val angle = kotlin.math.PI * i / 180
+                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
+                    val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
+                    lineTo(x, y)
+                }
+                close()
+            }
+        return Outline.Generic(path)
+    }
+}
+
+class SquareShape : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline {
+        val path =
+            Path().apply {
+                moveTo(0f, 0f)
+                lineTo(size.width, 0f)
+                lineTo(size.width, size.height)
+                lineTo(0f, size.height)
+                close()
+            }
+        return Outline.Generic(path)
+    }
+}
+
+class TriangleShape : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline {
+        val path =
+            Path().apply {
+                val width = size.width
+                val height = size.height
+
+                moveTo(width / 2f, 0f)
+                lineTo(width, height)
+                lineTo(0f, height)
+                close()
+            }
+        return Outline.Generic(path)
+    }
 }
 
 class StarShape : Shape {

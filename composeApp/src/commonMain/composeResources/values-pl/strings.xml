@@ -54,4 +54,12 @@
     <string name="color_purple">Fioletowy</string>
     <string name="color_pink">Różowy</string>
     <string name="color_cyan">Cyjan</string>
+
+    <!-- Shapes -->
+    <string name="shape_circle">Okrąg</string>
+    <string name="shape_square">Kwadrat</string>
+    <string name="shape_triangle">Trójkąt</string>
+    <string name="shape_star">Gwiazda</string>
+    <string name="shape_diamond">Diament</string>
+    <string name="shape_heart">Serce</string>
 </resources>

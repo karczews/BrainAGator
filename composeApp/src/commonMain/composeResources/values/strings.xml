@@ -54,4 +54,12 @@
     <string name="color_purple">Purple</string>
     <string name="color_pink">Pink</string>
     <string name="color_cyan">Cyan</string>
+
+    <!-- Shapes -->
+    <string name="shape_circle">Circle</string>
+    <string name="shape_square">Square</string>
+    <string name="shape_triangle">Triangle</string>
+    <string name="shape_star">Star</string>
+    <string name="shape_diamond">Diamond</string>
+    <string name="shape_heart">Heart</string>
 </resources>

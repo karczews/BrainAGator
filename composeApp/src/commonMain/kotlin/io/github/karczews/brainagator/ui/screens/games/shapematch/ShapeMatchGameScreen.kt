@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
@@ -45,9 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
@@ -104,7 +101,7 @@ fun ShapeMatchGameScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                items(GameShape.entries.toList()) { shape ->
+                items(gameShapes) { shape ->
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
@@ -156,7 +153,7 @@ fun ShapeMatchGameScreen(
             selectedShape?.let { shape ->
                 selectedColor?.let { color ->
                     Text(
-                        text = "You selected: ${shape.name.lowercase()} + ${stringResource(color.nameRes)}",
+                        text = "You selected: ${stringResource(shape.nameRes)} + ${stringResource(color.nameRes)}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -180,7 +177,6 @@ private fun ShapeButton(
         }
 
     val borderWidth = if (isSelected) 4.dp else 2.dp
-    val surfaceColor = MaterialTheme.colorScheme.surface
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
 
     Box(
@@ -190,79 +186,16 @@ private fun ShapeButton(
                 .clip(RoundedCornerShape(8.dp))
                 .border(borderWidth, borderColor, RoundedCornerShape(8.dp))
                 .clickable(onClick = onClick)
-                .background(surfaceColor),
+                .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center,
     ) {
-        when (shape) {
-            GameShape.CIRCLE -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .background(onSurfaceColor, CircleShape),
-                )
-            }
-
-            GameShape.SQUARE -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .background(onSurfaceColor),
-                )
-            }
-
-            GameShape.TRIANGLE -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .background(surfaceColor)
-                            .drawBehind {
-                                val trianglePath =
-                                    Path().apply {
-                                        val width = size.width
-                                        val height = size.height
-                                        moveTo(width / 2f, 0f)
-                                        lineTo(width, height)
-                                        lineTo(0f, height)
-                                        close()
-                                    }
-                                drawPath(trianglePath, onSurfaceColor)
-                            },
-                )
-            }
-
-            GameShape.STAR -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .clip(StarShape())
-                            .background(onSurfaceColor),
-                )
-            }
-
-            GameShape.DIAMOND -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .clip(DiamondShape())
-                            .background(onSurfaceColor),
-                )
-            }
-
-            GameShape.HEART -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .clip(HeartShape())
-                            .background(onSurfaceColor),
-                )
-            }
-        }
+        Box(
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(shape.shape)
+                    .background(onSurfaceColor),
+        )
     }
 }
 
@@ -296,7 +229,7 @@ private fun ColorButton(
                 modifier =
                     Modifier
                         .size(20.dp)
-                        .background(Color.White.copy(alpha = 0.3f), CircleShape),
+                        .background(Color.White.copy(alpha = 0.3f), androidx.compose.foundation.shape.CircleShape),
             )
         }
     }
