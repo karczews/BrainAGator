@@ -20,6 +20,7 @@ import android.content.Context
 import android.speech.tts.TextToSpeech
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import java.util.Locale
 import java.util.UUID
 
@@ -115,6 +116,11 @@ fun createTextToSpeech(context: Context): io.github.karczews.brainagator.tts.Tex
  */
 @Composable
 actual fun rememberTextToSpeech(): io.github.karczews.brainagator.tts.TextToSpeech {
+    // Return dummy implementation for Compose Preview
+    if (LocalInspectionMode.current) {
+        return androidx.compose.runtime.remember { DummyTextToSpeech() }
+    }
+
     val context = LocalContext.current
     val tts = androidx.compose.runtime.remember { createTextToSpeech(context) }
 

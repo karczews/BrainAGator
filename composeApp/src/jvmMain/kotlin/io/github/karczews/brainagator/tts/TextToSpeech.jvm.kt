@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -74,7 +75,7 @@ class DesktopTextToSpeech : TextToSpeech {
     private fun parseVoices(output: String): List<Voice> =
         output.lines().mapNotNull { line ->
             // Split on two or more spaces to handle multi-word voice names
-            val parts = line.split(Regex("\\s{2,}")).map { it.trim() }
+            val parts = line.split("""\s{2,}""".toRegex()).map { it.trim() }
             if (parts.size >= 2) {
                 val name = parts[0]
                 val langCode = parts[1]
@@ -218,9 +219,15 @@ actual fun createTextToSpeech(): TextToSpeech = DesktopTextToSpeech()
 /**
  * Composable remember function for TTS in Desktop.
  * Automatically handles lifecycle and cleanup.
+ * Returns a dummy implementation when running in Compose Preview.
  */
 @Composable
 actual fun rememberTextToSpeech(): TextToSpeech {
+    // Return dummy implementation for Compose Preview
+    if (LocalInspectionMode.current) {
+        return remember { DummyTextToSpeech() }
+    }
+
     val tts = remember { createTextToSpeech() }
 
     DisposableEffect(Unit) {

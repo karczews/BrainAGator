@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_color_match
 import brainagator.composeapp.generated.resources.subtitle_color_match
@@ -45,5 +46,15 @@ fun ColorMatchGameScreen(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
         onGameWon = onGameWon,
+    )
+}
+
+@Preview
+@Composable
+private fun ColorMatchGameScreenPreview() {
+    ColorMatchGameScreen(
+        gameInfo = ColorMatchGameInfo,
+        onBackClick = {},
+        onGameWon = {},
     )
 }
