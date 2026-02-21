@@ -16,6 +16,7 @@
 
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -38,38 +39,13 @@ internal data class GameShape(
 
 internal val gameShapes =
     listOf(
-        GameShape(CircleShape(), Res.string.shape_circle),
+        GameShape(CircleShape, Res.string.shape_circle),
         GameShape(SquareShape(), Res.string.shape_square),
         GameShape(TriangleShape(), Res.string.shape_triangle),
         GameShape(StarShape(), Res.string.shape_star),
         GameShape(DiamondShape(), Res.string.shape_diamond),
         GameShape(HeartShape(), Res.string.shape_heart),
     )
-
-class CircleShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density,
-    ): Outline {
-        val path =
-            Path().apply {
-                val centerX = size.width / 2f
-                val centerY = size.height / 2f
-                val radius = size.width / 2f
-
-                moveTo(centerX + radius, centerY)
-                for (i in 1..360) {
-                    val angle = kotlin.math.PI * i / 180
-                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
-                    val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
-                    lineTo(x, y)
-                }
-                close()
-            }
-        return Outline.Generic(path)
-    }
-}
 
 class SquareShape : Shape {
     override fun createOutline(

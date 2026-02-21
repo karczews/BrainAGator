@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
@@ -229,7 +230,7 @@ private fun ColorButton(
                 modifier =
                     Modifier
                         .size(20.dp)
-                        .background(Color.White.copy(alpha = 0.3f), androidx.compose.foundation.shape.CircleShape),
+                        .background(Color.White.copy(alpha = 0.3f), CircleShape),
             )
         }
     }
