@@ -16,8 +16,24 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.game_color_match
+import brainagator.composeapp.generated.resources.subtitle_color_match
+import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+
+val ColorMatchGameInfo =
+    GameInfo(
+        titleRes = Res.string.game_color_match,
+        subtitleRes = Res.string.subtitle_color_match,
+        icon = Icons.Default.Palette,
+        gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)),
+        gameType = GameType.ColorMatch,
+    )
 
 @Composable
 fun ColorMatchGameScreen(
