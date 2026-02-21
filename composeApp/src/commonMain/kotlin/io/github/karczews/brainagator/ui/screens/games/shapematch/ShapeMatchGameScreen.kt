@@ -22,7 +22,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,14 +46,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
@@ -63,56 +57,6 @@ import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
-
-private enum class GameShape {
-    CIRCLE,
-    SQUARE,
-    TRIANGLE,
-    STAR,
-}
-
-private data class GameColor(
-    val color: Color,
-    val name: String,
-)
-
-private val gameColors =
-    listOf(
-        GameColor(Color(0xFFE53935), "Red"),
-        GameColor(Color(0xFF1E88E5), "Blue"),
-        GameColor(Color(0xFFFDD835), "Yellow"),
-        GameColor(Color(0xFF43A047), "Green"),
-        GameColor(Color(0xFFFB8C00), "Orange"),
-    )
-
-private class StarShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density,
-    ): Outline {
-        val path =
-            Path().apply {
-                val centerX = size.width / 2f
-                val centerY = size.height / 2f
-                val outerRadius = size.width / 2f
-                val innerRadius = outerRadius * 0.4f
-                val points = 5
-                val angleStep = 360f / points
-
-                moveTo(centerX, centerY - outerRadius)
-                for (i in 0 until points * 2) {
-                    val radius = if (i % 2 == 0) outerRadius else innerRadius
-                    val angle = kotlin.math.PI * (i * angleStep / 2 - 90) / 180
-                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
-                    val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
-                    lineTo(x, y)
-                }
-                close()
-            }
-        return Outline.Generic(path)
-    }
-}
 
 val ShapeMatchGameInfo =
     GameInfo(
@@ -150,16 +94,26 @@ fun ShapeMatchGameScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(240.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                GameShape.entries.forEach { shape ->
-                    ShapeButton(
-                        shape = shape,
-                        isSelected = selectedShape == shape,
-                        onClick = { selectedShape = shape },
-                    )
+                items(GameShape.entries.toList()) { shape ->
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ShapeButton(
+                            shape = shape,
+                            isSelected = selectedShape == shape,
+                            onClick = { selectedShape = shape },
+                        )
+                    }
                 }
             }
 
@@ -284,6 +238,26 @@ private fun ShapeButton(
                         Modifier
                             .size(40.dp)
                             .clip(StarShape())
+                            .background(onSurfaceColor),
+                )
+            }
+
+            GameShape.DIAMOND -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(DiamondShape())
+                            .background(onSurfaceColor),
+                )
+            }
+
+            GameShape.HEART -> {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(HeartShape())
                             .background(onSurfaceColor),
                 )
             }
