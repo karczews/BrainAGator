@@ -26,13 +26,13 @@
     <string name="subtitle_spot_difference">Find the difference!</string>
 
     <!-- Game Descriptions for TTS -->
-    <string name="desc_shape_match">Shape Match. Match each shape with its correct color.</string>
-    <string name="desc_number_order">Number Order. Arrange the numbers from smallest to largest.</string>
-    <string name="desc_color_match">Color Match. Find and match the same colors together.</string>
-    <string name="desc_size_order">Size Order. Arrange objects from smallest to largest.</string>
-    <string name="desc_pattern">Pattern Game. Complete the pattern by choosing the right shape.</string>
-    <string name="desc_odd_one_out">Odd One Out. Find the object that does not belong with the others.</string>
-    <string name="desc_spot_difference">Spot the Difference. Find what is different between two pictures.</string>
+    <string name="desc_shape_match">In this game, you need to match each shape with its correct color. Look at the shapes and colors carefully, and put them together!</string>
+    <string name="desc_number_order">In this game, you need to arrange the numbers from the smallest to the largest. Start with the smallest number and work your way up!</string>
+    <string name="desc_color_match">In this game, you need to find and match the same colors together. Look for colors that look exactly the same!</string>
+    <string name="desc_size_order">In this game, you need to arrange objects from the smallest to the biggest. Start with the tiny ones and end with the huge ones!</string>
+    <string name="desc_pattern">In this game, you need to complete the pattern by choosing the right shape. Look at what comes next in the pattern!</string>
+    <string name="desc_odd_one_out">In this game, you need to find the one object that does not belong with the others. Look for the one that is different!</string>
+    <string name="desc_spot_difference">In this game, you need to find what is different between two pictures. Look carefully at both pictures to spot the differences!</string>
 
     <!-- Game Won Screen -->
     <string name="congratulations">Congratulations!</string>
