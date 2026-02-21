@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_shape_match
 import brainagator.composeapp.generated.resources.subtitle_shape_match
@@ -45,5 +46,15 @@ fun ShapeMatchGameScreen(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
         onGameWon = onGameWon,
+    )
+}
+
+@Preview
+@Composable
+private fun ShapeMatchGameScreenPreview() {
+    ShapeMatchGameScreen(
+        gameInfo = ShapeMatchGameInfo,
+        onBackClick = {},
+        onGameWon = {},
     )
 }
