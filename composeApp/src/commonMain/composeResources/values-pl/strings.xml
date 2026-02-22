@@ -8,7 +8,7 @@
     <string name="welcome_message">Witaj w Brainagator! Wybierz grę do zagrania.</string>
 
     <!-- Game Titles -->
-    <string name="game_shape_match">Dopasuj Kształty</string>
+    <string name="game_shape_match">Znajdź Kształt</string>
     <string name="game_number_order">Porządek Liczb</string>
     <string name="game_color_match">Dopasuj Kolory</string>
     <string name="game_size_order">Porządek Wielkości</string>
@@ -17,7 +17,7 @@
     <string name="game_spot_difference">Znajdź Różnice</string>
 
     <!-- Game Subtitles -->
-    <string name="subtitle_shape_match">Dopasuj kształty do kolorów!</string>
+    <string name="subtitle_shape_match">Znajdź kształt w danym kolorze!</string>
     <string name="subtitle_number_order">Ułóż liczby w kolejności!</string>
     <string name="subtitle_color_match">Znajdź pasujące kolory!</string>
     <string name="subtitle_size_order">Ułóż według wielkości!</string>
@@ -26,7 +26,7 @@
     <string name="subtitle_spot_difference">Znajdź różnicę!</string>
 
     <!-- Game Descriptions for TTS -->
-    <string name="desc_shape_match">W tej grze musisz dopasować każdy kształt do jego prawidłowego koloru. Przyjrzyj się kształtom i kolorom, a potem połącz je razem!</string>
+    <string name="desc_shape_match">W tej grze musisz znaleźć konkretny kształt w danym kolorze. Przyjrzyj się siatce pokolorowanych kształtów i dotknij tego, który pasuje do instrukcji!</string>
     <string name="desc_number_order">W tej grze musisz ułożyć liczby od najmniejszej do największej. Zacznij od najmniejszej liczby i idź coraz wyżej!</string>
     <string name="desc_color_match">W tej grze musisz znaleźć i dopasować te same kolory razem. Szukaj kolorów, które wyglądają dokładnie tak samo!</string>
     <string name="desc_size_order">W tej grze musisz ułożyć obiekty od najmniejszego do największego. Zacznij od malutkich, a skończ na ogromnych!</string>
