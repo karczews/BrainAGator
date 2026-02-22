@@ -62,4 +62,11 @@
     <string name="shape_star">Star</string>
     <string name="shape_diamond">Diamond</string>
     <string name="shape_heart">Heart</string>
+
+    <!-- Shape Match Game -->
+    <string name="shape_match_select_instruction">Select a %1$s %2$s</string>
+    <string name="shape_match_keep_going">Great! Keep going!</string>
+    <string name="shape_match_select_shape">Select a shape</string>
+    <string name="shape_match_select_color">Select a color</string>
+    <string name="shape_match_progress">%1$d / %2$d completed</string>
 </resources>

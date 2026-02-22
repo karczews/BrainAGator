@@ -52,6 +52,11 @@ import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
+import brainagator.composeapp.generated.resources.shape_match_keep_going
+import brainagator.composeapp.generated.resources.shape_match_progress
+import brainagator.composeapp.generated.resources.shape_match_select_color
+import brainagator.composeapp.generated.resources.shape_match_select_instruction
+import brainagator.composeapp.generated.resources.shape_match_select_shape
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
@@ -125,7 +130,12 @@ fun ShapeMatchGameScreen(
             // Instruction text
             currentTarget?.let { target ->
                 Text(
-                    text = "Select a ${stringResource(target.second.nameRes)} ${stringResource(target.first.nameRes)}",
+                    text =
+                        stringResource(
+                            Res.string.shape_match_select_instruction,
+                            stringResource(target.second.nameRes),
+                            stringResource(target.first.nameRes),
+                        ),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -133,7 +143,7 @@ fun ShapeMatchGameScreen(
 
             if (currentTarget == null && targetPairs.isNotEmpty()) {
                 Text(
-                    text = "Great! Keep going!",
+                    text = stringResource(Res.string.shape_match_keep_going),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -142,7 +152,7 @@ fun ShapeMatchGameScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Select a shape",
+                text = stringResource(Res.string.shape_match_select_shape),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -178,7 +188,7 @@ fun ShapeMatchGameScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             Text(
-                text = "Select a color",
+                text = stringResource(Res.string.shape_match_select_color),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -215,7 +225,7 @@ fun ShapeMatchGameScreen(
 
             // Progress indicator
             Text(
-                text = "${4 - targetPairs.size} / 4 completed",
+                text = stringResource(Res.string.shape_match_progress, 4 - targetPairs.size, 4),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
