@@ -21,46 +21,22 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.karczews.brainagator.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.delay
+import platform.AVFAudio.AVSpeechBoundary
 import platform.AVFAudio.AVSpeechSynthesizer
 import platform.AVFAudio.AVSpeechUtterance
 
 /**
  * iOS implementation of Text-to-Speech using AVSpeechSynthesizer.
+ * Implements queued speaking where multiple requests are processed sequentially.
  */
 @OptIn(ExperimentalForeignApi::class)
-class IosTextToSpeech : TextToSpeech {
+class IosTextToSpeech : QueuedTextToSpeech() {
     private val synthesizer = AVSpeechSynthesizer()
-    private var currentRate = 0.5f // iOS uses 0.0 to 1.0 range, default is 0.5
+    private var currentRate = 0.5f
     private var currentPitch = 1.0f
 
-    override fun speak(text: String) {
-        Logger.v { "TTS speak called: \"$text\"" }
-        if (synthesizer.isSpeaking()) {
-            Logger.d { "TTS stopping previous speech" }
-            synthesizer.stopSpeakingAtBoundary(platform.AVFAudio.AVSpeechBoundary.AVSpeechBoundaryImmediate)
-        }
-
-        val utterance = AVSpeechUtterance(string = text)
-
-        // Set speech parameters - iOS uses Float, not Double
-        utterance.setRate(currentRate)
-        utterance.setPitchMultiplier(currentPitch)
-        utterance.setVolume(1.0f)
-
-        Logger.d { "TTS configured: rate=$currentRate, pitch=$currentPitch" }
-        Logger.d { "TTS starting speech synthesis" }
-        synthesizer.speakUtterance(utterance)
-        Logger.v { "TTS speak completed: \"$text\"" }
-    }
-
-    override fun stop() {
-        synthesizer.stopSpeakingAtBoundary(platform.AVFAudio.AVSpeechBoundary.AVSpeechBoundaryImmediate)
-    }
-
-    override fun isSpeaking(): Boolean = synthesizer.isSpeaking()
-
     override fun setSpeechRate(rate: Float) {
-        // Map external 0.1-2.0 range to iOS 0.0-1.0 range
         currentRate = (rate / 2.0f).coerceIn(0.0f, 1.0f)
     }
 
@@ -68,8 +44,37 @@ class IosTextToSpeech : TextToSpeech {
         currentPitch = pitch.coerceIn(0.5f, 2.0f)
     }
 
+    override suspend fun performSpeak(text: String) {
+        Logger.v { "TTS speaking: \"$text\"" }
+
+        val utterance = AVSpeechUtterance(string = text)
+        utterance.setRate(currentRate)
+        utterance.setPitchMultiplier(currentPitch)
+        utterance.setVolume(1.0f)
+
+        synthesizer.speakUtterance(utterance)
+
+        // Wait for the synthesizer to actually start speaking
+        // isSpeaking() returns false immediately after speakUtterance() due to async nature
+        // We poll with a small delay to detect when speech actually begins
+        var attempts = 0
+        while (!synthesizer.isSpeaking() && attempts < 100) {
+            delay(10)
+            attempts++
+        }
+
+        // Now wait for speech to complete
+        while (synthesizer.isSpeaking()) {
+            delay(50)
+        }
+    }
+
+    override fun performStop() {
+        synthesizer.stopSpeakingAtBoundary(AVSpeechBoundary.AVSpeechBoundaryImmediate)
+    }
+
     override fun shutdown() {
-        stop()
+        super.shutdown()
         // AVSpeechSynthesizer doesn't need explicit cleanup
     }
 }

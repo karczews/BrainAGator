@@ -1,0 +1,69 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="256dp"
+        android:height="256dp"
+        android:viewportWidth="256"
+        android:viewportHeight="256">
+
+    <!-- Speaker Body -->
+    <path
+            android:fillColor="#1E88E5"
+            android:pathData="M40,96 L80,96 L120,64 L120,192 L80,160 L40,160 Z"/>
+
+    <!-- Speaker Inner -->
+    <path
+            android:fillColor="#42A5F5"
+            android:pathData="M48,104 L80,104 L112,76 L112,180 L80,152 L48,152 Z"/>
+
+    <!-- Eyes -->
+    <circle
+            android:cx="72"
+            android:cy="120"
+            android:r="6"
+            android:fillColor="#0D47A1" />
+
+    <circle
+            android:cx="92"
+            android:cy="120"
+            android:r="6"
+            android:fillColor="#0D47A1" />
+
+    <!-- Smile -->
+    <path
+            android:fillColor="#0D47A1"
+            android:pathData="M70,140 Q82,150 94,140 Q82,155 70,140 Z"/>
+
+    <!-- Sound Waves -->
+    <path
+            android:fillColor="#FDD835"
+            android:pathData="M130,110 Q150,128 130,146 Q140,128 130,110 Z"/>
+
+    <path
+            android:fillColor="#FBC02D"
+            android:pathData="M140,100 Q175,128 140,156 Q155,128 140,100 Z"/>
+
+    <path
+            android:fillColor="#F9A825"
+            android:pathData="M150,90 Q200,128 150,166 Q170,128 150,90 Z"/>
+
+    <!-- Circular Arrow -->
+    <path
+            android:fillColor="#E53935"
+            android:pathData="M128,32
+                          A96,96 0 1,1 96,224
+                          L112,208
+                          A72,72 0 1,0 128,48
+                          Z"/>
+
+    <!-- Arrow Head -->
+    <path
+            android:fillColor="#D32F2F"
+            android:pathData="M96,224 L128,224 L112,208 Z"/>
+
+    <!-- Decorative Stars -->
+    <circle android:cx="40" android:cy="60" android:r="4" android:fillColor="#FDD835"/>
+    <circle android:cx="200" android:cy="60" android:r="4" android:fillColor="#AB47BC"/>
+    <circle android:cx="220" android:cy="120" android:r="4" android:fillColor="#EF5350"/>
+    <circle android:cx="200" android:cy="200" android:r="4" android:fillColor="#26A69A"/>
+    <circle android:cx="60" android:cy="200" android:r="4" android:fillColor="#FFCA28"/>
+
+</vector>

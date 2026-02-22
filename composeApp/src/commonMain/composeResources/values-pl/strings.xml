@@ -25,6 +25,15 @@
     <string name="subtitle_odd_one_out">Znajdź to, co inne!</string>
     <string name="subtitle_spot_difference">Znajdź różnicę!</string>
 
+    <!-- Game Descriptions for TTS -->
+    <string name="desc_shape_match">W tej grze musisz dopasować każdy kształt do jego prawidłowego koloru. Przyjrzyj się kształtom i kolorom, a potem połącz je razem!</string>
+    <string name="desc_number_order">W tej grze musisz ułożyć liczby od najmniejszej do największej. Zacznij od najmniejszej liczby i idź coraz wyżej!</string>
+    <string name="desc_color_match">W tej grze musisz znaleźć i dopasować te same kolory razem. Szukaj kolorów, które wyglądają dokładnie tak samo!</string>
+    <string name="desc_size_order">W tej grze musisz ułożyć obiekty od najmniejszego do największego. Zacznij od malutkich, a skończ na ogromnych!</string>
+    <string name="desc_pattern">W tej grze musisz uzupełnić wzór, wybierając odpowiedni kształt. Sprawdź, jaki kształt pasuje jako następny!</string>
+    <string name="desc_odd_one_out">W tej grze musisz znaleźć jeden obiekt, który nie pasuje do pozostałych. Szukaj tego, który jest inny!</string>
+    <string name="desc_spot_difference">W tej grze musisz znaleźć różnice między dwoma obrazkami. Przyjrzyj się dokładnie obu obrazkom i znajdź co się różni!</string>
+
     <!-- Game Won Screen -->
     <string name="congratulations">Gratulacje!</string>
     <string name="you_won">Wygrałeś grę!</string>
@@ -34,4 +43,30 @@
     <string name="go_back">Wróć</string>
     <string name="game_coming_soon">Gra wkrótce dostępna!</string>
     <string name="test_trigger_win">Test: Wygraj</string>
+    <string name="repeat_instruction">Powtórz instrukcje</string>
+
+    <!-- Colors -->
+    <string name="color_red">Czerwony</string>
+    <string name="color_blue">Niebieski</string>
+    <string name="color_yellow">Żółty</string>
+    <string name="color_green">Zielony</string>
+    <string name="color_orange">Pomarańczowy</string>
+    <string name="color_purple">Fioletowy</string>
+    <string name="color_pink">Różowy</string>
+    <string name="color_turquoise">Turkus</string>
+
+    <!-- Shapes -->
+    <string name="shape_circle">Okrąg</string>
+    <string name="shape_square">Kwadrat</string>
+    <string name="shape_triangle">Trójkąt</string>
+    <string name="shape_star">Gwiazda</string>
+    <string name="shape_diamond">Diament</string>
+    <string name="shape_heart">Serce</string>
+
+    <!-- Shape Match Game -->
+    <string name="shape_match_select_instruction">Wybierz %1$s %2$s</string>
+    <string name="shape_match_keep_going">Świetnie! Kontynuuj!</string>
+    <string name="shape_match_select_shape">Wybierz kształt</string>
+    <string name="shape_match_select_color">Wybierz kolor</string>
+    <string name="shape_match_progress">%1$d / %2$d ukończono</string>
 </resources>

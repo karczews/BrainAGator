@@ -24,13 +24,23 @@ import androidx.compose.runtime.LaunchedEffect
  * This is the common entry point - platform-specific implementations
  * provide the actual functionality.
  *
+ * The TTS implementation provides internal queuing - multiple speak() calls
+ * are processed sequentially. Each call returns a Job that can be
+ * used to cancel that specific utterance.
+ *
  * Usage:
  * ```
  * @Composable
  * fun MyScreen() {
  *     val tts = rememberTextToSpeech()
  *
- *     Button(onClick = { tts.speak("Hello World") }) {
+ *     // Speak with cancellation support
+ *     val job = tts.speak("Hello World")
+ *     // ... later, to cancel this specific utterance:
+ *     job.cancel()
+ *
+ *     // Or simply speak without caring about cancellation
+ *     Button(onClick = { tts.speak("Hello") }) {
  *         Text("Speak")
  *     }
  * }

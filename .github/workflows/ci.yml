@@ -15,6 +15,9 @@ jobs:
     uses: ./.github/workflows/run-tests.yml
 
   check-copyrights:
+    permissions:
+      contents: read
+      pull-requests: write
     uses: ./.github/workflows/check-copyrights.yml
 
   check-formatting:

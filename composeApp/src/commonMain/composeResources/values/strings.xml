@@ -22,8 +22,17 @@
     <string name="subtitle_color_match">Find matching colors!</string>
     <string name="subtitle_size_order">Order by size!</string>
     <string name="subtitle_pattern">Complete the pattern!</string>
-    <string name="subtitle_odd_one_out">Find what's different!</string>
+    <string name="subtitle_odd_one_out">Find what\'s different!</string>
     <string name="subtitle_spot_difference">Find the difference!</string>
+
+    <!-- Game Descriptions for TTS -->
+    <string name="desc_shape_match">In this game, you need to match each shape with its correct color. Look at the shapes and colors carefully, and put them together!</string>
+    <string name="desc_number_order">In this game, you need to arrange the numbers from the smallest to the largest. Start with the smallest number and work your way up!</string>
+    <string name="desc_color_match">In this game, you need to find and match the same colors together. Look for colors that look exactly the same!</string>
+    <string name="desc_size_order">In this game, you need to arrange objects from the smallest to the biggest. Start with the tiny ones and end with the huge ones!</string>
+    <string name="desc_pattern">In this game, you need to complete the pattern by choosing the right shape. Look at what comes next in the pattern!</string>
+    <string name="desc_odd_one_out">In this game, you need to find the one object that does not belong with the others. Look for the one that is different!</string>
+    <string name="desc_spot_difference">In this game, you need to find what is different between two pictures. Look carefully at both pictures to spot the differences!</string>
 
     <!-- Game Won Screen -->
     <string name="congratulations">Congratulations!</string>
@@ -34,4 +43,30 @@
     <string name="go_back">Go back</string>
     <string name="game_coming_soon">Game coming soon!</string>
     <string name="test_trigger_win">Test: Trigger Win</string>
+    <string name="repeat_instruction">Repeat instructions</string>
+
+    <!-- Colors -->
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_green">Green</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_purple">Purple</string>
+    <string name="color_pink">Pink</string>
+    <string name="color_turquoise">Turquoise</string>
+
+    <!-- Shapes -->
+    <string name="shape_circle">Circle</string>
+    <string name="shape_square">Square</string>
+    <string name="shape_triangle">Triangle</string>
+    <string name="shape_star">Star</string>
+    <string name="shape_diamond">Diamond</string>
+    <string name="shape_heart">Heart</string>
+
+    <!-- Shape Match Game -->
+    <string name="shape_match_select_instruction">Select a %1$s %2$s</string>
+    <string name="shape_match_keep_going">Great! Keep going!</string>
+    <string name="shape_match_select_shape">Select a shape</string>
+    <string name="shape_match_select_color">Select a color</string>
+    <string name="shape_match_progress">%1$d / %2$d completed</string>
 </resources>

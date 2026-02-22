@@ -16,18 +16,19 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
-import androidx.compose.runtime.Composable
-import io.github.karczews.brainagator.ui.screens.GameInfo
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 
-@Composable
-fun PatternGameScreen(
-    gameInfo: GameInfo,
-    onBackClick: () -> Unit,
-    onGameWon: () -> Unit,
-) {
-    GamePlaceholder(
-        gameInfo = gameInfo,
-        onBackClick = onBackClick,
-        onGameWon = onGameWon,
+val rainbowBrush: Brush =
+    Brush.verticalGradient(
+        listOf(
+            Color(0xFF9575CD),
+            Color(0xFFBA68C8),
+            Color(0xFFE57373),
+            Color(0xFFFFB74D),
+            Color(0xFFFFF176),
+            Color(0xFFAED581),
+            Color(0xFF4DD0E1),
+            Color(0xFF9575CD),
+        ),
     )
-}

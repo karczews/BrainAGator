@@ -16,24 +16,14 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,19 +34,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.go_back
-import brainagator.composeapp.generated.resources.test_trigger_win
-import io.github.karczews.brainagator.isDebugBuild
+import brainagator.composeapp.generated.resources.ic_replay_speaker
+import brainagator.composeapp.generated.resources.repeat_instruction
+import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,8 +55,17 @@ import org.jetbrains.compose.resources.stringResource
 fun GameScreenScaffold(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
+    val tts = rememberTextToSpeech()
+    val scope = rememberCoroutineScope()
+    val description = stringResource(gameInfo.descriptionRes)
+
+    // Speak game description when screen opens
+    LaunchedEffect(gameInfo) {
+        tts.speak(description)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -83,6 +83,20 @@ fun GameScreenScaffold(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.go_back),
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            tts.speak(description)
+                        },
+                        modifier = Modifier.size(60.dp),
+                    ) {
+                        Image(
+                            modifier = Modifier.size(60.dp),
+                            painter = painterResource(Res.drawable.ic_replay_speaker),
+                            contentDescription = stringResource(Res.string.repeat_instruction),
                         )
                     }
                 },
@@ -104,96 +118,7 @@ fun GameScreenScaffold(
                         ),
                     ),
         ) {
-            content(innerPadding)
-        }
-    }
-}
-
-@Composable
-fun GamePlaceholder(
-    gameInfo: GameInfo,
-    onBackClick: () -> Unit,
-    onGameWon: (() -> Unit)? = null,
-) {
-    val title = stringResource(gameInfo.titleRes)
-    val subtitle = stringResource(gameInfo.subtitleRes)
-    val tts = rememberTextToSpeech()
-
-    // Speak game title and subtitle when screen opens
-    LaunchedEffect(Unit) {
-        tts.speak("$title. $subtitle")
-    }
-
-    GameScreenScaffold(
-        gameInfo = gameInfo,
-        onBackClick = onBackClick,
-    ) { innerPadding ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(
-                    text = "🎮",
-                    style = MaterialTheme.typography.displayLarge,
-                )
-                Text(
-                    text = title,
-                    style =
-                        MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                Card(
-                    modifier = Modifier.padding(horizontal = 32.dp),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                ) {
-                    Text(
-                        text = stringResource(Res.string.game_coming_soon),
-                        modifier = Modifier.padding(24.dp),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-
-                if (isDebugBuild && onGameWon != null) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Button(
-                        onClick = onGameWon,
-                        modifier = Modifier.fillMaxWidth(0.7f).height(56.dp),
-                        shape = RoundedCornerShape(28.dp),
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.EmojiEvents,
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = stringResource(Res.string.test_trigger_win),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-                }
-            }
+            content(innerPadding, tts)
         }
     }
 }

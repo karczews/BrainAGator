@@ -34,14 +34,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SwapVert
-import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -54,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -64,87 +55,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
-import brainagator.composeapp.generated.resources.game_color_match
-import brainagator.composeapp.generated.resources.game_number_order
-import brainagator.composeapp.generated.resources.game_odd_one_out
-import brainagator.composeapp.generated.resources.game_pattern
-import brainagator.composeapp.generated.resources.game_shape_match
-import brainagator.composeapp.generated.resources.game_size_order
-import brainagator.composeapp.generated.resources.game_spot_difference
-import brainagator.composeapp.generated.resources.subtitle_color_match
-import brainagator.composeapp.generated.resources.subtitle_number_order
-import brainagator.composeapp.generated.resources.subtitle_odd_one_out
-import brainagator.composeapp.generated.resources.subtitle_pattern
-import brainagator.composeapp.generated.resources.subtitle_shape_match
-import brainagator.composeapp.generated.resources.subtitle_size_order
-import brainagator.composeapp.generated.resources.subtitle_spot_difference
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.getPlatform
 import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
-import io.github.karczews.brainagator.ui.navigation.GameType
-import org.jetbrains.compose.resources.StringResource
+import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
+import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
+import io.github.karczews.brainagator.ui.screens.games.oddoneout.OddOneOutGameInfo
+import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
+import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
+import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
+import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
 import org.jetbrains.compose.resources.stringResource
-
-data class GameInfo(
-    val titleRes: StringResource,
-    val subtitleRes: StringResource,
-    val icon: ImageVector,
-    val gradientColors: List<Color>,
-    val gameType: GameType,
-)
 
 val games =
     listOf(
-        GameInfo(
-            titleRes = Res.string.game_shape_match,
-            subtitleRes = Res.string.subtitle_shape_match,
-            icon = Icons.Default.Category,
-            gradientColors = listOf(Color(0xFFB06AB3), Color(0xFF4568DC)),
-            gameType = GameType.ShapeMatch,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_number_order,
-            subtitleRes = Res.string.subtitle_number_order,
-            icon = Icons.Default.Tag,
-            gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
-            gameType = GameType.NumberOrder,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_color_match,
-            subtitleRes = Res.string.subtitle_color_match,
-            icon = Icons.Default.Palette,
-            gradientColors = listOf(Color(0xFFFA709A), Color(0xFFFEE140)),
-            gameType = GameType.ColorMatch,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_size_order,
-            subtitleRes = Res.string.subtitle_size_order,
-            icon = Icons.Default.SwapVert,
-            gradientColors = listOf(Color(0xFFF093FB), Color(0xFFF5576C)),
-            gameType = GameType.SizeOrder,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_pattern,
-            subtitleRes = Res.string.subtitle_pattern,
-            icon = Icons.Default.GridView,
-            gradientColors = listOf(Color(0xFF667EEA), Color(0xFF764BA2)),
-            gameType = GameType.Pattern,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_odd_one_out,
-            subtitleRes = Res.string.subtitle_odd_one_out,
-            icon = Icons.Default.HelpOutline,
-            gradientColors = listOf(Color(0xFF2AF598), Color(0xFF009EFD)),
-            gameType = GameType.OddOneOut,
-        ),
-        GameInfo(
-            titleRes = Res.string.game_spot_difference,
-            subtitleRes = Res.string.subtitle_spot_difference,
-            icon = Icons.Default.Search,
-            gradientColors = listOf(Color(0xFF43E97B), Color(0xFF38F9D7)),
-            gameType = GameType.SpotDifference,
-        ),
+        ShapeMatchGameInfo,
+        NumberOrderGameInfo,
+        ColorMatchGameInfo,
+        SizeOrderGameInfo,
+        PatternGameInfo,
+        OddOneOutGameInfo,
+        SpotDifferenceGameInfo,
     )
 
 @Composable

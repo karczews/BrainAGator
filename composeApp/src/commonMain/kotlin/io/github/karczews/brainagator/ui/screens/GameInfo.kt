@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator.ui.screens.games
+package io.github.karczews.brainagator.ui.screens
 
-import androidx.compose.runtime.Composable
-import io.github.karczews.brainagator.ui.screens.GameInfo
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import io.github.karczews.brainagator.ui.navigation.GameType
+import org.jetbrains.compose.resources.StringResource
 
-@Composable
-fun SpotDifferenceGameScreen(
-    gameInfo: GameInfo,
-    onBackClick: () -> Unit,
-    onGameWon: () -> Unit,
-) {
-    GamePlaceholder(
-        gameInfo = gameInfo,
-        onBackClick = onBackClick,
-        onGameWon = onGameWon,
-    )
-}
+data class GameInfo(
+    val titleRes: StringResource,
+    val subtitleRes: StringResource,
+    val descriptionRes: StringResource,
+    val icon: ImageVector,
+    val gradientColors: List<Color>,
+    val gameType: GameType,
+)
