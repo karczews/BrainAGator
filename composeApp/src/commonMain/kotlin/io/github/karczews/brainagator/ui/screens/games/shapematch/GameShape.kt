@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -55,30 +56,12 @@ internal data class GameShape(
 internal val gameShapes =
     listOf(
         GameShape(CircleShape, Res.string.shape_circle),
-        GameShape(SquareShape(), Res.string.shape_square),
+        GameShape(RectangleShape, Res.string.shape_square),
         GameShape(TriangleShape(), Res.string.shape_triangle),
         GameShape(StarShape(), Res.string.shape_star),
         GameShape(DiamondShape(), Res.string.shape_diamond),
         GameShape(HeartShape(), Res.string.shape_heart),
     )
-
-class SquareShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density,
-    ): Outline {
-        val path =
-            Path().apply {
-                moveTo(0f, 0f)
-                lineTo(size.width, 0f)
-                lineTo(size.width, size.height)
-                lineTo(0f, size.height)
-                close()
-            }
-        return Outline.Generic(path)
-    }
-}
 
 class TriangleShape : Shape {
     override fun createOutline(
