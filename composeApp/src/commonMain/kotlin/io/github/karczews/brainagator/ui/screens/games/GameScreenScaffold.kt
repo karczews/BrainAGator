@@ -55,6 +55,7 @@ import org.jetbrains.compose.resources.stringResource
 fun GameScreenScaffold(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
     val tts = rememberTextToSpeech()
@@ -107,6 +108,7 @@ fun GameScreenScaffold(
                     ),
             )
         },
+        bottomBar = bottomBar,
     ) { innerPadding ->
         Box(
             modifier =

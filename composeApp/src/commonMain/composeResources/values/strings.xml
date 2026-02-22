@@ -8,7 +8,7 @@
     <string name="welcome_message">Welcome to Brainagator! Select a game to play.</string>
 
     <!-- Game Titles -->
-    <string name="game_shape_match">Shape Match</string>
+    <string name="game_shape_match">Find the Shape</string>
     <string name="game_number_order">Number Order</string>
     <string name="game_color_match">Color Match</string>
     <string name="game_size_order">Size Order</string>
@@ -17,7 +17,7 @@
     <string name="game_spot_difference">Spot Difference</string>
 
     <!-- Game Subtitles -->
-    <string name="subtitle_shape_match">Match shapes to colors!</string>
+    <string name="subtitle_shape_match">Find the colored shape!</string>
     <string name="subtitle_number_order">Put numbers in order!</string>
     <string name="subtitle_color_match">Find matching colors!</string>
     <string name="subtitle_size_order">Order by size!</string>
@@ -26,7 +26,7 @@
     <string name="subtitle_spot_difference">Find the difference!</string>
 
     <!-- Game Descriptions for TTS -->
-    <string name="desc_shape_match">In this game, you need to match each shape with its correct color. Look at the shapes and colors carefully, and put them together!</string>
+    <string name="desc_shape_match">In this game, you need to find a specific shape in a given color. Look at the grid of colored shapes and tap on the one that matches the instruction!</string>
     <string name="desc_number_order">In this game, you need to arrange the numbers from the smallest to the largest. Start with the smallest number and work your way up!</string>
     <string name="desc_color_match">In this game, you need to find and match the same colors together. Look for colors that look exactly the same!</string>
     <string name="desc_size_order">In this game, you need to arrange objects from the smallest to the biggest. Start with the tiny ones and end with the huge ones!</string>
