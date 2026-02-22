@@ -16,13 +16,27 @@
 
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.shape_circle
 import brainagator.composeapp.generated.resources.shape_diamond
@@ -30,6 +44,7 @@ import brainagator.composeapp.generated.resources.shape_heart
 import brainagator.composeapp.generated.resources.shape_square
 import brainagator.composeapp.generated.resources.shape_star
 import brainagator.composeapp.generated.resources.shape_triangle
+import io.github.karczews.brainagator.ui.screens.games.rainbowBrush
 import org.jetbrains.compose.resources.StringResource
 
 internal data class GameShape(
@@ -195,5 +210,27 @@ class HeartShape : Shape {
                 close()
             }
         return Outline.Generic(path)
+    }
+}
+
+@Composable
+@Preview(widthDp = 120, heightDp = 900)
+fun ShapesPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        gameShapes.forEach { shape ->
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .clip(shape.shape)
+                        .background(Color.White)
+                        .border(
+                            width = 2.dp,
+                            brush = remember { rainbowBrush },
+                            shape = shape.shape,
+                        ),
+            )
+        }
     }
 }
