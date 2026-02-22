@@ -19,12 +19,12 @@ package io.github.karczews.brainagator.ui.screens.games.shapematch
 import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.color_blue
-import brainagator.composeapp.generated.resources.color_cyan
 import brainagator.composeapp.generated.resources.color_green
 import brainagator.composeapp.generated.resources.color_orange
 import brainagator.composeapp.generated.resources.color_pink
 import brainagator.composeapp.generated.resources.color_purple
 import brainagator.composeapp.generated.resources.color_red
+import brainagator.composeapp.generated.resources.color_turquoise
 import brainagator.composeapp.generated.resources.color_yellow
 import org.jetbrains.compose.resources.StringResource
 
@@ -42,5 +42,5 @@ internal val gameColors =
         GameColor(Color(0xFFFB8C00), Res.string.color_orange),
         GameColor(Color(0xFF8E24AA), Res.string.color_purple),
         GameColor(Color(0xFFF06292), Res.string.color_pink),
-        GameColor(Color(0xFF00ACC1), Res.string.color_cyan),
+        GameColor(Color(0xFF40E0D0), Res.string.color_turquoise),
     )
