@@ -16,6 +16,8 @@
 
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -101,9 +103,25 @@ fun ShapeMatchGameScreen(
 
     var shapeColorPairs by remember { mutableStateOf(generateShapeColorPairs()) }
     var correctCount by remember { mutableIntStateOf(0) }
+    var isIncorrectSelection by remember { mutableStateOf(false) }
     val totalIterations = 5
 
     val currentTarget = remember(shapeColorPairs) { shapeColorPairs.random() }
+
+    // Animate border width for flash effect
+    val borderWidth by animateDpAsState(
+        targetValue = if (isIncorrectSelection) 8.dp else 0.dp,
+        animationSpec = tween(durationMillis = 150),
+        label = "border_flash",
+    )
+
+    // Reset incorrect selection after animation
+    LaunchedEffect(isIncorrectSelection) {
+        if (isIncorrectSelection) {
+            kotlinx.coroutines.delay(300)
+            isIncorrectSelection = false
+        }
+    }
 
     fun handleShapeClick(
         clickedShape: GameShape,
@@ -118,6 +136,9 @@ fun ShapeMatchGameScreen(
                 // Regenerate shapes and colors
                 shapeColorPairs = generateShapeColorPairs()
             }
+        } else {
+            // Incorrect - trigger flash effect
+            isIncorrectSelection = true
         }
     }
 
@@ -133,7 +154,13 @@ fun ShapeMatchGameScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                    .border(
+                        width = borderWidth,
+                        color = Color.Red,
+                        shape =
+                            androidx.compose.foundation.shape
+                                .RoundedCornerShape(16.dp),
+                    ).padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Instruction text
