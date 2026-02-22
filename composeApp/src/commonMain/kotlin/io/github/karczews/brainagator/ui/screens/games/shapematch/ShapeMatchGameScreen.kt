@@ -21,6 +21,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -28,9 +29,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -157,22 +157,44 @@ fun ShapeMatchGameScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Display 10 colored shapes in a grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            // Display colored shapes in a grid - adapts to orientation
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
-                items(shapeColorPairs) { (shape, color) ->
-                    ColoredShapeButton(
-                        shape = shape,
-                        color = color.color,
-                        onClick = { handleShapeClick(shape, color) },
-                    )
+                val isLandscape = maxWidth > maxHeight
+
+                if (isLandscape) {
+                    // Landscape: horizontal grid with 3 rows, adaptive spacing
+                    LazyHorizontalGrid(
+                        rows = GridCells.Fixed(3),
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        items(shapeColorPairs) { (shape, color) ->
+                            ColoredShapeButton(
+                                shape = shape,
+                                color = color.color,
+                                onClick = { handleShapeClick(shape, color) },
+                            )
+                        }
+                    }
+                } else {
+                    // Portrait: vertical grid with 3 columns, adaptive spacing
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        items(shapeColorPairs) { (shape, color) ->
+                            ColoredShapeButton(
+                                shape = shape,
+                                color = color.color,
+                                onClick = { handleShapeClick(shape, color) },
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -204,6 +226,7 @@ private fun ColoredShapeButton(
         modifier =
             Modifier
                 .aspectRatio(1f)
+                .padding(6.dp)
                 .clip(shape.shape)
                 .clickable(onClick = onClick)
                 .background(color)
