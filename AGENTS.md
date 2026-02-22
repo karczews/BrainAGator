@@ -42,6 +42,15 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - **Qodana**: Static analysis via `qodana_code_quality.yml` workflow
 - **License checking**: Enforced via Qodana
 
+### Communication Guidelines
+- **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
+- **Verify "known issues"**: Don't label issues as "known" or "tracked" without verifying ticket/issue tracker references
+- **Be precise**: Distinguish between what is actually known vs. what is inferred from symptoms
+
+**Example of inferred vs. known:**
+- ❌ *Inferred*: "This is a known issue with Kotlin 2.3.10" (without evidence)
+- ✅ *Known*: "The stack trace shows the warning originates from Kotlin plugin's internal artifact creation code at `KotlinTargetArtifactKt.createPublishArtifact`"
+
 ## ANTI-PATTERNS (THIS PROJECT)
 - Package name mismatch: `androidApp` uses `com.example.androidapp`, `composeApp` uses `io.github.karczews.brainagator`
 - Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
