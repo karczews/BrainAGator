@@ -38,7 +38,6 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,11 +58,6 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import org.jetbrains.compose.resources.stringResource
 
-private data class ShapeColorPair(
-    val shape: GameShape,
-    val color: GameColor,
-)
-
 val ShapeMatchGameInfo =
     GameInfo(
         titleRes = Res.string.game_shape_match,
@@ -79,30 +73,30 @@ fun ShapeMatchGameScreen(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
+    maxShapes: Int = 6,
+    maxColors: Int = 6,
 ) {
-    val targetPairs = remember { mutableStateListOf<ShapeColorPair>() }
+    val availableShapes = remember { gameShapes.take(maxShapes.coerceIn(1, gameShapes.size)) }
+    val availableColors = remember { gameColors.take(maxColors.coerceIn(1, gameColors.size)) }
+
+    // Generate random pairs on start
+    val targetPairs =
+        remember {
+            mutableStateListOf<Pair<GameShape, GameColor>>().apply {
+                repeat(4) {
+                    add(availableShapes.random() to availableColors.random())
+                }
+            }
+        }
     var currentIndex by remember { mutableStateOf(0) }
     var selectedShape by remember { mutableStateOf<GameShape?>(null) }
     var selectedColor by remember { mutableStateOf<GameColor?>(null) }
-
-    // Generate random pairs on start
-    LaunchedEffect(Unit) {
-        if (targetPairs.isEmpty()) {
-            val pairs = mutableListOf<ShapeColorPair>()
-            repeat(4) {
-                val randomShape = gameShapes.random()
-                val randomColor = gameColors.random()
-                pairs.add(ShapeColorPair(randomShape, randomColor))
-            }
-            targetPairs.addAll(pairs)
-        }
-    }
 
     val currentTarget = targetPairs.getOrNull(currentIndex)
 
     fun checkSelection() {
         if (selectedShape != null && selectedColor != null && currentTarget != null) {
-            if (selectedShape == currentTarget.shape && selectedColor == currentTarget.color) {
+            if (selectedShape == currentTarget.first && selectedColor == currentTarget.second) {
                 // Correct - remove and move to next
                 targetPairs.removeAt(currentIndex)
                 selectedShape = null
@@ -131,7 +125,7 @@ fun ShapeMatchGameScreen(
             // Instruction text
             currentTarget?.let { target ->
                 Text(
-                    text = "Select a ${stringResource(target.color.nameRes)} ${stringResource(target.shape.nameRes)}",
+                    text = "Select a ${stringResource(target.second.nameRes)} ${stringResource(target.first.nameRes)}",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -156,15 +150,15 @@ fun ShapeMatchGameScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(3),
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(240.dp),
+                        .height(160.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                items(gameShapes) { shape ->
+                items(availableShapes) { shape ->
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
@@ -192,7 +186,7 @@ fun ShapeMatchGameScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(3),
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -200,7 +194,7 @@ fun ShapeMatchGameScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                items(gameColors) { gameColor ->
+                items(availableColors) { gameColor ->
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center,
