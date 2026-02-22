@@ -17,62 +17,45 @@
 package io.github.karczews.brainagator.tts
 
 import android.content.Context
-import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import kotlinx.coroutines.CompletableDeferred
 import java.util.Locale
 import java.util.UUID
+import android.speech.tts.TextToSpeech as AndroidTextToSpeechAPI
 
 /**
  * Android implementation of Text-to-Speech using Android's native TextToSpeech API.
+ * Implements queued speaking where multiple requests are processed sequentially.
  */
 class AndroidTextToSpeech(
     context: Context,
-) : io.github.karczews.brainagator.tts.TextToSpeech {
-    private var tts: TextToSpeech? = null
+) : QueuedTextToSpeech() {
+    private var tts: AndroidTextToSpeechAPI? = null
     private var isInitialized = false
-    private var pendingText: String? = null
+    private var pendingInitText: String? = null
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
 
     init {
         tts =
-            TextToSpeech(context.applicationContext) { status ->
-                if (status == TextToSpeech.SUCCESS) {
+            AndroidTextToSpeechAPI(context.applicationContext) { status ->
+                if (status == AndroidTextToSpeechAPI.SUCCESS) {
                     isInitialized = true
                     tts?.apply {
                         language = Locale.getDefault()
                         setSpeechRate(currentRate)
                         setPitch(currentPitch)
                     }
-                    pendingText?.let { speak(it) }
-                    pendingText = null
+                    pendingInitText?.let { text ->
+                        speak(text)
+                    }
+                    pendingInitText = null
                 }
             }
     }
-
-    override fun speak(text: String) {
-        if (!isInitialized) {
-            pendingText = text
-            return
-        }
-
-        tts?.let { engine ->
-            if (engine.isSpeaking) {
-                engine.stop()
-            }
-
-            val utteranceId = UUID.randomUUID().toString()
-            engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
-        }
-    }
-
-    override fun stop() {
-        tts?.stop()
-    }
-
-    override fun isSpeaking(): Boolean = tts?.isSpeaking ?: false
 
     override fun setSpeechRate(rate: Float) {
         currentRate = rate.coerceIn(0.1f, 2.0f)
@@ -88,7 +71,44 @@ class AndroidTextToSpeech(
         }
     }
 
+    override suspend fun performSpeak(text: String) {
+        if (!isInitialized) {
+            pendingInitText = text
+            return
+        }
+
+        val completable = CompletableDeferred<Unit>()
+
+        tts?.setOnUtteranceProgressListener(
+            object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {
+                    // Speech started
+                }
+
+                override fun onDone(utteranceId: String?) {
+                    completable.complete(Unit)
+                }
+
+                @Deprecated("Deprecated in Java")
+                override fun onError(utteranceId: String?) {
+                    completable.completeExceptionally(
+                        Exception("TTS Error for utterance: $utteranceId"),
+                    )
+                }
+            },
+        )
+
+        val utteranceId = UUID.randomUUID().toString()
+        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
+        completable.await()
+    }
+
+    override fun performStop() {
+        tts?.stop()
+    }
+
     override fun shutdown() {
+        super.shutdown()
         tts?.shutdown()
         tts = null
         isInitialized = false
@@ -118,11 +138,11 @@ fun createTextToSpeech(context: Context): io.github.karczews.brainagator.tts.Tex
 actual fun rememberTextToSpeech(): io.github.karczews.brainagator.tts.TextToSpeech {
     // Return dummy implementation for Compose Preview
     if (LocalInspectionMode.current) {
-        return androidx.compose.runtime.remember { DummyTextToSpeech() }
+        return androidx.compose.runtime.remember<io.github.karczews.brainagator.tts.TextToSpeech> { DummyTextToSpeech() }
     }
 
     val context = LocalContext.current
-    val tts = androidx.compose.runtime.remember { createTextToSpeech(context) }
+    val tts = androidx.compose.runtime.remember<io.github.karczews.brainagator.tts.TextToSpeech> { createTextToSpeech(context) }
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         onDispose {

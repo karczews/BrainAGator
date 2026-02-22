@@ -16,30 +16,31 @@
 
 package io.github.karczews.brainagator.tts
 
+import kotlinx.coroutines.delay
+
 /**
  * Dummy TTS implementation for Compose Preview that does nothing.
  * Used when LocalInspectionMode.current is true (in preview).
  */
-class DummyTextToSpeech : TextToSpeech {
-    override fun speak(text: String) {
-        // No-op in preview mode
-    }
-
-    override fun stop() {
-        // No-op in preview mode
-    }
-
-    override fun isSpeaking(): Boolean = false
+class DummyTextToSpeech : QueuedTextToSpeech() {
+    private var currentRate = 1.0f
+    private var currentPitch = 1.0f
 
     override fun setSpeechRate(rate: Float) {
-        // No-op in preview mode
+        currentRate = rate.coerceIn(0.1f, 2.0f)
     }
 
     override fun setPitch(pitch: Float) {
-        // No-op in preview mode
+        currentPitch = pitch.coerceIn(0.5f, 2.0f)
     }
 
-    override fun shutdown() {
-        // No-op in preview mode
+    override suspend fun performSpeak(text: String) {
+        // Simulate speech duration based on text length
+        val duration = (text.length * 50L / currentRate).toLong()
+        delay(duration.coerceIn(100, 2000))
+    }
+
+    override fun performStop() {
+        // No-op for dummy
     }
 }

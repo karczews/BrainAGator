@@ -22,59 +22,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.karczews.brainagator.Logger
+import kotlinx.coroutines.CompletableDeferred
 
 /**
  * Wasm/JS implementation of Text-to-Speech using the Web Speech API.
- * Uses external interfaces for proper Kotlin/Wasm JS interop.
+ * Implements queued speaking where multiple requests are processed sequentially.
  */
-class WasmTextToSpeech : TextToSpeech {
+class WasmTextToSpeech : QueuedTextToSpeech() {
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
-
-    override fun speak(text: String) {
-        Logger.v { "TTS speak called: \"$text\"" }
-        try {
-            stop()
-
-            val synthesis = getSpeechSynthesis()
-            val utterance = createSpeechSynthesisUtterance(text)
-
-            utterance.rate = currentRate.toDouble()
-            utterance.pitch = currentPitch.toDouble()
-            utterance.volume = 1.0
-
-            // Try to use default or first available voice
-            val voices = synthesis.getVoices()
-            val voiceCount = voices.length
-            Logger.d { "TTS voices available: $voiceCount, rate: $currentRate, pitch: $currentPitch" }
-            if (voiceCount > 0) {
-                utterance.voice = getVoiceAt(voices, 0)
-                Logger.v { "TTS using voice index 0" }
-            }
-
-            Logger.d { "TTS starting speech synthesis" }
-            synthesis.speak(utterance)
-            Logger.v { "TTS speak completed: \"$text\"" }
-        } catch (e: Exception) {
-            Logger.e(e) { "TTS Error" }
-        }
-    }
-
-    override fun stop() {
-        try {
-            getSpeechSynthesis().cancel()
-        } catch (e: Exception) {
-            Logger.e(e) { "TTS Stop Error" }
-        }
-    }
-
-    override fun isSpeaking(): Boolean =
-        try {
-            getSpeechSynthesis().speaking
-        } catch (e: Exception) {
-            Logger.w(e) { "TTS isSpeaking check failed" }
-            false
-        }
 
     override fun setSpeechRate(rate: Float) {
         currentRate = rate.coerceIn(0.1f, 2.0f)
@@ -84,8 +40,48 @@ class WasmTextToSpeech : TextToSpeech {
         currentPitch = pitch.coerceIn(0.5f, 2.0f)
     }
 
+    override suspend fun performSpeak(text: String) {
+        Logger.v { "TTS speaking: \"$text\"" }
+
+        val completable = CompletableDeferred<Unit>()
+
+        val synthesis = getSpeechSynthesis()
+        val utterance = createSpeechSynthesisUtterance(text)
+
+        utterance.rate = currentRate.toDouble()
+        utterance.pitch = currentPitch.toDouble()
+        utterance.volume = 1.0
+
+        val voices = synthesis.getVoices()
+        val voiceCount = voices.length
+        Logger.d { "TTS voices: $voiceCount, rate: $currentRate, pitch: $currentPitch" }
+        if (voiceCount > 0) {
+            utterance.voice = getVoiceAt(voices, 0)
+        }
+
+        // Set up completion handlers
+        setUtteranceCallbacks(
+            utterance,
+            onEnd = { completable.complete(Unit) },
+            onError = { completable.completeExceptionally(Exception("TTS Error")) },
+        )
+
+        synthesis.speak(utterance)
+
+        completable.await()
+    }
+
+    override fun performStop() {
+        try {
+            getSpeechSynthesis().cancel()
+        } catch (e: Exception) {
+            Logger.e(e) { "TTS Stop Error" }
+        }
+    }
+
     override fun shutdown() {
-        stop()
+        super.shutdown()
+        performStop()
     }
 }
 
@@ -146,3 +142,17 @@ external fun getVoiceAt(
     voices: JsArray<SpeechSynthesisVoice>,
     index: Int,
 ): SpeechSynthesisVoice?
+
+@JsFun(
+    """
+    (utterance, onEnd, onError) => {
+        utterance.onend = onEnd;
+        utterance.onerror = onError;
+    }
+""",
+)
+external fun setUtteranceCallbacks(
+    utterance: SpeechSynthesisUtterance,
+    onEnd: () -> Unit,
+    onError: () -> Unit,
+)

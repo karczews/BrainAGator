@@ -16,19 +16,31 @@
 
 package io.github.karczews.brainagator.tts
 
+import kotlinx.coroutines.Job
+
 /**
  * Text-to-Speech engine interface for reading on-screen text.
  * Platform-specific implementations handle the actual TTS functionality.
+ *
+ * This interface provides a queued speaking model where multiple [speak] calls
+ * are processed sequentially. Each call returns a [Job] that can be used
+ * to cancel that specific utterance.
  */
 interface TextToSpeech {
     /**
      * Speak the given text aloud.
+     * The request is queued and will be spoken after any pending utterances.
+     *
      * @param text The text to speak
+     * @return A [Job] that can be used to cancel this specific utterance.
+     *         Cancelling will stop the speech if it's currently playing, or
+     *         remove it from the queue if not yet started.
      */
-    fun speak(text: String)
+    fun speak(text: String): Job
 
     /**
-     * Stop any ongoing speech immediately.
+     * Stop all speech immediately and clear the queue.
+     * This cancels all pending and current utterances.
      */
     fun stop()
 
@@ -52,6 +64,7 @@ interface TextToSpeech {
 
     /**
      * Release resources when done.
+     * This should stop all speech and clean up any resources.
      */
     fun shutdown()
 }

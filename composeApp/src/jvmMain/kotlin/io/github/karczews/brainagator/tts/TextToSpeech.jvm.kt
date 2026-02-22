@@ -21,9 +21,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Data class representing a voice with its language code.
@@ -36,17 +36,15 @@ private data class Voice(
 /**
  * Desktop/JVM implementation of Text-to-Speech.
  * Uses system TTS commands with automatic language/voice matching on macOS.
- * Note: Desktop TTS support varies by OS. This is a basic implementation.
  */
-class DesktopTextToSpeech : TextToSpeech {
-    private val isSpeakingState = AtomicBoolean(false)
-    private val currentProcess = AtomicReference<Process?>(null)
+class DesktopTextToSpeech : QueuedTextToSpeech() {
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
     private val osName = System.getProperty("os.name").lowercase()
     private val isMac = osName.contains("mac")
     private val systemLanguage: String = Locale.getDefault().language
     private val cachedVoice: String? by lazy { findBestVoice() }
+    private var currentProcess: Process? = null
 
     /**
      * Finds the best voice for the current system language.
@@ -70,11 +68,9 @@ class DesktopTextToSpeech : TextToSpeech {
 
     /**
      * Parses the output of `say -v '?'` into a list of Voice objects.
-     * Format: "VoiceName    lang_CODE    # Description"
      */
     private fun parseVoices(output: String): List<Voice> =
         output.lines().mapNotNull { line ->
-            // Split on two or more spaces to handle multi-word voice names
             val parts = line.split("""\s{2,}""".toRegex()).map { it.trim() }
             if (parts.size >= 2) {
                 val name = parts[0]
@@ -87,95 +83,82 @@ class DesktopTextToSpeech : TextToSpeech {
 
     /**
      * Matches the system language to an available voice.
-     * Returns null if no matching voice is found.
      */
     private fun matchVoiceForLanguage(
         voices: List<Voice>,
         language: String,
     ): String? {
-        // First try exact match (e.g., "pl_PL" for language "pl")
         val exactMatch =
             voices.find { voice ->
                 voice.languageCode.startsWith("${language}_") || voice.languageCode == language
             }
         if (exactMatch != null) return exactMatch.name
 
-        // Fallback: try matching just the language part (e.g., "pl" in "pl_PL")
         return voices
             .find { voice ->
                 voice.languageCode.split("_")[0] == language
             }?.name
     }
 
-    override fun speak(text: String) {
-        Logger.v { "TTS speak called: \"$text\"" }
-        try {
-            stop()
+    override fun setSpeechRate(rate: Float) {
+        currentRate = rate.coerceIn(0.1f, 2.0f)
+    }
 
-            val voice = cachedVoice
-            Logger.d { "TTS using voice: ${voice ?: "system default"}, rate: $currentRate, pitch: $currentPitch" }
+    override fun setPitch(pitch: Float) {
+        currentPitch = pitch.coerceIn(0.5f, 2.0f)
+    }
 
-            val command =
-                when {
-                    isMac -> {
-                        buildMacCommand(text)
-                    }
+    override suspend fun performSpeak(text: String) {
+        Logger.v { "TTS speaking: \"$text\"" }
 
-                    osName.contains("win") -> {
-                        buildWindowsCommand(text)
-                    }
+        withContext(Dispatchers.IO) {
+            try {
+                val command = buildCommand(text)
+                Logger.d { "TTS executing: $command" }
 
-                    else -> {
-                        listOf("espeak", text)
-                    }
-                }
+                val process = ProcessBuilder(command).start()
+                currentProcess = process
 
-            Logger.d { "TTS executing command: $command" }
-
-            isSpeakingState.set(true)
-            Thread {
-                val process =
-                    try {
-                        ProcessBuilder(command).start()
-                    } catch (e: Exception) {
-                        Logger.e(e) { "TTS not available on this system" }
-                        isSpeakingState.set(false)
-                        return@Thread
-                    }
-                currentProcess.set(process)
                 try {
                     process.waitFor()
-                    Logger.v { "TTS speak completed: \"$text\"" }
+                    Logger.v { "TTS completed: \"$text\"" }
                 } finally {
-                    if (currentProcess.compareAndSet(process, null)) {
-                        isSpeakingState.set(false)
-                    }
+                    currentProcess = null
                 }
-            }.start()
-        } catch (e: Exception) {
-            Logger.e(e) { "TTS Error" }
-            isSpeakingState.set(false)
+            } catch (e: Exception) {
+                Logger.e(e) { "TTS not available on this system" }
+                throw e
+            }
         }
     }
 
     /**
-     * Builds the macOS say command with voice selection.
+     * Builds the system command for speaking text.
      */
-    private fun buildMacCommand(text: String): List<String> {
-        val voice = cachedVoice
-        return if (voice != null) {
-            listOf("say", "-v", voice, text)
-        } else {
-            listOf("say", text)
+    private fun buildCommand(text: String): List<String> =
+        when {
+            isMac -> {
+                val voice = cachedVoice
+                if (voice != null) {
+                    listOf("say", "-v", voice, text)
+                } else {
+                    listOf("say", text)
+                }
+            }
+
+            osName.contains("win") -> {
+                buildWindowsCommand(text)
+            }
+
+            else -> {
+                listOf("espeak", text)
+            }
         }
-    }
 
     /**
      * Builds the Windows PowerShell command for TTS.
-     * Uses Base64 encoding to prevent command injection.
      */
     private fun buildWindowsCommand(text: String): List<String> {
-        // Escape single quotes by replacing each ' with ''
         val safeText = text.replace("'", "''")
         val script =
             "Add-Type -AssemblyName System.Speech; " +
@@ -191,23 +174,14 @@ class DesktopTextToSpeech : TextToSpeech {
         return listOf("powershell.exe", "-EncodedCommand", encodedScript)
     }
 
-    override fun stop() {
-        currentProcess.getAndSet(null)?.destroy()
-        isSpeakingState.set(false)
-    }
-
-    override fun isSpeaking(): Boolean = isSpeakingState.get()
-
-    override fun setSpeechRate(rate: Float) {
-        currentRate = rate.coerceIn(0.1f, 2.0f)
-    }
-
-    override fun setPitch(pitch: Float) {
-        currentPitch = pitch.coerceIn(0.5f, 2.0f)
+    override fun performStop() {
+        currentProcess?.destroy()
+        currentProcess = null
     }
 
     override fun shutdown() {
-        stop()
+        super.shutdown()
+        currentProcess?.destroy()
     }
 }
 
@@ -219,11 +193,9 @@ actual fun createTextToSpeech(): TextToSpeech = DesktopTextToSpeech()
 /**
  * Composable remember function for TTS in Desktop.
  * Automatically handles lifecycle and cleanup.
- * Returns a dummy implementation when running in Compose Preview.
  */
 @Composable
 actual fun rememberTextToSpeech(): TextToSpeech {
-    // Return dummy implementation for Compose Preview
     if (LocalInspectionMode.current) {
         return remember { DummyTextToSpeech() }
     }
