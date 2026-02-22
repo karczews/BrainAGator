@@ -46,6 +46,7 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
 - **Verify "known issues"**: Don't label issues as "known" or "tracked" without verifying ticket/issue tracker references
 - **Be precise**: Distinguish between what is actually known vs. what is inferred from symptoms
+- **Prefer new commits**: When updating code after review, prefer creating new commits over amending existing ones. This preserves the review history and makes it easier to track what changed after feedback.
 
 **Example of inferred vs. known:**
 - ❌ *Inferred*: "This is a known issue with Kotlin 2.3.10" (without evidence)
