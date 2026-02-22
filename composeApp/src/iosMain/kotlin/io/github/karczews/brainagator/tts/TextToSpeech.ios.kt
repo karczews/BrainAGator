@@ -21,7 +21,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.karczews.brainagator.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import platform.AVFAudio.AVSpeechBoundary
 import platform.AVFAudio.AVSpeechSynthesizer
@@ -48,8 +47,6 @@ class IosTextToSpeech : QueuedTextToSpeech() {
     override suspend fun performSpeak(text: String) {
         Logger.v { "TTS speaking: \"$text\"" }
 
-        val completable = CompletableDeferred<Unit>()
-
         val utterance = AVSpeechUtterance(string = text)
         utterance.setRate(currentRate)
         utterance.setPitchMultiplier(currentPitch)
@@ -57,12 +54,17 @@ class IosTextToSpeech : QueuedTextToSpeech() {
 
         synthesizer.speakUtterance(utterance)
 
-        // Wait for speaking to start (handles async nature of speakUtterance)
-        var started = false
-        while (true) {
-            val speaking = synthesizer.isSpeaking()
-            if (speaking) started = true
-            if (started && !speaking) break
+        // Wait for the synthesizer to actually start speaking
+        // isSpeaking() returns false immediately after speakUtterance() due to async nature
+        // We poll with a small delay to detect when speech actually begins
+        var attempts = 0
+        while (!synthesizer.isSpeaking() && attempts < 100) {
+            delay(10)
+            attempts++
+        }
+
+        // Now wait for speech to complete
+        while (synthesizer.isSpeaking()) {
             delay(50)
         }
     }
