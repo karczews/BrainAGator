@@ -65,6 +65,8 @@ abstract class QueuedTextToSpeech : TextToSpeech {
                 try {
                     performSpeak(text)
                 } catch (e: CancellationException) {
+                    // Stop speech when job is cancelled
+                    performStop()
                     throw e
                 } catch (e: Exception) {
                     Logger.e(e) { "TTS Error speaking: $text" }

@@ -35,7 +35,7 @@ class AndroidTextToSpeech(
 ) : QueuedTextToSpeech() {
     private var tts: AndroidTextToSpeechAPI? = null
     private var isInitialized = false
-    private var pendingInitText: String? = null
+    private val initDeferred = CompletableDeferred<Unit>()
     private var currentRate = 1.0f
     private var currentPitch = 1.0f
 
@@ -49,10 +49,9 @@ class AndroidTextToSpeech(
                         setSpeechRate(currentRate)
                         setPitch(currentPitch)
                     }
-                    pendingInitText?.let { text ->
-                        speak(text)
-                    }
-                    pendingInitText = null
+                    initDeferred.complete(Unit)
+                } else {
+                    initDeferred.completeExceptionally(Exception("TTS initialization failed"))
                 }
             }
     }
@@ -72,9 +71,9 @@ class AndroidTextToSpeech(
     }
 
     override suspend fun performSpeak(text: String) {
+        // Wait for initialization if not yet initialized
         if (!isInitialized) {
-            pendingInitText = text
-            return
+            initDeferred.await()
         }
 
         val completable = CompletableDeferred<Unit>()
