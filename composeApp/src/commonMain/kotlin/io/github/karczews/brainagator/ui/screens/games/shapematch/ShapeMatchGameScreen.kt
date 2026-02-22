@@ -64,6 +64,9 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Game information for the Shape Match game.
+ */
 val ShapeMatchGameInfo =
     GameInfo(
         titleRes = Res.string.game_shape_match,
@@ -74,6 +77,17 @@ val ShapeMatchGameInfo =
         gameType = GameType.ShapeMatch,
     )
 
+/**
+ * Main screen for the Shape Match game where users find and select
+ * colored shapes matching the given instruction.
+ *
+ * @param gameInfo Information about the game for display in the scaffold
+ * @param onBackClick Callback invoked when user wants to navigate back
+ * @param onGameWon Callback invoked when user completes all iterations
+ * @param maxShapes Maximum number of different shapes to use (default: 5)
+ * @param maxColors Maximum number of different colors to use (default: 5)
+ * @param numbersOfItemsToSelect Number of shape-color pairs to display (default: 12)
+ */
 @Composable
 fun ShapeMatchGameScreen(
     gameInfo: GameInfo,
@@ -163,24 +177,22 @@ fun ShapeMatchGameScreen(
                     ).padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // Instruction text
-            currentTarget.let { target ->
-                val (targetShape, targetColor) = target
-                val instructionText =
-                    stringResource(
-                        Res.string.shape_match_select_instruction,
-                        stringResource(targetColor.nameRes),
-                        stringResource(targetShape.nameRes),
-                    )
-                LaunchedEffect(instructionText) {
-                    tts.speak(instructionText)
-                }
-                Text(
-                    text = instructionText,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
+            // Instruction text - currentTarget is non-nullable
+            val (targetShape, targetColor) = currentTarget
+            val instructionText =
+                stringResource(
+                    Res.string.shape_match_select_instruction,
+                    stringResource(targetColor.nameRes),
+                    stringResource(targetShape.nameRes),
                 )
+            LaunchedEffect(instructionText) {
+                tts.speak(instructionText)
             }
+            Text(
+                text = instructionText,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -228,11 +240,16 @@ fun ShapeMatchGameScreen(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 500)
+/**
+ * Displays the game progress indicator showing current progress out of total iterations.
+ *
+ * @param correctCount Number of correct selections made by the user
+ * @param totalCount Total number of iterations required to complete the game
+ */
 @Composable
 private fun GameProgress(
-    correctCount: Int = 0,
-    totalCount: Int = 5,
+    correctCount: Int,
+    totalCount: Int,
 ) {
     Text(
         modifier = Modifier.fillMaxWidth(),
@@ -243,6 +260,22 @@ private fun GameProgress(
     )
 }
 
+/**
+ * Preview wrapper for GameProgress composable.
+ */
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 500)
+@Composable
+private fun GameProgressPreview() {
+    GameProgress(correctCount = 3, totalCount = 5)
+}
+
+/**
+ * A colored shape button that displays a shape filled with a specific color.
+ *
+ * @param shape The shape to display
+ * @param color The color to fill the shape with
+ * @param onClick Callback invoked when the shape is clicked
+ */
 @Composable
 private fun ColoredShapeButton(
     shape: GameShape,
@@ -261,6 +294,9 @@ private fun ColoredShapeButton(
     )
 }
 
+/**
+ * Preview of the ShapeMatchGameScreen for design-time visualization.
+ */
 @Preview
 @Composable
 private fun ShapeMatchGameScreenPreview() {
