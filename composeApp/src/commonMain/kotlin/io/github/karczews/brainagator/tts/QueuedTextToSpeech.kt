@@ -27,6 +27,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Abstract base class for TextToSpeech implementations that provides
@@ -38,34 +39,53 @@ import kotlinx.coroutines.launch
 abstract class QueuedTextToSpeech : TextToSpeech {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
     private val queue = Channel<Job>(Channel.UNLIMITED)
+    private val isSpeakingFlag = AtomicBoolean(false)
+    private var queueProcessor: Job? = null
 
     init {
-        scope.launch {
-            for (job in queue) job.join()
-        }
+        startQueueProcessor()
+    }
+
+    private fun startQueueProcessor() {
+        queueProcessor?.cancel()
+        queueProcessor =
+            scope.launch {
+                for (job in queue) {
+                    isSpeakingFlag.set(true)
+                    job.join()
+                    isSpeakingFlag.set(false)
+                }
+            }
     }
 
     override fun speak(text: String): Job {
+        if (queue.isClosedForSend) {
+            Logger.w { "TTS queue closed, restarting..." }
+            startQueueProcessor()
+        }
+
         val job =
             scope.launch(start = CoroutineStart.LAZY) {
                 try {
                     performSpeak(text)
                 } catch (e: CancellationException) {
-                    // Expected when cancelled
                     throw e
                 } catch (e: Exception) {
-                    // Log error but don't crash the queue
                     Logger.e(e) { "TTS Error speaking: $text" }
                 }
             }
 
-        queue.trySend(job)
+        val result = queue.trySend(job)
+        if (result.isFailure) {
+            Logger.w { "TTS queue closed, cannot enqueue: $text" }
+            job.cancel()
+        }
         return job
     }
 
     override fun stop() {
-        queue.cancel()
         performStop()
+        isSpeakingFlag.set(false)
     }
 
     override fun shutdown() {

@@ -57,13 +57,14 @@ class IosTextToSpeech : QueuedTextToSpeech() {
 
         synthesizer.speakUtterance(utterance)
 
-        // Poll for completion
-        while (synthesizer.isSpeaking()) {
+        // Wait for speaking to start (handles async nature of speakUtterance)
+        var started = false
+        while (true) {
+            val speaking = synthesizer.isSpeaking()
+            if (speaking) started = true
+            if (started && !speaking) break
             delay(50)
         }
-
-        completable.complete(Unit)
-        completable.await()
     }
 
     override fun performStop() {

@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
-import brainagator.composeapp.generated.resources.shape_match_keep_going
 import brainagator.composeapp.generated.resources.shape_match_progress
 import brainagator.composeapp.generated.resources.shape_match_select_color
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
@@ -146,14 +145,6 @@ fun ShapeMatchGameScreen(
                             stringResource(target.second.nameRes),
                             stringResource(target.first.nameRes),
                         ),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-
-            if (currentTarget == null && targetPairs.isNotEmpty()) {
-                Text(
-                    text = stringResource(Res.string.shape_match_keep_going),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
