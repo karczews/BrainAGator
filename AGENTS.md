@@ -88,3 +88,4 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - Project has dual Android modules (androidApp + composeApp as androidLibrary) - document rationale if intentional
 - Package names should align across modules for consistency
 - Qodana token uses project-specific instance ID - may need updating if migrating Qodana instance
+- **Read CONTRIBUTING.md**: Always review `docs/CONTRIBUTING.md` for project-specific setup instructions, code style guidelines, and contribution workflow before making changes
