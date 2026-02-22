@@ -57,7 +57,7 @@ fun GamePlaceholder(
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
-    ) { innerPadding ->
+    ) { innerPadding, _ ->
         Box(
             modifier =
                 Modifier

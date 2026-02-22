@@ -44,6 +44,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.ic_replay_speaker
 import brainagator.composeapp.generated.resources.repeat_instruction
+import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 fun GameScreenScaffold(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
     val tts = rememberTextToSpeech()
     val scope = rememberCoroutineScope()
@@ -120,7 +121,7 @@ fun GameScreenScaffold(
                         ),
                     ),
         ) {
-            content(innerPadding)
+            content(innerPadding, tts)
         }
     }
 }

@@ -118,7 +118,7 @@ fun ShapeMatchGameScreen(
         }
     }
 
-    GameScreenScaffold(gameInfo, onBackClick) { innerPadding ->
+    GameScreenScaffold(gameInfo, onBackClick) { innerPadding, _ ->
         Column(
             modifier =
                 Modifier
