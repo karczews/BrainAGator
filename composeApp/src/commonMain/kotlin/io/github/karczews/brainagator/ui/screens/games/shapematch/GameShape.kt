@@ -146,46 +146,50 @@ class HeartShape : Shape {
                 val width = size.width
                 val height = size.height
 
-                moveTo(width / 2f, height * 0.75f)
+                // Start at bottom point (sharp angle)
+                moveTo(width / 2f, height)
 
-                // Right side curve
+                // Right side curve going up to right lobe
                 cubicTo(
                     width * 0.75f,
-                    height * 0.75f,
-                    width * 0.85f,
-                    height * 0.4f,
+                    height * 0.6f,
                     width * 0.85f,
                     height * 0.35f,
-                )
-                cubicTo(
                     width * 0.85f,
-                    height * 0.1f,
-                    width * 0.65f,
-                    height * 0.1f,
-                    width * 0.55f,
                     height * 0.25f,
                 )
+                // Curve to top of right lobe
+                cubicTo(
+                    width * 0.85f,
+                    height * 0.05f,
+                    width * 0.65f,
+                    height * 0.05f,
+                    width * 0.55f,
+                    height * 0.2f,
+                )
 
-                // Top middle
-                lineTo(width / 2f, height * 0.35f)
+                // Center dip
+                lineTo(width / 2f, height * 0.3f)
 
-                // Left side curve (mirror)
-                lineTo(width * 0.45f, height * 0.25f)
+                // Top of left lobe
+                lineTo(width * 0.45f, height * 0.2f)
+                // Curve down to left lobe
                 cubicTo(
                     width * 0.35f,
-                    height * 0.1f,
+                    height * 0.05f,
                     width * 0.15f,
-                    height * 0.1f,
+                    height * 0.05f,
                     width * 0.15f,
-                    height * 0.35f,
+                    height * 0.25f,
                 )
+                // Curve down left side
                 cubicTo(
                     width * 0.15f,
-                    height * 0.4f,
+                    height * 0.35f,
                     width * 0.25f,
-                    height * 0.75f,
+                    height * 0.6f,
                     width / 2f,
-                    height * 0.75f,
+                    height,
                 )
 
                 close()
