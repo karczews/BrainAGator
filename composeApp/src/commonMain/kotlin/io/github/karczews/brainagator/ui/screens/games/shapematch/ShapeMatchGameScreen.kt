@@ -79,14 +79,14 @@ fun ShapeMatchGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
     maxShapes: Int = 6,
-    maxColors: Int = 6,
+    maxColors: Int = 8,
 ) {
-    val availableShapes = remember { gameShapes.take(maxShapes.coerceIn(1, gameShapes.size)) }
-    val availableColors = remember { gameColors.take(maxColors.coerceIn(1, gameColors.size)) }
+    val availableShapes = remember(maxShapes) { gameShapes.take(maxShapes.coerceIn(1, gameShapes.size)) }
+    val availableColors = remember(maxColors) { gameColors.take(maxColors.coerceIn(1, gameColors.size)) }
 
     // Generate random pairs on start
     val targetPairs =
-        remember {
+        remember(maxShapes, maxColors) {
             mutableStateListOf<Pair<GameShape, GameColor>>().apply {
                 repeat(4) {
                     add(availableShapes.random() to availableColors.random())
@@ -139,12 +139,7 @@ fun ShapeMatchGameScreen(
                     tts.speak(currentActionString)
                 }
                 Text(
-                    text =
-                        stringResource(
-                            Res.string.shape_match_select_instruction,
-                            stringResource(target.second.nameRes),
-                            stringResource(target.first.nameRes),
-                        ),
+                    text = currentActionString,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )

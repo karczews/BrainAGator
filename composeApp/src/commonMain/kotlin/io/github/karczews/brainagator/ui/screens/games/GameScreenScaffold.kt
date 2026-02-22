@@ -47,7 +47,6 @@ import brainagator.composeapp.generated.resources.repeat_instruction
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -90,9 +89,7 @@ fun GameScreenScaffold(
                 actions = {
                     IconButton(
                         onClick = {
-                            scope.launch {
-                                tts.speak(description)
-                            }
+                            tts.speak(description)
                         },
                         modifier = Modifier.size(60.dp),
                     ) {
