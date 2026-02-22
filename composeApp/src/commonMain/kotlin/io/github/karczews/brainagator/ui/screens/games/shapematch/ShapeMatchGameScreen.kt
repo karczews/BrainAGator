@@ -38,7 +38,9 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,6 +59,11 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import org.jetbrains.compose.resources.stringResource
 
+private data class ShapeColorPair(
+    val shape: GameShape,
+    val color: GameColor,
+)
+
 val ShapeMatchGameInfo =
     GameInfo(
         titleRes = Res.string.game_shape_match,
@@ -73,8 +80,44 @@ fun ShapeMatchGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
+    val targetPairs = remember { mutableStateListOf<ShapeColorPair>() }
+    var currentIndex by remember { mutableStateOf(0) }
     var selectedShape by remember { mutableStateOf<GameShape?>(null) }
     var selectedColor by remember { mutableStateOf<GameColor?>(null) }
+
+    // Generate random pairs on start
+    LaunchedEffect(Unit) {
+        if (targetPairs.isEmpty()) {
+            val pairs = mutableListOf<ShapeColorPair>()
+            repeat(4) {
+                val randomShape = gameShapes.random()
+                val randomColor = gameColors.random()
+                pairs.add(ShapeColorPair(randomShape, randomColor))
+            }
+            targetPairs.addAll(pairs)
+        }
+    }
+
+    val currentTarget = targetPairs.getOrNull(currentIndex)
+
+    fun checkSelection() {
+        if (selectedShape != null && selectedColor != null && currentTarget != null) {
+            if (selectedShape == currentTarget.shape && selectedColor == currentTarget.color) {
+                // Correct - remove and move to next
+                targetPairs.removeAt(currentIndex)
+                selectedShape = null
+                selectedColor = null
+
+                if (targetPairs.isEmpty()) {
+                    onGameWon()
+                }
+            } else {
+                // Incorrect - deselect both
+                selectedShape = null
+                selectedColor = null
+            }
+        }
+    }
 
     GameScreenScaffold(gameInfo, onBackClick) { innerPadding ->
         Column(
@@ -85,6 +128,25 @@ fun ShapeMatchGameScreen(
                     .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Instruction text
+            currentTarget?.let { target ->
+                Text(
+                    text = "Select a ${stringResource(target.color.nameRes)} ${stringResource(target.shape.nameRes)}",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            if (currentTarget == null && targetPairs.isNotEmpty()) {
+                Text(
+                    text = "Great! Keep going!",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
                 text = "Select a shape",
                 style = MaterialTheme.typography.titleMedium,
@@ -110,7 +172,10 @@ fun ShapeMatchGameScreen(
                         ShapeButton(
                             shape = shape,
                             isSelected = selectedShape == shape,
-                            onClick = { selectedShape = shape },
+                            onClick = {
+                                selectedShape = shape
+                                checkSelection()
+                            },
                         )
                     }
                 }
@@ -143,7 +208,10 @@ fun ShapeMatchGameScreen(
                         ColorButton(
                             gameColor = gameColor,
                             isSelected = selectedColor == gameColor,
-                            onClick = { selectedColor = gameColor },
+                            onClick = {
+                                selectedColor = gameColor
+                                checkSelection()
+                            },
                         )
                     }
                 }
@@ -151,15 +219,12 @@ fun ShapeMatchGameScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            selectedShape?.let { shape ->
-                selectedColor?.let { color ->
-                    Text(
-                        text = "You selected: ${stringResource(shape.nameRes)} + ${stringResource(color.nameRes)}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            // Progress indicator
+            Text(
+                text = "${4 - targetPairs.size} / 4 completed",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
     }
 }
