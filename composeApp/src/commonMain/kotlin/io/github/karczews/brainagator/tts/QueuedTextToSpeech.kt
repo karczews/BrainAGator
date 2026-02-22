@@ -27,7 +27,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Abstract base class for TextToSpeech implementations that provides
@@ -39,7 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class QueuedTextToSpeech : TextToSpeech {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
     private val queue = Channel<Job>(Channel.UNLIMITED)
-    private val isSpeakingFlag = AtomicBoolean(false)
     private var queueProcessor: Job? = null
 
     init {
@@ -51,9 +49,7 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         queueProcessor =
             scope.launch {
                 for (job in queue) {
-                    isSpeakingFlag.set(true)
                     job.join()
-                    isSpeakingFlag.set(false)
                 }
             }
     }
@@ -85,7 +81,6 @@ abstract class QueuedTextToSpeech : TextToSpeech {
 
     override fun stop() {
         performStop()
-        isSpeakingFlag.set(false)
     }
 
     override fun shutdown() {
