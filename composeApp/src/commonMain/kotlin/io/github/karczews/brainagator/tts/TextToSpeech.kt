@@ -45,12 +45,6 @@ interface TextToSpeech {
     fun stop()
 
     /**
-     * Check if currently speaking.
-     * @return true if currently speaking, false otherwise
-     */
-    fun isSpeaking(): Boolean
-
-    /**
      * Set speech rate (speed).
      * @param rate Value between 0.0 (slowest) and 2.0 (fastest), 1.0 is normal
      */

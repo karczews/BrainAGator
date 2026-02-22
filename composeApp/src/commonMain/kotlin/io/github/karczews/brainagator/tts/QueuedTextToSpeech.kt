@@ -68,8 +68,6 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         performStop()
     }
 
-    override fun isSpeaking(): Boolean = !queue.isClosedForSend
-
     override fun shutdown() {
         queue.cancel()
         scope.cancel()
