@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -118,7 +119,7 @@ fun ShapeMatchGameScreen(
         }
     }
 
-    GameScreenScaffold(gameInfo, onBackClick) { innerPadding, _ ->
+    GameScreenScaffold(gameInfo, onBackClick) { innerPadding, tts ->
         Column(
             modifier =
                 Modifier
@@ -129,6 +130,15 @@ fun ShapeMatchGameScreen(
         ) {
             // Instruction text
             currentTarget?.let { target ->
+                val currentActionString =
+                    stringResource(
+                        Res.string.shape_match_select_instruction,
+                        stringResource(target.second.nameRes),
+                        stringResource(target.first.nameRes),
+                    )
+                LaunchedEffect(currentActionString) {
+                    tts.speak(currentActionString)
+                }
                 Text(
                     text =
                         stringResource(
