@@ -1,7 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-01-26
-**Commit:** 2a785c7
+**Generated:** 2026-02-23
 
 ## OVERVIEW
 Kotlin Multiplatform project targeting Android, iOS, Web, and Desktop (JVM). Uses Compose Multiplatform for shared UI code across all platforms.
@@ -18,7 +17,7 @@ brainagator/
 | Task | Location | Notes |
 |------|----------|-------|
 | Shared UI/Logic | composeApp/src/commonMain/kotlin | Common code for all platforms |
-| Platform-specific | composeApp/src/{platform}Main/kotlin | androidMain, iosMain, jvmMain, webMain, jsMain, wasmJsMain |
+| Platform-specific | composeApp/src/{platform}Main/kotlin | androidMain, iosMain, jvmMain, jsMain, wasmJsMain |
 | Android entry | androidApp/src/main/java | MainActivity with Compose integration |
 | iOS entry | iosApp/iosApp | SwiftUI app embedding Compose framework |
 | Platform abstraction | composeApp/src/*/kotlin/Platform*.kt | expect/actual pattern for platform APIs |
@@ -31,19 +30,38 @@ brainagator/
 - **expect/actual**: Use for platform-specific APIs (see Platform.kt pattern)
 
 ### Entry Point Pattern
-All platforms render the same `App()` composable from `composeApp/src/commonMain/kotlin/com/example/brainagator/App.kt`
+All platforms render the same `App()` composable from `composeApp/src/commonMain/kotlin/io/github/karczews/brainagator/App.kt`
 
 ### Build System
 - **Gradle version catalog**: All dependencies defined in `gradle/libs.versions.toml`
-- **Toolchains**: JVM 21 for Kotlin toolchain, JDK 17 for compilation
+- **Toolchains**: JVM 21 for Kotlin toolchain
 - **Memory**: High allocation configured (4GB Gradle, 3GB Kotlin daemon)
 
 ### Code Quality
 - **Qodana**: Static analysis via `qodana_code_quality.yml` workflow
 - **License checking**: Enforced via Qodana
 
+### Communication Guidelines
+- **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
+- **Verify "known issues"**: Don't label issues as "known" or "tracked" without verifying ticket/issue tracker references
+- **Be precise**: Distinguish between what is actually known vs. what is inferred from symptoms
+- **Prefer new commits**: When making updates to existing changes (including during code review), create new commits instead of amending existing ones. This preserves the history and makes it easier to track what changed.
+
+**Example of inferred vs. known:**
+- ❌ *Inferred*: "This is a known issue with Kotlin 2.3.10" (without evidence)
+- ✅ *Known*: "The stack trace shows the warning originates from Kotlin plugin's internal artifact creation code at `KotlinTargetArtifactKt.createPublishArtifact`"
+
+### Commit Message Guidelines
+We follow [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/). See `docs/CONTRIBUTING.md` for the complete guide.
+
+**Quick reference:**
+- Format: `<type>[optional scope]: <description>`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
+- Description: imperative, present tense, lowercase, no period, under 72 chars
+- Breaking changes: add `!` after type/scope or use `BREAKING CHANGE:` footer
+- Example: `feat: add shape match game with TTS queue support`
+
 ## ANTI-PATTERNS (THIS PROJECT)
-- Package name mismatch: `androidApp` uses `com.example.androidapp`, `composeApp` uses `io.github.karczews.brainagator`
 - Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
 
 ## UNIQUE STYLES
@@ -76,5 +94,5 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 
 ## NOTES
 - Project has dual Android modules (androidApp + composeApp as androidLibrary) - document rationale if intentional
-- Package names should align across modules for consistency
 - Qodana token uses project-specific instance ID - may need updating if migrating Qodana instance
+- **Read CONTRIBUTING.md**: Always review `docs/CONTRIBUTING.md` for project-specific setup instructions, code style guidelines, and contribution workflow before making changes

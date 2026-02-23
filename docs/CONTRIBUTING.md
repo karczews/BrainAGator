@@ -292,7 +292,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 <footer>
 ```
 
-The header is required. Scope is optional. Keep all lines under 100 characters.
+The header is required. Scope is optional. Keep all lines under 100 characters (72 is recommended).
 
 ### Commit Types
 
@@ -313,7 +313,7 @@ The header is required. Scope is optional. Keep all lines under 100 characters.
 - Use imperative, present tense: "Add feature" not "Added feature"
 - Capitalize the first letter
 - No period at the end
-- Maximum 70 characters
+- Keep under 72 characters (soft limit, 50 is ideal)
 - Be concise but descriptive
 
 ### Examples
@@ -335,15 +335,25 @@ causing a crash in the dashboard. Add null check
 before accessing user properties.
 ```
 
-**Breaking change:**
+**Breaking change (with `!`):**
 ```text
 feat(api)!: Remove deprecated v1 endpoints
+
+Remove all v1 API endpoints that were deprecated
+in version 23.1. Clients should migrate to v2.
+```
+
+**Breaking change (with footer):**
+```text
+feat(api): Remove deprecated v1 endpoints
 
 Remove all v1 API endpoints that were deprecated
 in version 23.1. Clients should migrate to v2.
 
 BREAKING CHANGE: v1 endpoints no longer available
 ```
+
+Note: You can use `!` after type/scope OR the `BREAKING CHANGE:` footer. If you use `!`, the commit description serves as the breaking change explanation and the footer can be omitted. You can also use both - the `!` indicates breaking change at a glance, while the footer provides detailed explanation.
 
 **Reference issue:**
 ```text
