@@ -51,6 +51,16 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - ❌ *Inferred*: "This is a known issue with Kotlin 2.3.10" (without evidence)
 - ✅ *Known*: "The stack trace shows the warning originates from Kotlin plugin's internal artifact creation code at `KotlinTargetArtifactKt.createPublishArtifact`"
 
+### Commit Message Guidelines
+We follow [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/). See `docs/CONTRIBUTING.md` for the complete guide.
+
+**Quick reference:**
+- Format: `<type>[optional scope]: <description>`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
+- Description: imperative, present tense, lowercase, no period, under 72 chars
+- Breaking changes: add `!` after type/scope or use `BREAKING CHANGE:` footer
+- Example: `feat: add shape match game with TTS queue support`
+
 ## ANTI-PATTERNS (THIS PROJECT)
 - Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
 
