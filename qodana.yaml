@@ -10,8 +10,8 @@ profile:
 project:
   type: Android
 
-# JDK configuration for KMP project
-projectJDK: corretto-21
+# JDK 17 for consistency with other workflows (supports JVM 11 target for Android)
+projectJDK: corretto-17
 
 # Include additional inspections
 include:
@@ -30,7 +30,6 @@ exclude:
 
 # Bootstrap commands to prepare the project
 bootstrap: |
-  chmod +x gradlew
   ./gradlew :composeApp:dependencies --configuration androidCompileClasspath --quiet || true
 
 # Quality gate configuration

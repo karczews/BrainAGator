@@ -13,7 +13,6 @@ on:
   push:
     branches:
       - main
-      - master
       - 'releases/*'
 
 jobs:
@@ -30,10 +29,11 @@ jobs:
           ref: ${{ inputs.sha || github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
+      # JDK 17 for consistency with other workflows (supports JVM 11 target for Android)
       - name: Setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Gradle
