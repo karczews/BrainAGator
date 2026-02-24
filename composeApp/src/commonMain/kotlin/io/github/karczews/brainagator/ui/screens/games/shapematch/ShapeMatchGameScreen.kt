@@ -50,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -97,22 +99,23 @@ fun ShapeMatchGameScreen(
     maxColors: Int = 5,
     numbersOfItemsToSelect: Int = 12,
 ) {
+    // Validate input parameter
+    require(numbersOfItemsToSelect >= 1) {
+        "numbersOfItemsToSelect must be at least 1, got $numbersOfItemsToSelect"
+    }
+
     // Function to generate random shape-color pairs
     fun generateShapeColorPairs(): List<Pair<GameShape, GameColor>> {
         val shapes = gameShapes.shuffled().take(maxShapes.coerceIn(1, gameShapes.size))
         val colors = gameColors.shuffled().take(maxColors.coerceIn(1, gameColors.size))
 
-        val gamesList = mutableListOf<Pair<GameShape, GameColor>>()
+        // Calculate maximum unique combinations possible
+        val maxUnique = shapes.size * colors.size
+        val desiredCount = numbersOfItemsToSelect.coerceAtMost(maxUnique)
 
-        repeat(numbersOfItemsToSelect) {
-            var game = shapes.random() to colors.random()
-            while (game in gamesList) {
-                game = shapes.random() to colors.random()
-            }
-            gamesList.add(game)
-        }
-
-        return gamesList
+        // Build all possible pairs, shuffle, and take desired count
+        val allPairs = shapes.flatMap { shape -> colors.map { color -> shape to color } }
+        return allPairs.shuffled().take(desiredCount)
     }
 
     var shapeColorPairs by remember { mutableStateOf(generateShapeColorPairs()) }
@@ -120,7 +123,13 @@ fun ShapeMatchGameScreen(
     var isIncorrectSelection by remember { mutableStateOf(false) }
     val totalIterations = 5
 
-    val currentTarget = remember(shapeColorPairs) { shapeColorPairs.random() }
+    val currentTarget =
+        remember(shapeColorPairs) {
+            shapeColorPairs.randomOrNull()
+                ?: throw IllegalStateException(
+                    "shapeColorPairs is empty - this should not happen when numbersOfItemsToSelect >= 1",
+                )
+        }
 
     // Animate border width for flash effect
     val borderWidth by animateDpAsState(
@@ -213,7 +222,7 @@ fun ShapeMatchGameScreen(
                         items(shapeColorPairs) { (shape, color) ->
                             ColoredShapeButton(
                                 shape = shape,
-                                color = color.color,
+                                color = color,
                                 onClick = { handleShapeClick(shape, color) },
                             )
                         }
@@ -229,7 +238,7 @@ fun ShapeMatchGameScreen(
                         items(shapeColorPairs) { (shape, color) ->
                             ColoredShapeButton(
                                 shape = shape,
-                                color = color.color,
+                                color = color,
                                 onClick = { handleShapeClick(shape, color) },
                             )
                         }
@@ -279,17 +288,23 @@ private fun GameProgressPreview() {
 @Composable
 private fun ColoredShapeButton(
     shape: GameShape,
-    color: Color,
+    color: GameColor,
     onClick: () -> Unit,
 ) {
+    val shapeName = stringResource(shape.nameRes)
+    val colorName = stringResource(color.nameRes)
+    val buttonDescription = "$colorName $shapeName"
+
     Box(
         modifier =
             Modifier
                 .aspectRatio(1f)
                 .padding(6.dp)
                 .clip(shape.shape)
-                .clickable(onClick = onClick)
-                .background(color)
+                .semantics {
+                    contentDescription = buttonDescription
+                }.clickable(onClick = onClick)
+                .background(color.color)
                 .border(2.dp, MaterialTheme.colorScheme.outline, shape.shape),
     )
 }
