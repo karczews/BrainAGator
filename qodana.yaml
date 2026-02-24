@@ -7,9 +7,6 @@ linter: jetbrains/qodana-jvm-android:2025.3
 profile:
   name: qodana.recommended
 
-project:
-  type: Android
-
 # JDK 17 for consistency with other workflows (supports JVM 11 target for Android)
 projectJDK: corretto-17
 
