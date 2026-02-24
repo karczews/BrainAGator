@@ -6,5 +6,39 @@ version: "1.0"
 linter: jetbrains/qodana-jvm-android:2025.3
 profile:
   name: qodana.recommended
+
+project:
+  type: Android
+
+# JDK configuration for KMP project
+projectJDK: corretto-21
+
+# Include additional inspections
 include:
   - name: CheckDependencyLicenses
+
+# Kotlin Multiplatform specific exclusions
+exclude:
+  - name: All
+    paths:
+      - build
+      - .gradle
+      - "**/build"
+      - "**/.gradle"
+      - iosApp
+      - "**/iosApp/**"
+
+# Bootstrap commands to prepare the project
+bootstrap: |
+  chmod +x gradlew
+  ./gradlew :composeApp:dependencies --configuration androidCompileClasspath --quiet || true
+
+# Quality gate configuration
+failureConditions:
+  severityThresholds:
+    any: 100
+    critical: 0
+    high: 10
+    moderate: 50
+    low: 100
+    info: 100
