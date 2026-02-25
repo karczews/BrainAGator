@@ -16,7 +16,6 @@
 
 package io.github.karczews.brainagator.ui.screens.games.numberorder
 
-import androidx.collection.mutableIntListOf
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -25,13 +24,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tag
@@ -41,11 +41,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -58,9 +57,11 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
 import brainagator.composeapp.generated.resources.subtitle_number_order
+import co.touchlab.kermit.Logger
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
+import kotlinx.coroutines.delay
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -78,41 +79,26 @@ fun NumberOrderGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     fun generateNumbers(): List<Int> = (1..9).shuffled().take(5)
 
-    var numbers by remember { mutableStateOf(generateNumbers()) }
-    var greenCount by remember { mutableIntStateOf(0) }
-    var isIncorrectSelection by remember { mutableStateOf(false) }
+    val generatedNumbers = remember { generateNumbers() }
 
-    val targetNumber =
-        remember(numbers, greenCount) {
-            numbers.filter { it > greenCount }.minOrNull() ?: numbers.minOrNull() ?: 1
+    val gameNumbersInOrder = remember(generatedNumbers) { generatedNumbers.sorted().toMutableStateList() }
+    val gameNumbers = remember(generatedNumbers) { generatedNumbers.map { GameNumber(it, false) }.toMutableStateList() }
+    val correctNextNumber = remember(gameNumbersInOrder) { gameNumbersInOrder.first() }
+
+    val onNumberClick = { gameNumber: GameNumber ->
+        Logger.d { "Number clicked: ${gameNumber.number}, gameNumbersInOrder=$gameNumbersInOrder" }
+        if (gameNumber.number == gameNumbersInOrder.first()) {
+            gameNumbersInOrder.removeFirst()
+            gameNumbers.remove(gameNumber)
+            val position = gameNumbers.indexOfLast { it.matched } + 1
+            gameNumbers.add(position, gameNumber.copy(matched = true))
+            Logger.d { "New gameNumbers=$gameNumbers" }
         }
-
-    LaunchedEffect(isIncorrectSelection) {
-        if (isIncorrectSelection) {
-            kotlinx.coroutines.delay(300)
-            isIncorrectSelection = false
+        if (gameNumbersInOrder.isEmpty()) {
+            onGameWon()
         }
-    }
-
-    fun handleNumberClick(clickedNumber: Int) {
-        if (clickedNumber == targetNumber) {
-            greenCount++
-            if (greenCount >= 5) {
-                onGameWon()
-            }
-        } else {
-            isIncorrectSelection = true
-        }
-    }
-
-    fun resetGame() {
-        numbers = generateNumbers()
-        greenCount = 0
-        isIncorrectSelection = false
     }
 
     GameScreenScaffold(
@@ -138,10 +124,9 @@ fun NumberOrderGameScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             NumberBoxesRow(
-                numbers = numbers,
-                greenCount = greenCount,
-                isIncorrectSelection = isIncorrectSelection,
-                onNumberClick = { handleNumberClick(it) },
+                gameNumbers = gameNumbers,
+                correctNextNumber = correctNextNumber,
+                onNumberClick = onNumberClick,
             )
         }
     }
@@ -149,40 +134,45 @@ fun NumberOrderGameScreen(
 
 @Composable
 private fun NumberBoxesRow(
-    numbers: List<Int>,
-    greenCount: Int,
-    isIncorrectSelection: Boolean,
-    onNumberClick: (Int) -> Unit,
+    gameNumbers: List<GameNumber>,
+    correctNextNumber: Int,
+    onNumberClick: (GameNumber) -> Unit,
 ) {
-    val remainingNumbersUnordered =
-        remember(numbers) {
-            mutableIntListOf(*numbers.toIntArray())
-        }
-    val currentNumberOrder =
-        remember(numbers) {
-            mutableIntListOf()
-        }
-
-    Row(
+    LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        currentNumberOrder.forEach { number ->
-            key(number) {
-                NumberBox(
-                    number = number,
-                    isGreen = true,
-                    isIncorrectSelection = isIncorrectSelection,
-                    onClick = { onNumberClick(number) },
-                )
+        items(
+            items = gameNumbers,
+            key = { it.number },
+        ) { gameNumber ->
+            var isIncorrectSelection by remember { mutableStateOf(false) }
+            LaunchedEffect(isIncorrectSelection) {
+                if (isIncorrectSelection) {
+                    delay(300)
+                    isIncorrectSelection = false
+                }
             }
+            NumberBox(
+                modifier = Modifier.animateItem(),
+                number = gameNumber.number,
+                isGreen = gameNumber.matched,
+                isIncorrectSelection = isIncorrectSelection,
+                onClick = {
+                    if (gameNumber.number != correctNextNumber) {
+                        isIncorrectSelection = true
+                    }
+                    onNumberClick(gameNumber)
+                },
+            )
         }
     }
 }
 
 @Composable
 private fun NumberBox(
+    modifier: Modifier,
     number: Int,
     isGreen: Boolean,
     isIncorrectSelection: Boolean,
@@ -219,7 +209,7 @@ private fun NumberBox(
 
     Box(
         modifier =
-            Modifier
+            modifier
                 .size(64.dp)
                 .scale(1f + shakeOffset.value * 0.1f)
                 .background(backgroundColor, RoundedCornerShape(12.dp))
@@ -251,3 +241,8 @@ private fun NumberOrderGameScreenPreview() {
         onGameWon = {},
     )
 }
+
+data class GameNumber(
+    val number: Int,
+    val matched: Boolean,
+)
