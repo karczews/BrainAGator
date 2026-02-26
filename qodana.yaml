@@ -20,8 +20,10 @@ exclude:
     paths:
       - build
       - .gradle
+      - .kotlin
       - "**/build"
       - "**/.gradle"
+      - "**/.kotlin"
       - iosApp
       - "**/iosApp/**"
 
