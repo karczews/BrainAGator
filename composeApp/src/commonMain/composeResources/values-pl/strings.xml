@@ -69,4 +69,51 @@
     <string name="shape_match_select_shape">Wybierz kształt</string>
     <string name="shape_match_select_color">Wybierz kolor</string>
     <string name="shape_match_progress">%1$d / %2$d ukończono</string>
+
+    <!-- Number Order Feedback -->
+    <string-array name="number_order_feedback_positive">
+        <item>super</item>
+        <item>świetnie</item>
+        <item>hurra</item>
+        <item>no jasne</item>
+        <item>tak trzymaj</item>
+        <item>ekstra</item>
+        <item>dobra robota</item>
+        <item>świetna robota</item>
+        <item>genialnie</item>
+        <item>fantastycznie</item>
+        <item>doskonale</item>
+        <item>udało się</item>
+        <item>idealnie</item>
+        <item>niesamowicie</item>
+        <item>rewelacja</item>
+        <item>znakomicie</item>
+        <item>tak dalej</item>
+        <item>w punkt</item>
+        <item>mistrzowsko</item>
+        <item>świetnie wykonane</item>
+    </string-array>
+
+    <string-array name="number_order_feedback_negative">
+        <item>spróbuj ponownie</item>
+        <item>nie poddawaj się</item>
+        <item>nie całkiem</item>
+        <item>próbuj dalej</item>
+        <item>prawie</item>
+        <item>ups</item>
+        <item>może następnym razem</item>
+        <item>podejdź jeszcze raz</item>
+        <item>było blisko</item>
+        <item>jeszcze nie</item>
+        <item>zła liczba</item>
+        <item>może inny numer</item>
+        <item>spróbujmy jeszcze raz</item>
+        <item>spójrz jeszcze raz</item>
+        <item>dasz radę</item>
+        <item>jesteś blisko</item>
+        <item>spróbuj raz jeszcze</item>
+        <item>to nie to</item>
+        <item>jeszcze jedna próba</item>
+        <item>daj temu jeszcze szansę</item>
+    </string-array>
 </resources>

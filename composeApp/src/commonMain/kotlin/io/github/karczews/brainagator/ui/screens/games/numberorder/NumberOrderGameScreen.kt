@@ -56,12 +56,15 @@ import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
+import brainagator.composeapp.generated.resources.number_order_feedback_negative
+import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.subtitle_number_order
-import co.touchlab.kermit.Logger
+import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.stringArrayResource
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -87,24 +90,47 @@ fun NumberOrderGameScreen(
     val gameNumbers = remember(generatedNumbers) { generatedNumbers.map { GameNumber(it, false) }.toMutableStateList() }
     val correctNextNumber = remember(gameNumbersInOrder) { gameNumbersInOrder.first() }
 
-    val onNumberClick = { gameNumber: GameNumber ->
-        Logger.d { "Number clicked: ${gameNumber.number}, gameNumbersInOrder=$gameNumbersInOrder" }
-        if (gameNumber.number == gameNumbersInOrder.first()) {
-            gameNumbersInOrder.removeFirst()
-            gameNumbers.remove(gameNumber)
-            val position = gameNumbers.indexOfLast { it.matched } + 1
-            gameNumbers.add(position, gameNumber.copy(matched = true))
-            Logger.d { "New gameNumbers=$gameNumbers" }
-        }
-        if (gameNumbersInOrder.isEmpty()) {
-            onGameWon()
-        }
-    }
+    val positiveFeedbackMessages =
+        stringArrayResource(Res.array.number_order_feedback_positive)
+    val negativeFeedbackMessages =
+        stringArrayResource(Res.array.number_order_feedback_negative)
 
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
     ) { innerPadding, tts ->
+
+        var feedbackMessage by remember { mutableStateOf<String?>(null) }
+
+        val onNumberClick = { gameNumber: GameNumber ->
+            Logger.d { "Number clicked: ${gameNumber.number}, gameNumbersInOrder=$gameNumbersInOrder" }
+            if (gameNumber.number == gameNumbersInOrder.first()) {
+                gameNumbersInOrder.removeFirst()
+                gameNumbers.remove(gameNumber)
+                val position = gameNumbers.indexOfLast { it.matched } + 1
+                gameNumbers.add(position, gameNumber.copy(matched = true))
+                Logger.d { "New gameNumbers=$gameNumbers" }
+                feedbackMessage = positiveFeedbackMessages.random()
+            } else {
+                feedbackMessage = negativeFeedbackMessages.random()
+            }
+
+            if (gameNumbersInOrder.isEmpty()) {
+                onGameWon()
+            }
+        }
+
+        LaunchedEffect(feedbackMessage) {
+            feedbackMessage?.let {
+                val job = tts.speak(it)
+                try {
+                    job.join()
+                } finally {
+                    job.cancel()
+                }
+            }
+        }
+
         Column(
             modifier =
                 Modifier
