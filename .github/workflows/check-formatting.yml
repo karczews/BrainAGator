@@ -3,6 +3,9 @@ name: Check formatting
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   ktlint:
     name: Run ktlint
