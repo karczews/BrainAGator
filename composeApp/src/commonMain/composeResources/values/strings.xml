@@ -69,4 +69,54 @@
     <string name="shape_match_select_shape">Select a shape</string>
     <string name="shape_match_select_color">Select a color</string>
     <string name="shape_match_progress">%1$d / %2$d completed</string>
+
+    <!-- Number Order Game -->
+    <string name="number_order_instruction">Click the numbers in order from smallest to largest!</string>
+
+    <!-- Number Order Feedback -->
+    <string-array name="number_order_feedback_positive">
+        <item>super</item>
+        <item>great</item>
+        <item>whoohoo</item>
+        <item>oh right</item>
+        <item>keep going</item>
+        <item>awesome</item>
+        <item>well done</item>
+        <item>nice job</item>
+        <item>brilliant</item>
+        <item>fantastic</item>
+        <item>excellent</item>
+        <item>you got it</item>
+        <item>perfect</item>
+        <item>amazing</item>
+        <item>terrific</item>
+        <item>outstanding</item>
+        <item>keep it up</item>
+        <item>right on</item>
+        <item>nailed it</item>
+        <item>good work</item>
+    </string-array>
+
+    <string-array name="number_order_feedback_negative">
+        <item>try again</item>
+        <item>don\'t give up</item>
+        <item>not quite</item>
+        <item>keep trying</item>
+        <item>almost</item>
+        <item>oops</item>
+        <item>maybe next time</item>
+        <item>give it another go</item>
+        <item>close one</item>
+        <item>not yet</item>
+        <item>wrong number</item>
+        <item>try a different one</item>
+        <item>let\'s retry</item>
+        <item>take another look</item>
+        <item>keep at it</item>
+        <item>you\'re close</item>
+        <item>have another go</item>
+        <item>that wasn\'t it</item>
+        <item>try once more</item>
+        <item>give it a shot again</item>
+    </string-array>
 </resources>

@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -112,6 +113,7 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
         Logger.v { "TTS speaking: \"$text\"" }
 
         withContext(Dispatchers.IO) {
+            if (!isActive) return@withContext
             try {
                 val command = buildCommand(text)
                 Logger.d { "TTS executing: $command" }
