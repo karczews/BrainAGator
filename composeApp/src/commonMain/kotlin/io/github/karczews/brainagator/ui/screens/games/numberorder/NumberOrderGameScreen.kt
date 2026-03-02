@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -88,7 +89,7 @@ fun NumberOrderGameScreen(
 
     val gameNumbersInOrder = remember(generatedNumbers) { generatedNumbers.sorted().toMutableStateList() }
     val gameNumbers = remember(generatedNumbers) { generatedNumbers.map { GameNumber(it, false) }.toMutableStateList() }
-    val correctNextNumber = remember(gameNumbersInOrder) { gameNumbersInOrder.first() }
+    val correctNextNumber by remember { derivedStateOf { gameNumbersInOrder.first() } }
 
     val positiveFeedbackMessages =
         stringArrayResource(Res.array.number_order_feedback_positive)
