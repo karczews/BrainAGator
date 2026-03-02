@@ -99,7 +99,7 @@
 
     <string-array name="number_order_feedback_negative">
         <item>try again</item>
-        <item>don't give up</item>
+        <item>don\'t give up</item>
         <item>not quite</item>
         <item>keep trying</item>
         <item>almost</item>
@@ -110,12 +110,12 @@
         <item>not yet</item>
         <item>wrong number</item>
         <item>try a different one</item>
-        <item>let's retry</item>
+        <item>let\'s retry</item>
         <item>take another look</item>
         <item>keep at it</item>
-        <item>you're close</item>
+        <item>you\'re close</item>
         <item>have another go</item>
-        <item>that wasn't it</item>
+        <item>that wasn\'t it</item>
         <item>try once more</item>
         <item>give it a shot again</item>
     </string-array>
