@@ -91,7 +91,7 @@ fun NumberOrderGameScreen(
 
     val gameNumbersInOrder = remember(generatedNumbers) { generatedNumbers.sorted().toMutableStateList() }
     val gameNumbers = remember(generatedNumbers) { generatedNumbers.map { GameNumber(it, false) }.toMutableStateList() }
-    val correctNextNumber by remember { derivedStateOf { gameNumbersInOrder.first() } }
+    val correctNextNumber by remember { derivedStateOf { gameNumbersInOrder.firstOrNull() ?: 0 } }
 
     val positiveFeedbackMessages =
         stringArrayResource(Res.array.number_order_feedback_positive)
