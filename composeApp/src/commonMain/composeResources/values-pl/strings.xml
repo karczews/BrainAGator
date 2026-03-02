@@ -70,6 +70,9 @@
     <string name="shape_match_select_color">Wybierz kolor</string>
     <string name="shape_match_progress">%1$d / %2$d ukończono</string>
 
+    <!-- Number Order Game -->
+    <string name="number_order_instruction">Klikaj liczby po kolei od najmniejszej do największej!</string>
+
     <!-- Number Order Feedback -->
     <string-array name="number_order_feedback_positive">
         <item>super</item>

@@ -59,6 +59,7 @@ import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
+import brainagator.composeapp.generated.resources.number_order_instruction
 import brainagator.composeapp.generated.resources.subtitle_number_order
 import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -66,6 +67,7 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringArrayResource
+import org.jetbrains.compose.resources.stringResource
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -142,7 +144,7 @@ fun NumberOrderGameScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "Click the numbers in order from smallest to largest!",
+                text = stringResource(Res.string.number_order_instruction),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
