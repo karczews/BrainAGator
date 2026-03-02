@@ -104,18 +104,22 @@ fun NumberOrderGameScreen(
     ) { innerPadding, tts ->
 
         var feedbackMessage by remember { mutableStateOf<String?>(null) }
+        var feedbackEventId by remember { mutableStateOf(0) }
 
         val onNumberClick = { gameNumber: GameNumber ->
             Logger.d { "Number clicked: ${gameNumber.number}, gameNumbersInOrder=$gameNumbersInOrder" }
-            if (gameNumber.number == gameNumbersInOrder.first()) {
+            val nextNumber = gameNumbersInOrder.firstOrNull()
+            if (nextNumber != null && gameNumber.number == nextNumber) {
                 gameNumbersInOrder.removeFirst()
                 gameNumbers.remove(gameNumber)
                 val position = gameNumbers.indexOfLast { it.matched } + 1
                 gameNumbers.add(position, gameNumber.copy(matched = true))
                 Logger.d { "New gameNumbers=$gameNumbers" }
                 feedbackMessage = positiveFeedbackMessages.random()
+                feedbackEventId++
             } else {
                 feedbackMessage = negativeFeedbackMessages.random()
+                feedbackEventId++
             }
 
             if (gameNumbersInOrder.isEmpty()) {
@@ -123,14 +127,10 @@ fun NumberOrderGameScreen(
             }
         }
 
-        LaunchedEffect(feedbackMessage) {
+        LaunchedEffect(feedbackEventId) {
             feedbackMessage?.let {
                 val job = tts.speak(it)
-                try {
-                    job.join()
-                } finally {
-                    job.cancel()
-                }
+                job.join()
             }
         }
 
