@@ -11,7 +11,6 @@ plugins {
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
 }
 
 subprojects {
@@ -21,41 +20,47 @@ subprojects {
             exclude("**/build/**")
         }
     }
+}
 
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        toolVersion = "1.23.8"
-        config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
-        buildUponDefaultConfig = true
-        allRules = false
-        ignoreFailures = false
-        baseline = file("${project.projectDir}/detekt-baseline.xml")
-        source.from(
-            files(
-                "src/commonMain",
-                "src/androidMain",
-                "src/iosMain",
-                "src/jvmMain",
-                "src/jsMain",
-                "src/wasmJsMain",
-                "src/commonTest",
-                "src/androidUnitTest",
-                "src/iosTest",
-                "src/jvmTest",
-                "src/jsTest",
-                "src/wasmJsTest",
-            ),
-        )
-    }
+subprojects {
+    afterEvaluate {
+        apply(plugin = "dev.detekt")
 
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-        jvmTarget = "11"
-        reports {
-            html.required.set(true)
-            html.outputLocation.set(file("build/reports/detekt.html"))
-            sarif.required.set(true)
-            sarif.outputLocation.set(file("build/reports/detekt.sarif"))
-            xml.required.set(true)
-            xml.outputLocation.set(file("build/reports/detekt.xml"))
+        configure<dev.detekt.gradle.extensions.DetektExtension> {
+            toolVersion = "2.0.0-alpha.1"
+            config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+            buildUponDefaultConfig = true
+            allRules = false
+            ignoreFailures = false
+            baseline = file("${project.projectDir}/detekt-baseline.xml")
+            source.setFrom(
+                files(
+                    "src/commonMain",
+                    "src/androidMain",
+                    "src/iosMain",
+                    "src/jvmMain",
+                    "src/jsMain",
+                    "src/wasmJsMain",
+                    "src/commonTest",
+                    "src/androidUnitTest",
+                    "src/iosTest",
+                    "src/jvmTest",
+                    "src/jsTest",
+                    "src/wasmJsTest",
+                ),
+            )
+        }
+
+        tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+            jvmTarget = "11"
+            reports {
+                html.required.set(true)
+                html.outputLocation.set(file("build/reports/detekt.html"))
+                sarif.required.set(true)
+                sarif.outputLocation.set(file("build/reports/detekt.sarif"))
+                checkstyle.required.set(true)
+                checkstyle.outputLocation.set(file("build/reports/detekt.xml"))
+            }
         }
     }
 }
