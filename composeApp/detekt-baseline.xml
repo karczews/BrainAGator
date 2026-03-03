@@ -2,14 +2,14 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>FunctionNaming:MainViewController.kt:@Suppress("ktlint:standard:function-naming") fun MainViewController()</ID>
-    <ID>LongMethod:App.kt:@Composable @Preview fun App()</ID>
-    <ID>LongMethod:GamePlaceholder.kt:@Composable fun GamePlaceholder( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: (() -&gt; Unit)? = null, )</ID>
-    <ID>LongMethod:GameScreenScaffold.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun GameScreenScaffold( gameInfo: GameInfo, onBackClick: () -&gt; Unit, bottomBar: @Composable () -&gt; Unit = {}, content: @Composable (PaddingValues, TextToSpeech) -&gt; Unit, )</ID>
-    <ID>LongMethod:GameSelectionScreen.kt:@Composable fun GameSelectionScreen( onGameSelected: (GameInfo) -&gt; Unit = {}, onWelcomeSpoken: () -&gt; Unit = {}, shouldSpeakWelcome: Boolean = true, )</ID>
-    <ID>LongMethod:GameWonScreen.kt:@Composable fun GameWonScreen(onBackToMainClick: () -&gt; Unit)</ID>
-    <ID>LongMethod:NumberOrderGameScreen.kt:@Composable fun NumberOrderGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, )</ID>
-    <ID>LongMethod:ShapeMatchGameScreen.kt:@Composable fun ShapeMatchGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, maxShapes: Int = 5, maxColors: Int = 5, numbersOfItemsToSelect: Int = 12, )</ID>
+    <ID>FunctionNaming:MainViewController.kt:@Suppress("ktlint:standard:function-naming") fun MainViewController</ID>
+    <ID>LongMethod:App.kt:@Composable @Preview fun App</ID>
+    <ID>LongMethod:GamePlaceholder.kt:@Composable fun GamePlaceholder</ID>
+    <ID>LongMethod:GameScreenScaffold.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun GameScreenScaffold</ID>
+    <ID>LongMethod:GameSelectionScreen.kt:@Composable fun GameSelectionScreen</ID>
+    <ID>LongMethod:GameWonScreen.kt:@Composable fun GameWonScreen</ID>
+    <ID>LongMethod:NumberOrderGameScreen.kt:@Composable fun NumberOrderGameScreen</ID>
+    <ID>LongMethod:ShapeMatchGameScreen.kt:@Composable fun ShapeMatchGameScreen</ID>
     <ID>TooGenericExceptionCaught:DesktopTextToSpeech.kt:DesktopTextToSpeech$e: Exception</ID>
     <ID>TooGenericExceptionCaught:JsTextToSpeech.kt:JsTextToSpeech$e: Exception</ID>
     <ID>TooGenericExceptionCaught:QueuedTextToSpeech.kt:QueuedTextToSpeech$e: Exception</ID>
