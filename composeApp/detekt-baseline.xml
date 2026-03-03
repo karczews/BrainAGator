@@ -10,11 +10,9 @@
     <ID>LongMethod:GameWonScreen.kt:@Composable fun GameWonScreen(onBackToMainClick: () -&gt; Unit)</ID>
     <ID>LongMethod:NumberOrderGameScreen.kt:@Composable fun NumberOrderGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, )</ID>
     <ID>LongMethod:ShapeMatchGameScreen.kt:@Composable fun ShapeMatchGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, maxShapes: Int = 5, maxColors: Int = 5, numbersOfItemsToSelect: Int = 12, )</ID>
-    <ID>MatchingDeclarationName:TextToSpeech.android.kt:AndroidTextToSpeech : QueuedTextToSpeech</ID>
-    <ID>MatchingDeclarationName:TextToSpeech.ios.kt:IosTextToSpeech : QueuedTextToSpeech</ID>
+    <ID>TooGenericExceptionCaught:DesktopTextToSpeech.kt:DesktopTextToSpeech$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:JsTextToSpeech.kt:JsTextToSpeech$e: Exception</ID>
     <ID>TooGenericExceptionCaught:QueuedTextToSpeech.kt:QueuedTextToSpeech$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:TextToSpeech.js.kt:JsTextToSpeech$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:TextToSpeech.jvm.kt:DesktopTextToSpeech$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:TextToSpeech.wasmJs.kt:WasmTextToSpeech$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:WasmTextToSpeech.kt:WasmTextToSpeech$e: Exception</ID>
   </CurrentIssues>
 </SmellBaseline>
