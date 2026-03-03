@@ -22,7 +22,6 @@ subprojects {
         }
     }
 
-    apply(plugin = "io.gitlab.arturbosch.detekt")
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         toolVersion = "1.23.8"
         config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
@@ -42,8 +41,5 @@ subprojects {
             xml.required.set(true)
             xml.outputLocation.set(file("build/reports/detekt.xml"))
         }
-    }
-
-    dependencies {
     }
 }
