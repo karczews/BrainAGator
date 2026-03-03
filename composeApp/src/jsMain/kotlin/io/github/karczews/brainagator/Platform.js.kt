@@ -16,11 +16,12 @@
 
 package io.github.karczews.brainagator
 
-class JsPlatform : Platform {
-    override val name: String = "Web with Kotlin/JS"
+/**
+ * JS implementation of Platform.
+ */
+actual class Platform actual constructor() {
+    actual val name: String = "Web with Kotlin/JS"
 }
-
-actual fun getPlatform(): Platform = JsPlatform()
 
 /**
  * For JS, this is set to true for development builds.

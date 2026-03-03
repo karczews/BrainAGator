@@ -353,6 +353,7 @@ naming:
       - 'android'
       - 'js'
       - 'jvm'
+      - 'wasmJs'
       - 'native'
       - 'iosArm64'
       - 'iosX64'

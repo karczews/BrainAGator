@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
 import brainagator.composeapp.generated.resources.welcome_message
-import io.github.karczews.brainagator.getPlatform
+import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
@@ -213,7 +213,7 @@ fun GameSelectionScreen(
         }
 
         // Build info at bottom right (absolute positioning)
-        val platform = getPlatform()
+        val platform = Platform()
         val buildType = if (isDebugBuild) "debug" else "release"
         Text(
             text = "${platform.name} • $buildType",

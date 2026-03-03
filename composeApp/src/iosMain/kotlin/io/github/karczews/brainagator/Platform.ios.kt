@@ -19,11 +19,12 @@ package io.github.karczews.brainagator
 import platform.UIKit.UIDevice
 import kotlin.native.Platform as NativePlatform
 
-class IOSPlatform : Platform {
-    override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
+/**
+ * iOS implementation of Platform.
+ */
+actual class Platform actual constructor() {
+    actual val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
-
-actual fun getPlatform(): Platform = IOSPlatform()
 
 /**
  * For iOS, we use a compile-time constant.

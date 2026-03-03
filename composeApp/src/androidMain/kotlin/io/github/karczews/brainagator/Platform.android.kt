@@ -18,11 +18,12 @@ package io.github.karczews.brainagator
 
 import android.os.Build
 
-class AndroidPlatform : Platform {
-    override val name: String = "Android ${Build.VERSION.SDK_INT}"
+/**
+ * Android implementation of Platform.
+ */
+actual class Platform actual constructor() {
+    actual val name: String = "Android ${Build.VERSION.SDK_INT}"
 }
-
-actual fun getPlatform(): Platform = AndroidPlatform()
 
 /**
  * For Android, this is set at compile time based on the build configuration.

@@ -10,11 +10,6 @@
     <ID>LongMethod:GameWonScreen.kt:@Composable fun GameWonScreen(onBackToMainClick: () -&gt; Unit)</ID>
     <ID>LongMethod:NumberOrderGameScreen.kt:@Composable fun NumberOrderGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, )</ID>
     <ID>LongMethod:ShapeMatchGameScreen.kt:@Composable fun ShapeMatchGameScreen( gameInfo: GameInfo, onBackClick: () -&gt; Unit, onGameWon: () -&gt; Unit, maxShapes: Int = 5, maxColors: Int = 5, numbersOfItemsToSelect: Int = 12, )</ID>
-    <ID>MatchingDeclarationName:Platform.android.kt:AndroidPlatform : Platform</ID>
-    <ID>MatchingDeclarationName:Platform.ios.kt:IOSPlatform : Platform</ID>
-    <ID>MatchingDeclarationName:Platform.js.kt:JsPlatform : Platform</ID>
-    <ID>MatchingDeclarationName:Platform.jvm.kt:JVMPlatform : Platform</ID>
-    <ID>MatchingDeclarationName:Platform.wasmJs.kt:WasmPlatform : Platform</ID>
     <ID>MatchingDeclarationName:TextToSpeech.android.kt:AndroidTextToSpeech : QueuedTextToSpeech</ID>
     <ID>MatchingDeclarationName:TextToSpeech.ios.kt:IosTextToSpeech : QueuedTextToSpeech</ID>
     <ID>TooGenericExceptionCaught:QueuedTextToSpeech.kt:QueuedTextToSpeech$e: Exception</ID>

@@ -16,11 +16,12 @@
 
 package io.github.karczews.brainagator
 
-interface Platform {
+/**
+ * Platform information with platform-specific implementation.
+ */
+expect class Platform() {
     val name: String
 }
-
-expect fun getPlatform(): Platform
 
 /**
  * Build-time flag indicating if this is a debug build.
