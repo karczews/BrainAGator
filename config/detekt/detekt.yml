@@ -146,5 +146,3 @@ exceptions:
   TooGenericExceptionThrown:
     active: true
 
-formatting:
-  active: false
