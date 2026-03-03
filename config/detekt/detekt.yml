@@ -149,3 +149,5 @@ exceptions:
 formatting:
   active: true
   autoCorrect: true
+  Indentation:
+    active: false
