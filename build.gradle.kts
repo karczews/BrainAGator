@@ -16,9 +16,21 @@ allprojects {
 subprojects {
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         filter {
-            exclude("**/generated/**")
-            exclude("**/build/**")
+            exclude { element ->
+                val path = element.file.path
+                path.contains("/build/") || path.contains("/generated/")
+            }
         }
+    }
+
+    tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.KtLintFormatTask>().configureEach {
+        exclude("**/generated/**")
+        exclude("**/build/**")
+    }
+
+    tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>().configureEach {
+        exclude("**/generated/**")
+        exclude("**/build/**")
     }
 }
 
