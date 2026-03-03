@@ -47,6 +47,7 @@ subprojects {
             baseline = file("${project.projectDir}/detekt-baseline.xml")
             source.setFrom(
                 files(
+                    // KMP source sets
                     "src/commonMain",
                     "src/androidMain",
                     "src/iosMain",
@@ -59,6 +60,10 @@ subprojects {
                     "src/jvmTest",
                     "src/jsTest",
                     "src/wasmJsTest",
+                    // Android standard source sets
+                    "src/main/kotlin",
+                    "src/test/kotlin",
+                    "src/androidTest/kotlin",
                 ),
             )
         }
