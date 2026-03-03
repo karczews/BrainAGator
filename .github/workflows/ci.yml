@@ -24,6 +24,9 @@ jobs:
     uses: ./.github/workflows/check-formatting.yml
 
   detekt:
+    permissions:
+      contents: read
+      security-events: write
     uses: ./.github/workflows/detekt.yml
     with:
       sha: ${{ github.event.pull_request.head.sha }}
