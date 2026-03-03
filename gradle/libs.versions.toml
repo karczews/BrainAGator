@@ -1,7 +1,7 @@
 [versions]
 agp = "9.1.0"
 ktlint = "14.0.1"
-detekt = "2.0.0-alpha.1"
+detekt = "2.0.0-alpha.2"
 android-compileSdk = "36"
 android-minSdk = "28"
 android-targetSdk = "36"
