@@ -29,6 +29,22 @@ subprojects {
         allRules = false
         ignoreFailures = false
         baseline = file("${project.projectDir}/detekt-baseline.xml")
+        source.from(
+            files(
+                "src/commonMain",
+                "src/androidMain",
+                "src/iosMain",
+                "src/jvmMain",
+                "src/jsMain",
+                "src/wasmJsMain",
+                "src/commonTest",
+                "src/androidUnitTest",
+                "src/iosTest",
+                "src/jvmTest",
+                "src/jsTest",
+                "src/wasmJsTest",
+            ),
+        )
     }
 
     tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
