@@ -39,7 +39,7 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 
 ### Code Quality
 - **Detekt**: Static analysis via `detekt.yml` workflow
-- **License checking**: Enforced via Detekt
+- **License checking**: Enforced via `.github/workflows/check-copyrights.yml`
 
 ### Communication Guidelines
 - **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions

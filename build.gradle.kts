@@ -27,7 +27,7 @@ subprojects {
         apply(plugin = "dev.detekt")
 
         configure<dev.detekt.gradle.extensions.DetektExtension> {
-            toolVersion = "2.0.0-alpha.1"
+            toolVersion = libs.versions.detekt.get()
             config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
             buildUponDefaultConfig = true
             allRules = false
@@ -52,7 +52,7 @@ subprojects {
         }
 
         tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
-            jvmTarget = "11"
+            jvmTarget = "21"
             reports {
                 html.required.set(true)
                 html.outputLocation.set(file("build/reports/detekt.html"))
