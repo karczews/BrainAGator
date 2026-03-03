@@ -19,7 +19,6 @@ jobs:
     permissions:
       contents: read
       security-events: write
-      security-events: write
     steps:
       - uses: actions/checkout@v6
         with:
