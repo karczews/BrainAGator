@@ -147,7 +147,4 @@ exceptions:
     active: true
 
 formatting:
-  active: true
-  autoCorrect: true
-  Indentation:
-    active: false
+  active: false
