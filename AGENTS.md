@@ -38,7 +38,8 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - **Memory**: High allocation configured (4GB Gradle, 3GB Kotlin daemon)
 
 ### Code Quality
-- **License checking**: Enforced via CI workflows
+- **Detekt**: Static analysis via `detekt.yml` workflow
+- **License checking**: Enforced via Detekt
 
 ### Communication Guidelines
 - **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
@@ -89,6 +90,12 @@ We follow [Conventional Commits specification](https://www.conventionalcommits.o
 
 # Tests
 ./gradlew testDebug
+
+# Code Quality
+./gradlew detekt  # Run detekt static analysis
+./gradlew detektBaseline  # Generate detekt baseline
+./gradlew ktlintCheck  # Run ktlint formatting check
+./gradlew ktlintFormat  # Auto-format code with ktlint
 ```
 
 ## NOTES

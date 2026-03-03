@@ -1,0 +1,57 @@
+name: Detekt
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      sha:
+        required: false
+        type: string
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-home-cache-cleanup: true
+          cache-read-only: false
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Detekt
+        run: ./gradlew detekt --stacktrace
+
+      - name: Upload Detekt HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: detekt-report-html
+          path: '**/build/reports/detekt.html'
+          retention-days: 30
+
+      - name: Upload Detekt SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: composeApp/build/reports/detekt.sarif
