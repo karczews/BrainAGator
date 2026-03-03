@@ -16,11 +16,12 @@
 
 package io.github.karczews.brainagator
 
-class WasmPlatform : Platform {
-    override val name: String = "Web with Kotlin/Wasm"
+/**
+ * Wasm implementation of Platform.
+ */
+actual class Platform actual constructor() {
+    actual val name: String = "Web with Kotlin/Wasm"
 }
-
-actual fun getPlatform(): Platform = WasmPlatform()
 
 /**
  * For Wasm/JS, debug builds are determined at compile time.

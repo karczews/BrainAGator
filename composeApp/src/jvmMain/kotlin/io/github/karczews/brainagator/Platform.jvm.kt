@@ -16,11 +16,12 @@
 
 package io.github.karczews.brainagator
 
-class JVMPlatform : Platform {
-    override val name: String = "Java ${System.getProperty("java.version")}"
+/**
+ * JVM/Desktop implementation of Platform.
+ */
+actual class Platform actual constructor() {
+    actual val name: String = "Java ${System.getProperty("java.version")}"
 }
-
-actual fun getPlatform(): Platform = JVMPlatform()
 
 /**
  * For JVM/Desktop, debug builds are determined by the "debug" system property.

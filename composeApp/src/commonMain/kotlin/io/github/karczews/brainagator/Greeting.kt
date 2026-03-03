@@ -17,7 +17,7 @@
 package io.github.karczews.brainagator
 
 class Greeting {
-    private val platform = getPlatform()
+    private val platform = Platform()
 
     fun greet(): String = "Hello, ${platform.name}!"
 }

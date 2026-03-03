@@ -56,14 +56,9 @@ interface TextToSpeech {
      */
     fun setPitch(pitch: Float)
 
-    /**
+/**
      * Release resources when done.
      * This should stop all speech and clean up any resources.
      */
     fun shutdown()
 }
-
-/**
- * Factory to create platform-specific TTS instance.
- */
-expect fun createTextToSpeech(): TextToSpeech

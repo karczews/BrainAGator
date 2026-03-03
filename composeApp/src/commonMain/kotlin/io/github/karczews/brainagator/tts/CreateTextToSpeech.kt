@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.karczews.brainagator
+package io.github.karczews.brainagator.tts
 
 /**
- * Platform information with platform-specific implementation.
+ * Factory function to create platform-specific TTS instance.
+ * Implemented in platform-specific source sets.
  */
-expect class Platform() {
-    val name: String
-}
-
-/**
- * Build-time flag indicating if this is a debug build.
- * Should be true in development/debug builds and false in release builds.
- */
-expect val isDebugBuild: Boolean
+expect fun createTextToSpeech(): TextToSpeech

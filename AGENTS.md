@@ -38,8 +38,8 @@ All platforms render the same `App()` composable from `composeApp/src/commonMain
 - **Memory**: High allocation configured (4GB Gradle, 3GB Kotlin daemon)
 
 ### Code Quality
-- **Qodana**: Static analysis via `qodana_code_quality.yml` workflow
-- **License checking**: Enforced via Qodana
+- **Detekt**: Static analysis via `detekt.yml` workflow
+- **License checking**: Enforced via `.github/workflows/check-copyrights.yml`
 
 ### Communication Guidelines
 - **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
@@ -90,9 +90,14 @@ We follow [Conventional Commits specification](https://www.conventionalcommits.o
 
 # Tests
 ./gradlew testDebug
+
+# Code Quality
+./gradlew detekt  # Run detekt static analysis
+./gradlew detektBaseline  # Generate detekt baseline
+./gradlew ktlintCheck  # Run ktlint formatting check
+./gradlew ktlintFormat  # Auto-format code with ktlint
 ```
 
 ## NOTES
 - Project has dual Android modules (androidApp + composeApp as androidLibrary) - document rationale if intentional
-- Qodana token uses project-specific instance ID - may need updating if migrating Qodana instance
 - **Read CONTRIBUTING.md**: Always review `docs/CONTRIBUTING.md` for project-specific setup instructions, code style guidelines, and contribution workflow before making changes

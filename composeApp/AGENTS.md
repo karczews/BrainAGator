@@ -20,10 +20,10 @@ composeApp/
 | Task | Location |
 |------|----------|
 | Shared UI | commonMain/kotlin/com/example/brainagator/App.kt |
-| Platform abstraction | commonMain/kotlin/com/example/brainagator/Platform.kt (expect) |
-| Android impl | androidMain/kotlin/com/example/brainagator/Platform.android.kt (actual) |
-| iOS impl | iosMain/kotlin/com/example/brainagator/Platform.ios.kt (actual) |
-| JVM impl | jvmMain/kotlin/com/example/brainagator/Platform.jvm.kt (actual) |
+| Platform abstraction | commonMain/kotlin/.../Platform.kt (expect class) |
+| Android impl | androidMain/kotlin/.../Platform.android.kt (actual class) |
+| iOS impl | iosMain/kotlin/.../Platform.ios.kt (actual class) |
+| JVM impl | jvmMain/kotlin/.../Platform.jvm.kt (actual class) |
 | Web entry | webMain/kotlin/com/example/brainagator/main.kt |
 | Desktop entry | jvmMain/kotlin/com/example/brainagator/main.kt |
 
@@ -31,8 +31,10 @@ composeApp/
 
 ### expect/actual Pattern
 Use for platform-specific APIs:
-- Define interface/function in `commonMain` with `expect`
-- Provide implementations in each `{platform}Main` with `actual`
+- Define `expect class` in `commonMain` with the same name as the file (e.g., `Platform` in `Platform.kt`)
+- Provide `actual class` implementations in each `{platform}Main` with matching filenames (e.g., `Platform.android.kt` contains `actual class Platform`)
+
+**Enforced by detekt**: The `MatchingDeclarationName` rule is enabled with `multiplatformTargets` configured. This requires that platform-specific classes match their filenames to avoid naming violations. Using `expect class` with identical names across platforms satisfies this requirement and is the idiomatic KMP approach.
 
 ### Shared UI Rules
 - All UI components in `commonMain` using Compose Multiplatform
