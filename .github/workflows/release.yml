@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: version
+        uses: tomtom-international/commisery-action/bump@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          create-release: false
+          create-tag: false
+
+      - name: Set up JDK 21
+        if: steps.version.outputs.next-version != ''
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        if: steps.version.outputs.next-version != ''
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build Android APK
+        if: steps.version.outputs.next-version != ''
+        uses: ./.github/actions/android-release
+        with:
+          keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.KEY_ALIAS }}
+          key-password: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Build WASM bundle
+        if: steps.version.outputs.next-version != ''
+        run: ./gradlew :composeApp:wasmJsBrowserProductionWebpack
+
+      - name: Create release
+        if: steps.version.outputs.next-version != ''
+        uses: tomtom-international/commisery-action/bump@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          create-release: true
+          create-tag: true
+
+      - name: Upload Android APK to release
+        if: steps.version.outputs.next-version != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.next-version }}
+          files: androidApp/build/outputs/apk/release/androidApp-release.apk
+          fail_on_unmatched_files: false
+
+      - name: Upload WASM bundle to release
+        if: steps.version.outputs.next-version != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.next-version }}
+          files: composeApp/build/dist/wasmJs/**
+          fail_on_unmatched_files: false
+
+      - name: Report release status
+        run: |
+          if [ -n "${{ steps.version.outputs.next-version }}" ]; then
+            echo "✅ New version created: ${{ steps.version.outputs.next-version }}"
+          else
+            echo "ℹ️ No new version created - no version bump needed"
+          fi

@@ -72,15 +72,17 @@ We follow [Conventional Commits specification](https://www.conventionalcommits.o
 
 ## COMMANDS
 ```bash
-# Android
-./gradlew :composeApp:assembleDebug
+# Android (androidApp is the application module, composeApp is the library)
+./gradlew :androidApp:assembleDebug    # Debug APK
+./gradlew :androidApp:assembleRelease  # Release APK
 
 # Desktop (JVM)
 ./gradlew :composeApp:run
 
 # Web Wasm
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Start dev server (local development)
-./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack  # Build WASM bundle (CI/artifacts)
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun     # Start dev server (local development)
+./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack # Build WASM dev bundle (CI/artifacts)
+./gradlew :composeApp:wasmJsBrowserProductionWebpack  # Build WASM prod bundle (releases)
 
 # Web JS
 ./gradlew :composeApp:jsBrowserDevelopmentRun
