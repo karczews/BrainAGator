@@ -1,0 +1,43 @@
+name: Build Android Release
+description: Build signed Android release APK
+
+inputs:
+  keystore-base64:
+    description: Base64 encoded keystore file
+    required: true
+  keystore-password:
+    description: Keystore password
+    required: true
+  key-alias:
+    description: Key alias
+    required: true
+  key-password:
+    description: Key password
+    required: true
+
+outputs:
+  apk-path:
+    description: Path to the release APK
+    value: androidApp/build/outputs/apk/release/androidApp-release.apk
+
+runs:
+  using: composite
+  steps:
+    - name: Decode keystore
+      shell: bash
+      run: |
+        echo "${{ inputs.keystore-base64 }}" | base64 -d > androidApp/android-release.jks
+        chmod 600 androidApp/android-release.jks
+
+    - name: Build release APK
+      shell: bash
+      env:
+        KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
+        KEY_ALIAS: ${{ inputs.key-alias }}
+        KEY_PASSWORD: ${{ inputs.key-password }}
+      run: ./gradlew :androidApp:assembleRelease
+
+    - name: Cleanup keystore
+      if: always()
+      shell: bash
+      run: rm -f androidApp/android-release.jks

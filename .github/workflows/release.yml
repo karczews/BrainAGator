@@ -42,7 +42,12 @@ jobs:
 
       - name: Build Android APK
         if: steps.version.outputs.next-version != ''
-        run: ./gradlew :androidApp:assembleRelease
+        uses: ./.github/actions/android-release
+        with:
+          keystore-base64: ${{ secrets.KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.KEY_ALIAS }}
+          key-password: ${{ secrets.KEY_PASSWORD }}
 
       - name: Build WASM bundle
         if: steps.version.outputs.next-version != ''
