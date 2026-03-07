@@ -2,7 +2,7 @@
 # See: https://github.com/tomtom-international/commisery-action/blob/master/docs/configuration.md
 
 # Maximum subject length matches CONTRIBUTING.md recommendation
-max-subject-length: 72
+max-subject-length: 140
 
 # Allow releases only from main branch
 allowed-branches: "^main$"
