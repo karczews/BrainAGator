@@ -1,0 +1,28 @@
+# Commisery configuration for BrainAGator
+# See: https://github.com/tomtom-international/commisery-action/blob/master/docs/configuration.md
+
+# Maximum subject length matches CONTRIBUTING.md recommendation
+max-subject-length: 72
+
+# Allow releases only from main branch
+allowed-branches: "^main$"
+
+# Use semantic versioning (default, explicit for clarity)
+version-scheme: semver
+
+# Project is still in initial development
+# Breaking changes will bump MINOR instead of MAJOR
+initial-development: true
+
+# Commit types aligned with CONTRIBUTING.md
+# Note: feat, fix, and revert are included by default with bump behavior
+tags:
+  docs: Documentation changes
+  style: Code style changes (formatting, semicolons, etc.)
+  refactor: Code refactoring without behavior change
+  perf:
+    description: Performance improvements
+    bump: true
+  test: Adding or updating tests
+  chore: Build process or auxiliary tool changes
+  ci: CI/CD configuration changes
