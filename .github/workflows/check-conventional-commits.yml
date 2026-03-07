@@ -1,0 +1,23 @@
+name: Check Conventional Commits
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check Conventional Commits
+        uses: tomtom-international/commisery-action/check@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
