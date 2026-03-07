@@ -1,5 +1,5 @@
 name: Build Android Release
-description: Build signed Android release APK
+description: Build signed Android release APK and AAB
 
 inputs:
   keystore-base64:
@@ -19,6 +19,9 @@ outputs:
   apk-path:
     description: Path to the release APK
     value: androidApp/build/outputs/apk/release/androidApp-release.apk
+  aab-path:
+    description: Path to the release AAB
+    value: androidApp/build/outputs/bundle/release/androidApp-release.aab
 
 runs:
   using: composite
@@ -29,13 +32,13 @@ runs:
         echo "${{ inputs.keystore-base64 }}" | base64 -d > androidApp/android-release.jks
         chmod 600 androidApp/android-release.jks
 
-    - name: Build release APK
+    - name: Build release APK and AAB
       shell: bash
       env:
         KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
         KEY_ALIAS: ${{ inputs.key-alias }}
         KEY_PASSWORD: ${{ inputs.key-password }}
-      run: ./gradlew :androidApp:assembleRelease
+      run: ./gradlew :androidApp:assembleRelease :androidApp:bundleRelease
 
     - name: Cleanup keystore
       if: always()
