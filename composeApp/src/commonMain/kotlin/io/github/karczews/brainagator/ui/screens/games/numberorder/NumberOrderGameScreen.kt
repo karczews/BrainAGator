@@ -16,6 +16,8 @@
 
 package io.github.karczews.brainagator.ui.screens.games.numberorder
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -35,6 +37,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -132,30 +135,45 @@ fun NumberOrderGameScreen(
                 job.join()
             }
         }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            Text(
-                text = stringResource(Res.string.number_order_instruction),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            )
+            /*with (sharedTransitionScope) {
+                Icon(
+                    imageVector = gameInfo.icon,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = gameInfo.icon),
+                            animatedVisibilityScope = animatedContentScope,
+                        )
+                        .align(Alignment.Center)
+                        .fillMaxSize(),
+                )
+            }*/
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = stringResource(Res.string.number_order_instruction),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(48.dp))
 
-            NumberBoxesRow(
-                gameNumbers = gameNumbers,
-                correctNextNumber = correctNextNumber,
-                onNumberClick = onNumberClick,
-            )
+                NumberBoxesRow(
+                    gameNumbers = gameNumbers,
+                    correctNextNumber = correctNextNumber,
+                    onNumberClick = onNumberClick,
+                )
+            }
         }
     }
 }
@@ -260,7 +278,7 @@ private fun NumberBox(
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 private fun NumberOrderGameScreenPreview() {
     NumberOrderGameScreen(
@@ -268,7 +286,7 @@ private fun NumberOrderGameScreenPreview() {
         onBackClick = {},
         onGameWon = {},
     )
-}
+}*/
 
 data class GameNumber(
     val number: Int,

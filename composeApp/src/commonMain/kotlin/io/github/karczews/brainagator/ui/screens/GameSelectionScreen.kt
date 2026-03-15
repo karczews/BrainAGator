@@ -16,6 +16,8 @@
 
 package io.github.karczews.brainagator.ui.screens
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,6 +83,8 @@ val games =
 
 @Composable
 fun GameSelectionScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onGameSelected: (GameInfo) -> Unit = {},
     onWelcomeSpoken: () -> Unit = {},
     shouldSpeakWelcome: Boolean = true,
@@ -191,6 +195,8 @@ fun GameSelectionScreen(
                             ) {
                                 GameCard(
                                     game = game,
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedContentScope = animatedContentScope,
                                     onClick = {
                                         onGameSelected(game)
                                     },
@@ -232,6 +238,9 @@ fun GameSelectionScreen(
 
 @Composable
 fun GameCard(
+    modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     game: GameInfo,
     onClick: () -> Unit,
 ) {
@@ -242,7 +251,7 @@ fun GameCard(
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .height(180.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -267,23 +276,35 @@ fun GameCard(
                             .background(Color.White.copy(alpha = 0.3f)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        imageVector = game.icon,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp),
-                    )
+                    with(sharedTransitionScope) {
+                        Icon(
+                            imageVector = game.icon,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
+                                .sharedElement(
+                                    sharedContentState = rememberSharedContentState(key = game.icon),
+                                    animatedVisibilityScope = animatedContentScope
+                                ),
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
-                )
+                with(sharedTransitionScope) {
+                    Text(
+                        modifier = Modifier.sharedElement(
+                            sharedContentState = rememberSharedContentState(key = game.titleRes),
+                            animatedVisibilityScope = animatedContentScope
+                        ),
+                        text = title,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                }
 
                 Text(
                     text = subtitle,
