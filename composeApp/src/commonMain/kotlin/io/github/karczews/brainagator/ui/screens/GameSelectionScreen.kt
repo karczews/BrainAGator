@@ -268,46 +268,19 @@ fun GameCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    with(sharedTransitionScope) {
-                        Icon(
-                            imageVector = game.icon,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier =
-                                Modifier
-                                    .size(32.dp)
-                                    .sharedElement(
-                                        sharedContentState = rememberSharedContentState(key = game.icon),
-                                        animatedVisibilityScope = animatedContentScope,
-                                    ),
-                        )
-                    }
-                }
+                GameIcon(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    icon = game.icon,
+                )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                with(sharedTransitionScope) {
-                    Text(
-                        modifier =
-                            Modifier.sharedBounds(
-                                sharedContentState = rememberSharedContentState(key = game.titleRes),
-                                animatedVisibilityScope = animatedContentScope,
-                            ),
-                        text = title,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                GameTitleText(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    titleRes = game.titleRes,
+                )
 
                 Text(
                     text = subtitle,
@@ -318,5 +291,58 @@ fun GameCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun GameIcon(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+) {
+    Box(
+        modifier =
+            Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.3f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        with(sharedTransitionScope) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.White,
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .sharedElement(
+                            sharedContentState = rememberSharedContentState(key = icon),
+                            animatedVisibilityScope = animatedContentScope,
+                        ),
+            )
+        }
+    }
+}
+
+@Composable
+private fun GameTitleText(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    titleRes: org.jetbrains.compose.resources.StringResource,
+) {
+    with(sharedTransitionScope) {
+        Text(
+            modifier =
+                Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = titleRes),
+                    animatedVisibilityScope = animatedContentScope,
+                ),
+            text = stringResource(titleRes),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+        )
     }
 }
