@@ -20,6 +20,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
+import brainagator.composeapp.generated.resources.gator_long
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
@@ -70,6 +72,7 @@ import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -167,6 +170,13 @@ fun NumberOrderGameScreen(
                 )
 
                 Spacer(modifier = Modifier.height(48.dp))
+
+                Image(
+                    modifier = Modifier
+                        .size(128.dp),
+                    imageVector = vectorResource(Res.drawable.gator_long),
+                    contentDescription = null,
+                )
 
                 NumberBoxesRow(
                     gameNumbers = gameNumbers,
@@ -278,7 +288,7 @@ private fun NumberBox(
     }
 }
 
-/*@Preview
+@Preview
 @Composable
 private fun NumberOrderGameScreenPreview() {
     NumberOrderGameScreen(
@@ -286,7 +296,7 @@ private fun NumberOrderGameScreenPreview() {
         onBackClick = {},
         onGameWon = {},
     )
-}*/
+}
 
 data class GameNumber(
     val number: Int,
