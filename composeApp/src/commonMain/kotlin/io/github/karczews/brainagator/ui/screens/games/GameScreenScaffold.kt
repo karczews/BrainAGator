@@ -76,11 +76,10 @@ fun GameScreenScaffold(
                 title = {
                     val modifier = if(sharedTransitionContext != null) {
                         with(sharedTransitionContext.sharedTransitionScope) {
-                            Modifier.sharedElement(
+                            Modifier.sharedBounds(
                                 sharedContentState = rememberSharedContentState(gameInfo.titleRes),
                                 animatedVisibilityScope = sharedTransitionContext.animatedContentScope
-                            ).skipToLookaheadSize()
-                                .renderInSharedTransitionScopeOverlay()
+                            )
                         }
                     } else {
                         Modifier

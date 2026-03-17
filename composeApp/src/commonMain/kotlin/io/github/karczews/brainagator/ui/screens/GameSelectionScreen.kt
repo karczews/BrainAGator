@@ -294,10 +294,10 @@ fun GameCard(
 
                 with(sharedTransitionScope) {
                     Text(
-                        modifier = Modifier.sharedElement(
+                        modifier = Modifier.sharedBounds(
                             sharedContentState = rememberSharedContentState(key = game.titleRes),
                             animatedVisibilityScope = animatedContentScope
-                        ).skipToLookaheadSize(),
+                        ),
                         text = title,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
