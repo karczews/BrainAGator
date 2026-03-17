@@ -74,16 +74,17 @@ fun GameScreenScaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    val modifier = if(sharedTransitionContext != null) {
-                        with(sharedTransitionContext.sharedTransitionScope) {
-                            Modifier.sharedBounds(
-                                sharedContentState = rememberSharedContentState(gameInfo.titleRes),
-                                animatedVisibilityScope = sharedTransitionContext.animatedContentScope
-                            )
+                    val modifier =
+                        if (sharedTransitionContext != null) {
+                            with(sharedTransitionContext.sharedTransitionScope) {
+                                Modifier.sharedBounds(
+                                    sharedContentState = rememberSharedContentState(gameInfo.titleRes),
+                                    animatedVisibilityScope = sharedTransitionContext.animatedContentScope,
+                                )
+                            }
+                        } else {
+                            Modifier
                         }
-                    } else {
-                        Modifier
-                    }
                     Text(
                         text = stringResource(gameInfo.titleRes),
                         modifier = modifier,

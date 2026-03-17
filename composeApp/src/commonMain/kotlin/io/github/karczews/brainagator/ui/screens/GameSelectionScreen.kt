@@ -281,11 +281,13 @@ fun GameCard(
                             imageVector = game.icon,
                             contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(32.dp)
-                                .sharedElement(
-                                    sharedContentState = rememberSharedContentState(key = game.icon),
-                                    animatedVisibilityScope = animatedContentScope
-                                ),
+                            modifier =
+                                Modifier
+                                    .size(32.dp)
+                                    .sharedElement(
+                                        sharedContentState = rememberSharedContentState(key = game.icon),
+                                        animatedVisibilityScope = animatedContentScope,
+                                    ),
                         )
                     }
                 }
@@ -294,10 +296,11 @@ fun GameCard(
 
                 with(sharedTransitionScope) {
                     Text(
-                        modifier = Modifier.sharedBounds(
-                            sharedContentState = rememberSharedContentState(key = game.titleRes),
-                            animatedVisibilityScope = animatedContentScope
-                        ),
+                        modifier =
+                            Modifier.sharedBounds(
+                                sharedContentState = rememberSharedContentState(key = game.titleRes),
+                                animatedVisibilityScope = animatedContentScope,
+                            ),
                         text = title,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,

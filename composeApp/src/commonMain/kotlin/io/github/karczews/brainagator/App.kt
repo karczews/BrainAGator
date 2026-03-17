@@ -21,10 +21,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -115,7 +112,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                         val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
                         val onGameWon: () -> Unit = { backStack.add(Route.GameWon) }
 
-                        CompositionLocalProvider(LocalSharedTransitionContext provides SharedTransitionContext(this@SharedTransitionLayout, LocalNavAnimatedContentScope.current)) {
+                        CompositionLocalProvider(
+                            LocalSharedTransitionContext provides
+                                SharedTransitionContext(this@SharedTransitionLayout, LocalNavAnimatedContentScope.current),
+                        ) {
                             when (route.gameType) {
                                 GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
                                 GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
@@ -146,4 +146,4 @@ data class SharedTransitionContext(
 )
 
 val LocalSharedTransitionContext =
-compositionLocalOf<SharedTransitionContext?> { null }
+    compositionLocalOf<SharedTransitionContext?> { null }

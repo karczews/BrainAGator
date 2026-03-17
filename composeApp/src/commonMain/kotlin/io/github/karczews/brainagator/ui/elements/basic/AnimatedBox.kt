@@ -27,7 +27,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,12 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.karczews.brainagator.ui.screens.games.rainbowColors
 
-
 @Composable
 fun AnimatedBox(
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val transition = rememberInfiniteTransition(label = "borderRotation")
     var controlEdge by remember { mutableStateOf(Offset.Zero) }
@@ -60,26 +58,29 @@ fun AnimatedBox(
         initialValue = controlEdge.copy(x = 0f),
         targetValue = controlEdge,
         typeConverter = Offset.VectorConverter,
-        animationSpec = infiniteRepeatable(
-            animation = tween(5000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        )
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(5000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
     )
-    Box(modifier = modifier
-        .clip(RoundedCornerShape(12.dp))
-        .drawWithCache {
-            onDrawBehind {
-                drawRect(Brush.radialGradient(rainbowColors, center = center, radius = controlEdge.x))
-            }
-        }
-        .padding(2.dp)
-        .onSizeChanged { size ->
-            controlEdge = Offset(size.width.toFloat(), size.height.toFloat())
-        }
-        .clip(RoundedCornerShape(12.dp))
-        .background(Color.White), contentAlignment = contentAlignment, content = content)
+    Box(
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(12.dp))
+                .drawWithCache {
+                    onDrawBehind {
+                        drawRect(Brush.radialGradient(rainbowColors, center = center, radius = controlEdge.x))
+                    }
+                }.padding(2.dp)
+                .onSizeChanged { size ->
+                    controlEdge = Offset(size.width.toFloat(), size.height.toFloat())
+                }.clip(RoundedCornerShape(12.dp))
+                .background(Color.White),
+        contentAlignment = contentAlignment,
+        content = content,
+    )
 }
-
 
 @Preview(
     backgroundColor = 0xDDDDDD,
@@ -89,7 +90,7 @@ fun AnimatedBox(
 @Composable
 fun AnimatedBoxPreview() {
     AnimatedBox(
-        modifier = Modifier
+        modifier = Modifier,
     ) {
         Text("Animated box", Modifier.padding(20.dp))
     }

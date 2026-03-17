@@ -16,8 +16,6 @@
 
 package io.github.karczews.brainagator.ui.screens.games.numberorder
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -39,7 +37,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Tag
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -143,7 +140,7 @@ fun NumberOrderGameScreen(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp, vertical = 16.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
             /*with (sharedTransitionScope) {
                 Icon(
@@ -173,8 +170,9 @@ fun NumberOrderGameScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Image(
-                    modifier = Modifier
-                        .heightIn(max = 128.dp),
+                    modifier =
+                        Modifier
+                            .heightIn(max = 128.dp),
                     imageVector = vectorResource(Res.drawable.gator_long),
                     contentDescription = null,
                 )
