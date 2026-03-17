@@ -79,7 +79,8 @@ fun GameScreenScaffold(
                             Modifier.sharedElement(
                                 sharedContentState = rememberSharedContentState(gameInfo.titleRes),
                                 animatedVisibilityScope = sharedTransitionContext.animatedContentScope
-                            ).renderInSharedTransitionScopeOverlay()
+                            ).skipToLookaheadSize()
+                                .renderInSharedTransitionScopeOverlay()
                         }
                     } else {
                         Modifier

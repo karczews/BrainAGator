@@ -297,7 +297,7 @@ fun GameCard(
                         modifier = Modifier.sharedElement(
                             sharedContentState = rememberSharedContentState(key = game.titleRes),
                             animatedVisibilityScope = animatedContentScope
-                        ),
+                        ).skipToLookaheadSize(),
                         text = title,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
