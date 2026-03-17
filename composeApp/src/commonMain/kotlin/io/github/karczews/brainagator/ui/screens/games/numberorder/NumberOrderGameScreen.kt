@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -169,11 +170,11 @@ fun NumberOrderGameScreen(
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 )
 
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
                 Image(
                     modifier = Modifier
-                        .size(128.dp),
+                        .heightIn(max = 128.dp),
                     imageVector = vectorResource(Res.drawable.gator_long),
                     contentDescription = null,
                 )
