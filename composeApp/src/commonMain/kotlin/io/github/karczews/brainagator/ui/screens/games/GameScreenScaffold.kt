@@ -44,6 +44,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.ic_replay_speaker
 import brainagator.composeapp.generated.resources.repeat_instruction
+import io.github.karczews.brainagator.LocalSharedTransitionContext
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.GameInfo
@@ -62,6 +63,8 @@ fun GameScreenScaffold(
     val scope = rememberCoroutineScope()
     val description = stringResource(gameInfo.descriptionRes)
 
+    val sharedTransitionContext = LocalSharedTransitionContext.current
+
     // Speak game description when screen opens
     LaunchedEffect(gameInfo) {
         tts.speak(description)
@@ -71,8 +74,20 @@ fun GameScreenScaffold(
         topBar = {
             TopAppBar(
                 title = {
+                    val modifier =
+                        if (sharedTransitionContext != null) {
+                            with(sharedTransitionContext.sharedTransitionScope) {
+                                Modifier.sharedBounds(
+                                    sharedContentState = rememberSharedContentState(gameInfo.titleRes),
+                                    animatedVisibilityScope = sharedTransitionContext.animatedContentScope,
+                                )
+                            }
+                        } else {
+                            Modifier
+                        }
                     Text(
                         text = stringResource(gameInfo.titleRes),
+                        modifier = modifier,
                         style =
                             MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,

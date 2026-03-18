@@ -18,6 +18,7 @@ package io.github.karczews.brainagator.ui.screens.games.numberorder
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -56,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
+import brainagator.composeapp.generated.resources.gator_long
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
@@ -67,6 +70,7 @@ import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -132,30 +136,40 @@ fun NumberOrderGameScreen(
                 job.join()
             }
         }
-
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.number_order_instruction),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = stringResource(Res.string.number_order_instruction),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
 
-            Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
-            NumberBoxesRow(
-                gameNumbers = gameNumbers,
-                correctNextNumber = correctNextNumber,
-                onNumberClick = onNumberClick,
-            )
+                Image(
+                    modifier =
+                        Modifier
+                            .heightIn(max = 128.dp),
+                    imageVector = vectorResource(Res.drawable.gator_long),
+                    contentDescription = null,
+                )
+
+                NumberBoxesRow(
+                    gameNumbers = gameNumbers,
+                    correctNextNumber = correctNextNumber,
+                    onNumberClick = onNumberClick,
+                )
+            }
         }
     }
 }

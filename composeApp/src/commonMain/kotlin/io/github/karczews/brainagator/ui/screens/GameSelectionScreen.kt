@@ -16,6 +16,8 @@
 
 package io.github.karczews.brainagator.ui.screens
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,6 +83,8 @@ val games =
 
 @Composable
 fun GameSelectionScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     onGameSelected: (GameInfo) -> Unit = {},
     onWelcomeSpoken: () -> Unit = {},
     shouldSpeakWelcome: Boolean = true,
@@ -191,6 +195,8 @@ fun GameSelectionScreen(
                             ) {
                                 GameCard(
                                     game = game,
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedContentScope = animatedContentScope,
                                     onClick = {
                                         onGameSelected(game)
                                     },
@@ -232,6 +238,9 @@ fun GameSelectionScreen(
 
 @Composable
 fun GameCard(
+    modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
     game: GameInfo,
     onClick: () -> Unit,
 ) {
@@ -242,7 +251,7 @@ fun GameCard(
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .height(180.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -259,30 +268,14 @@ fun GameCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = game.icon,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp),
-                    )
-                }
+                GameIcon(icon = game.icon)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center,
+                GameTitleText(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedContentScope = animatedContentScope,
+                    titleRes = game.titleRes,
                 )
 
                 Text(
@@ -294,5 +287,46 @@ fun GameCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun GameIcon(icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    Box(
+        modifier =
+            Modifier
+                .size(60.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.3f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(32.dp),
+        )
+    }
+}
+
+@Composable
+private fun GameTitleText(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    titleRes: org.jetbrains.compose.resources.StringResource,
+) {
+    with(sharedTransitionScope) {
+        Text(
+            modifier =
+                Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(key = titleRes),
+                    animatedVisibilityScope = animatedContentScope,
+                ),
+            text = stringResource(titleRes),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center,
+        )
     }
 }
