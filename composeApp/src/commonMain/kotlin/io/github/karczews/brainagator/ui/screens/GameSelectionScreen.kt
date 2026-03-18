@@ -268,11 +268,7 @@ fun GameCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                GameIcon(
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
-                    icon = game.icon,
-                )
+                GameIcon(icon = game.icon)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -295,11 +291,7 @@ fun GameCard(
 }
 
 @Composable
-private fun GameIcon(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-) {
+private fun GameIcon(icon: androidx.compose.ui.graphics.vector.ImageVector) {
     Box(
         modifier =
             Modifier
