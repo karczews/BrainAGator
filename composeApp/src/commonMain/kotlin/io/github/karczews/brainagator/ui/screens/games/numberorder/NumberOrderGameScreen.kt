@@ -142,21 +142,8 @@ fun NumberOrderGameScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-            /*with (sharedTransitionScope) {
-                Icon(
-                    imageVector = gameInfo.icon,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedTransitionScope.rememberSharedContentState(key = gameInfo.icon),
-                            animatedVisibilityScope = animatedContentScope,
-                        )
-                        .align(Alignment.Center)
-                        .fillMaxSize(),
-                )
-            }*/
             Column(
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {

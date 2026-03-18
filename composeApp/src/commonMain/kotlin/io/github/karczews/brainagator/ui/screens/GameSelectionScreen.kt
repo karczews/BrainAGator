@@ -308,20 +308,12 @@ private fun GameIcon(
                 .background(Color.White.copy(alpha = 0.3f)),
         contentAlignment = Alignment.Center,
     ) {
-        with(sharedTransitionScope) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = Color.White,
-                modifier =
-                    Modifier
-                        .size(32.dp)
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState(key = icon),
-                            animatedVisibilityScope = animatedContentScope,
-                        ),
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(32.dp),
+        )
     }
 }
 
