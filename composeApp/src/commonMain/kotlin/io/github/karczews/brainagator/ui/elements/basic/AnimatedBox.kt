@@ -85,7 +85,9 @@ fun AnimatedBox(
                 }.padding(2.dp)
                 .onSizeChanged { size ->
                     controlEdge = Offset(size.width.toFloat(), size.height.toFloat())
-                }.background(Color.White),
+                }
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.White),
         contentAlignment = contentAlignment,
         content = content,
     )
