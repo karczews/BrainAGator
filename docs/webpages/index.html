@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainagator – Let's Learn &amp; Play!</title>
+  <meta name="description" content="Brainagator is a free educational app for kids featuring brain-training games with voice guidance. Available on Android, iOS, Web, and Desktop.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:   #6C63FF;
+      --secondary: #FF6584;
+      --accent:    #43C59E;
+      --yellow:    #FFD166;
+      --bg:        #F8F7FF;
+      --text:      #2D2D3A;
+      --muted:     #6B7280;
+      --card-bg:   #FFFFFF;
+      --radius:    16px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--card-bg);
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--primary); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #6C63FF 0%, #a78bfa 60%, #FF6584 100%);
+      color: #fff;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+      clip-path: ellipse(120% 100% at 50% 0%);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 99px;
+      padding: .3rem 1rem;
+      font-size: .85rem;
+      letter-spacing: .05em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      opacity: .92;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-cta {
+      display: inline-flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      padding: .8rem 2rem;
+      border-radius: 99px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform .15s, box-shadow .15s;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+    .btn-white { background: #fff; color: var(--primary); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.7); }
+
+    /* ── Section wrapper ── */
+    section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 99px;
+      padding: .25rem .9rem;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Features grid ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,.1); }
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: .5rem; }
+    .feature-card p { color: var(--muted); font-size: .95rem; }
+
+    /* ── Games grid ── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .game-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+      text-align: center;
+      transition: transform .2s;
+    }
+    .game-card:hover { transform: translateY(-4px); }
+    .game-icon { font-size: 3rem; margin-bottom: .8rem; }
+    .game-card h3 { font-weight: 700; margin-bottom: .4rem; }
+    .game-card p { color: var(--muted); font-size: .9rem; }
+    .game-badge {
+      display: inline-block;
+      margin-top: .8rem;
+      padding: .2rem .7rem;
+      border-radius: 99px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .badge-live { background: #d1fae5; color: #065f46; }
+    .badge-soon { background: #fef3c7; color: #92400e; }
+
+    /* ── Platforms ── */
+    .platforms-section { background: var(--card-bg); }
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+    .platform-card {
+      border: 2px solid #e5e7eb;
+      border-radius: var(--radius);
+      padding: 1.8rem 1.2rem;
+      text-align: center;
+      transition: border-color .2s;
+    }
+    .platform-card:hover { border-color: var(--primary); }
+    .platform-icon { font-size: 2.5rem; margin-bottom: .8rem; }
+    .platform-card h3 { font-weight: 700; }
+    .platform-card p { color: var(--muted); font-size: .88rem; margin-top: .3rem; }
+
+    /* ── Open source ── */
+    .oss-section {
+      background: linear-gradient(135deg, #2D2D3A 0%, #1a1a2e 100%);
+      color: #fff;
+      text-align: center;
+    }
+    .oss-section h2 { color: #fff; }
+    .oss-section .subtitle { color: rgba(255,255,255,.7); margin: 0 auto 2rem; }
+    .oss-code {
+      display: inline-block;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 8px;
+      padding: .8rem 1.4rem;
+      font-family: 'Courier New', monospace;
+      font-size: .95rem;
+      color: var(--yellow);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,.65);
+      text-align: center;
+      padding: 2.5rem 2rem;
+      font-size: .9rem;
+    }
+    footer a { color: rgba(255,255,255,.85); text-decoration: none; }
+    footer a:hover { color: #fff; }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">🐊 Brainagator</a>
+    <ul class="nav-links">
+      <li><a href="#games">Games</a></li>
+      <li><a href="#platforms">Platforms</a></li>
+      <li><a href="https://github.com/karczews/BrainAGator">GitHub</a></li>
+      <li><a href="privacy-policy.html">Privacy Policy</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<header class="hero">
+  <div class="hero-badge">Free &amp; Open Source</div>
+  <h1>Let's Learn &amp; Play!</h1>
+  <p>
+    Brainagator is an educational brain-training app for children. Solve puzzles,
+    match shapes, order numbers — all guided by a friendly voice.
+  </p>
+  <div class="hero-cta">
+    <a class="btn btn-white" href="https://github.com/karczews/BrainAGator">View on GitHub</a>
+    <a class="btn btn-outline" href="#games">Explore Games</a>
+  </div>
+</header>
+
+<!-- ── Key Features ── -->
+<section id="features">
+  <div class="section-inner">
+    <span class="section-tag">Why Brainagator</span>
+    <h2>Built for curious young minds</h2>
+    <p class="subtitle">Every feature is designed to make learning feel like play.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#ede9fe">🔊</div>
+        <h3>Voice Guidance</h3>
+        <p>Text-to-speech reads every instruction aloud, so even pre-readers can play independently.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fce7f3">🎮</div>
+        <h3>Engaging Games</h3>
+        <p>Seven brain-training mini-games that build shape recognition, number sense, and colour awareness.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#d1fae5">🔒</div>
+        <h3>100% Privacy</h3>
+        <p>No accounts, no ads, no data collection. Your child's activity stays on the device, full stop.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7">🌍</div>
+        <h3>Cross-Platform</h3>
+        <p>One codebase powered by Kotlin Multiplatform runs natively on Android, iOS, Web, and Desktop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Games ── -->
+<section id="games" style="background:#F0EEFF">
+  <div class="section-inner">
+    <span class="section-tag">Games</span>
+    <h2>What's inside</h2>
+    <p class="subtitle">Mix of fully playable games and exciting titles coming soon.</p>
+    <div class="games-grid">
+      <div class="game-card">
+        <div class="game-icon">🔷</div>
+        <h3>Find the Shape</h3>
+        <p>Spot the matching coloured shape hidden in a grid of distractors.</p>
+        <span class="game-badge badge-live">Available</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">🔢</div>
+        <h3>Number Order</h3>
+        <p>Drag numbers from smallest to largest and build early maths skills.</p>
+        <span class="game-badge badge-live">Available</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">🎨</div>
+        <h3>Color Match</h3>
+        <p>Find the two tiles that share exactly the same colour.</p>
+        <span class="game-badge badge-live">Available</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">📏</div>
+        <h3>Size Order</h3>
+        <p>Arrange objects from smallest to biggest and explore proportions.</p>
+        <span class="game-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">🔵</div>
+        <h3>Pattern Game</h3>
+        <p>Identify the rule in a sequence and pick what comes next.</p>
+        <span class="game-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">🦆</div>
+        <h3>Odd One Out</h3>
+        <p>Find the item that doesn't belong in a colourful group.</p>
+        <span class="game-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="game-card">
+        <div class="game-icon">🔍</div>
+        <h3>Spot the Difference</h3>
+        <p>Compare two pictures and tap all the differences you find.</p>
+        <span class="game-badge badge-soon">Coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Platforms ── -->
+<section class="platforms-section" id="platforms">
+  <div class="section-inner">
+    <span class="section-tag">Availability</span>
+    <h2>Play anywhere</h2>
+    <p class="subtitle">Brainagator is built with Kotlin Multiplatform and Compose Multiplatform — one shared codebase, four native targets.</p>
+    <div class="platforms-grid">
+      <div class="platform-card">
+        <div class="platform-icon">🤖</div>
+        <h3>Android</h3>
+        <p>Android 9+ (API 28)</p>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">🍎</div>
+        <h3>iOS</h3>
+        <p>iPhone &amp; iPad</p>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">🌐</div>
+        <h3>Web</h3>
+        <p>Wasm &amp; JS — no install needed</p>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">🖥️</div>
+        <h3>Desktop</h3>
+        <p>macOS, Windows &amp; Linux (JVM)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Open Source ── -->
+<section class="oss-section">
+  <div class="section-inner">
+    <span class="section-tag" style="background:var(--accent)">Open Source</span>
+    <h2>Built in the open</h2>
+    <p class="subtitle">
+      Brainagator is free and open-source. Star the repo, file an issue, or contribute a new game.
+    </p>
+    <div class="oss-code">github.com/karczews/BrainAGator</div>
+    <br>
+    <a class="btn btn-white" href="https://github.com/karczews/BrainAGator" style="color:var(--primary)">View Source on GitHub</a>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="https://github.com/karczews/BrainAGator">GitHub</a>
+    <a href="https://github.com/karczews/BrainAGator/issues">Report an Issue</a>
+  </div>
+  <p>&copy; 2025 Brainagator contributors. Released under the open-source licence.</p>
+</footer>
+
+</body>
+</html>
