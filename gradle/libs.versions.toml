@@ -15,6 +15,7 @@ composeHotReload = "1.1.0"
 composeMultiplatform = "1.10.3"
 composeMaterial3 = "1.9.0"
 composeMaterialIcons = "1.7.3"
+gradlePlayPublisher = "4.0.0"
 junit = "4.13.2"
 kotlin = "2.3.21"
 kotlinx-coroutines = "1.10.2"
@@ -69,3 +70,4 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versio
 atomicfu = { id = "org.jetbrains.kotlinx.atomicfu", version.ref = "kotlinx-atomicfu" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
+gradlePlayPublisher = { id = "com.github.triplet.play", version.ref = "gradlePlayPublisher" }
