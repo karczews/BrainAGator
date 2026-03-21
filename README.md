@@ -1,3 +1,6 @@
+[![Website](https://img.shields.io/badge/website-live-6C63FF?logo=github)](https://karczews.github.io/BrainAGator/)
+[![Privacy Policy](https://img.shields.io/badge/privacy%20policy-read-43C59E?logo=github)](https://karczews.github.io/BrainAGator/privacy-policy.html)
+
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
