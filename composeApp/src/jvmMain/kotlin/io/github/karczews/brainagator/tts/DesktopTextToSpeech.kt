@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -122,7 +123,9 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 currentProcess = process
 
                 try {
-                    process.waitFor()
+                    runInterruptible {
+                        process.waitFor()
+                    }
                     Logger.v { "TTS completed: \"$text\"" }
                 } finally {
                     currentProcess = null

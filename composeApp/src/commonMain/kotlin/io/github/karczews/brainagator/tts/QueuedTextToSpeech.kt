@@ -40,6 +40,7 @@ abstract class QueuedTextToSpeech : TextToSpeech {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
     private val queue = Channel<Job>(Channel.UNLIMITED)
     private var queueProcessor: Job? = null
+    private var currentJob: Job? = null
 
     init {
         startQueueProcessor()
@@ -50,7 +51,12 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         queueProcessor =
             scope.launch {
                 for (job in queue) {
-                    job.join()
+                    currentJob = job
+                    try {
+                        job.join()
+                    } finally {
+                        currentJob = null
+                    }
                 }
             }
     }
@@ -85,6 +91,16 @@ abstract class QueuedTextToSpeech : TextToSpeech {
     }
 
     override fun stop() {
+        // Cancel all pending jobs in the queue
+        var result = queue.tryReceive()
+        while (result.isSuccess) {
+            result.getOrNull()?.cancel()
+            result = queue.tryReceive()
+        }
+
+        // Cancel the currently executing job
+        currentJob?.cancel()
+
         performStop()
     }
 
