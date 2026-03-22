@@ -16,37 +16,48 @@
 
 package io.github.karczews.brainagator.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = KidBlue,
+    onPrimary = OnKidBlue,
+    primaryContainer = KidBlueContainer,
+    onPrimaryContainer = OnKidBlueContainer,
+    secondary = KidOrange,
+    onSecondary = OnKidOrange,
+    secondaryContainer = KidOrangeContainer,
+    onSecondaryContainer = OnKidOrangeContainer,
+    tertiary = KidPink,
+    onTertiary = OnKidPink,
+    tertiaryContainer = KidPinkContainer,
+    onTertiaryContainer = OnKidPinkContainer,
+    error = KidError,
+    onError = OnKidError,
+    errorContainer = KidErrorContainer,
+    onErrorContainer = OnKidErrorContainer,
+    background = KidBackground,
+    onBackground = OnKidBackground,
+    surface = KidSurface,
+    onSurface = OnKidSurface,
+    surfaceVariant = KidSurfaceVariant,
+    onSurfaceVariant = OnKidSurfaceVariant,
+    outline = KidOutline,
+    outlineVariant = KidOutlineVariant,
+    inverseSurface = KidInverseSurface,
+    inverseOnSurface = KidInverseOnSurface,
+    inversePrimary = KidInversePrimary,
+    scrim = KidScrim,
 )
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = false, //isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = LightColorScheme,
         typography = AppTypography,
-        content = content
+        content = content,
     )
 }

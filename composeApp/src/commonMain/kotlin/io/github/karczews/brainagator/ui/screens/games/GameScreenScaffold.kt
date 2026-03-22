@@ -106,6 +106,7 @@ fun GameScreenScaffold(
                     Text(
                         text = stringResource(gameInfo.titleRes),
                         modifier = modifier,
+                        color = MaterialTheme.colorScheme.primary,
                         style =
                             MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
@@ -117,6 +118,7 @@ fun GameScreenScaffold(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(Res.string.go_back),
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                     }
                 },
@@ -127,11 +129,12 @@ fun GameScreenScaffold(
                         },
                         modifier = Modifier.size(60.dp),
                     ) {
-                        Image(
+                        Icon(
                             modifier = Modifier.size(40.dp),
                             painter = painterResource(Res.drawable.ic_help_center_24dp_e3e3e3_fill0_wght400_grad0_opsz24),
                             contentDescription = stringResource(Res.string.repeat_instruction),
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                            tint = MaterialTheme.colorScheme.primary
+                          //  colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                         )
                     }
                 },
