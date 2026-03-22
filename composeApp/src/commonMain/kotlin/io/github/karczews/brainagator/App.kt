@@ -23,9 +23,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import io.github.karczews.brainagator.theme.AppTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -58,7 +58,7 @@ fun App() {
     LaunchedEffect(Unit) {
         Logger.i { "App composable started" }
     }
-    MaterialTheme {
+    AppTheme {
         AppNavigation(modifier = Modifier.fillMaxSize())
     }
 }
