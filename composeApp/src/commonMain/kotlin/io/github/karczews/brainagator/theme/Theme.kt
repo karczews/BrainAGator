@@ -16,39 +16,49 @@
 
 package io.github.karczews.brainagator.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
 private val LightColorScheme = lightColorScheme(
-    primary = KidBlue,
-    onPrimary = OnKidBlue,
-    primaryContainer = KidBlueContainer,
-    onPrimaryContainer = OnKidBlueContainer,
-    secondary = KidOrange,
-    onSecondary = OnKidOrange,
-    secondaryContainer = KidOrangeContainer,
-    onSecondaryContainer = OnKidOrangeContainer,
-    tertiary = KidPink,
-    onTertiary = OnKidPink,
-    tertiaryContainer = KidPinkContainer,
-    onTertiaryContainer = OnKidPinkContainer,
-    error = KidError,
-    onError = OnKidError,
-    errorContainer = KidErrorContainer,
-    onErrorContainer = OnKidErrorContainer,
-    background = KidBackground,
-    onBackground = OnKidBackground,
-    surface = KidSurface,
-    onSurface = OnKidSurface,
-    surfaceVariant = KidSurfaceVariant,
-    onSurfaceVariant = OnKidSurfaceVariant,
-    outline = KidOutline,
-    outlineVariant = KidOutlineVariant,
-    inverseSurface = KidInverseSurface,
-    inverseOnSurface = KidInverseOnSurface,
-    inversePrimary = KidInversePrimary,
-    scrim = KidScrim,
+    primary = Primary,
+    onPrimary = OnPrimary,
+    primaryContainer = PrimaryContainer,
+    onPrimaryContainer = OnPrimaryContainer,
+    secondary = Secondary,
+    onSecondary = OnSecondary,
+    secondaryContainer = SecondaryContainer,
+    onSecondaryContainer = OnSecondaryContainer,
+    error = Error,
+    onError = OnError,
+    errorContainer = ErrorContainer,
+    onErrorContainer = OnErrorContainer,
+    background = Background,
+    onBackground = OnBackground,
+    surface = Surface,
+    onSurface = OnSurface,
+    surfaceVariant = SurfaceVariant,
+    onSurfaceVariant = OnSurfaceVariant,
+    surfaceContainerLow = SurfaceContainerLow,
+    surfaceContainerHigh = SurfaceContainerHigh,
+    surfaceContainerHighest = SurfaceContainerHighest,
+    outline = Outline,
+    outlineVariant = OutlineVariant,
+    inverseSurface = InverseSurface,
+    inverseOnSurface = InverseOnSurface,
+    inversePrimary = InversePrimary,
+    scrim = Scrim,
+)
+
+private val AppShapes = Shapes(
+    extraSmall = RoundedCornerShape(0.dp),
+    small = RoundedCornerShape(0.dp),
+    medium = RoundedCornerShape(0.dp),
+    large = RoundedCornerShape(0.dp),
+    extraLarge = RoundedCornerShape(0.dp)
 )
 
 @Composable
@@ -57,7 +67,8 @@ fun AppTheme(
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = AppTypography,
+        typography = getAppTypography(),
+        shapes = AppShapes,
         content = content,
     )
 }

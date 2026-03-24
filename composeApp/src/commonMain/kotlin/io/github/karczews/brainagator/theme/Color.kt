@@ -18,48 +18,47 @@ package io.github.karczews.brainagator.theme
 
 import androidx.compose.ui.graphics.Color
 
-// --- Light scheme (kid-friendly: bright, cheerful, playful) ---
+// --- Retro-Futurist Play scheme ---
 
-// Primary: vibrant sky blue — fun and inviting
-val KidBlue = Color(0xFF1E8FE1)
-val KidBlueContainer = Color(0xFFBDE3FF)
-val OnKidBlue = Color(0xFFFFFFFF)
-val OnKidBlueContainer = Color(0xFF002E4D)
+// Primary: The "Brick Red"
+val Primary = Color(0xFFBB000A)
+val OnPrimary = Color(0xFFFFFFFF)
+val PrimaryContainer = Color(0xFFFFDAD6)
+val OnPrimaryContainer = Color(0xFF410002)
+val PrimaryDim = Color(0xFF8A0006)
 
-// Secondary: sunny yellow-orange — energetic and warm
-val KidOrange = Color(0xFFFF8C00)
-val KidOrangeContainer = Color(0xFFFFDDB3)
-val OnKidOrange = Color(0xFFFFFFFF)
-val OnKidOrangeContainer = Color(0xFF2D1600)
+// Secondary: The "Pipe Green"
+val Secondary = Color(0xFF006B1C)
+val OnSecondary = Color(0xFFFFFFFF)
+val SecondaryContainer = Color(0xFF89FA95)
+val OnSecondaryContainer = Color(0xFF002105)
 
-// Tertiary: playful coral-pink — joyful accent
-val KidPink = Color(0xFFE84393)
-val KidPinkContainer = Color(0xFFFFD8EC)
-val OnKidPink = Color(0xFFFFFFFF)
-val OnKidPinkContainer = Color(0xFF3C0021)
+// Error
+val Error = Color(0xFFB41340)
+val OnError = Color(0xFFFFFFFF)
+val ErrorContainer = Color(0xFFFFDAD6)
+val OnErrorContainer = Color(0xFF410002)
 
-// Error: soft red — still clear but not harsh
-val KidError = Color(0xFFD94F4F)
-val KidErrorContainer = Color(0xFFFFDAD6)
-val OnKidError = Color(0xFFFFFFFF)
-val OnKidErrorContainer = Color(0xFF410002)
+// Background & surface — light sky blue per reference image
+val Background = Color(0xFFADD8E6)
+val OnBackground = Color(0xFF422A00)
+val Surface = Color(0xFFADD8E6)
+val OnSurface = Color(0xFF422A00)
 
-// Background & surface: soft warm white — easy on young eyes
-val KidBackground = Color(0xFFFFF8F0)
-val KidSurface = Color(0xFFFFF8F0)
-val OnKidBackground = Color(0xFF1A1A2E)
-val OnKidSurface = Color(0xFF1A1A2E)
+// Surface variants — warm cream/tan card tones per reference image
+val SurfaceVariant = Color(0xFFF5E6D0)
+val OnSurfaceVariant = Color(0xFF422A00)
+val SurfaceContainerLow = Color(0xFFF5E6D0)
+val SurfaceContainerHigh = Color(0xFFFFDFB9)
+val SurfaceContainerHighest = Color(0xFFF5E6D0)
 
-// Surface variants
-val KidSurfaceVariant = Color(0xFFDEE8F5)
-val OnKidSurfaceVariant = Color(0xFF40505F)
-val KidOutline = Color(0xFF70909E)
-val KidOutlineVariant = Color(0xFFBFD0DC)
+val Outline = Color(0xFF6B3A2A)
+val OutlineVariant = Color(0xFFD7A459)
 
 // Inverse
-val KidInverseSurface = Color(0xFF2E3640)
-val KidInverseOnSurface = Color(0xFFF0F4F8)
-val KidInversePrimary = Color(0xFF8FCFFF)
+val InverseSurface = Color(0xFF322A25)
+val InverseOnSurface = Color(0xFFF5E0D4)
+val InversePrimary = Color(0xFFFFB4AB)
 
 // Scrim
-val KidScrim = Color(0xFF000000)
+val Scrim = Color(0xFF000000)

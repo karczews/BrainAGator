@@ -62,6 +62,7 @@
     <string name="shape_star">Gwiazda</string>
     <string name="shape_diamond">Diament</string>
     <string name="shape_heart">Serce</string>
+    <string name="shape_pentagon">Pięciokąt</string>
 
     <!-- Shape Match Game -->
     <string name="shape_match_select_instruction">Wybierz %1$s %2$s</string>

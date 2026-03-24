@@ -42,6 +42,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.shape_circle
 import brainagator.composeapp.generated.resources.shape_diamond
 import brainagator.composeapp.generated.resources.shape_heart
+import brainagator.composeapp.generated.resources.shape_pentagon
 import brainagator.composeapp.generated.resources.shape_square
 import brainagator.composeapp.generated.resources.shape_star
 import brainagator.composeapp.generated.resources.shape_triangle
@@ -61,6 +62,7 @@ internal val gameShapes =
         GameShape(StarShape(), Res.string.shape_star),
         GameShape(DiamondShape(), Res.string.shape_diamond),
         GameShape(HeartShape(), Res.string.shape_heart),
+        GameShape(PentagonShape(), Res.string.shape_pentagon),
     )
 
 class TriangleShape : Shape {
@@ -190,6 +192,32 @@ class HeartShape : Shape {
                     height,
                 )
 
+                close()
+            }
+        return Outline.Generic(path)
+    }
+}
+
+class PentagonShape : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline {
+        val path =
+            Path().apply {
+                val centerX = size.width / 2f
+                val centerY = size.height / 2f
+                val radius = minOf(size.width, size.height) / 2f
+                val points = 5
+                val angleStep = 360f / points
+
+                for (i in 0 until points) {
+                    val angle = kotlin.math.PI * (i * angleStep - 90) / 180
+                    val x = centerX + (radius * kotlin.math.cos(angle)).toFloat()
+                    val y = centerY + (radius * kotlin.math.sin(angle)).toFloat()
+                    if (i == 0) moveTo(x, y) else lineTo(x, y)
+                }
                 close()
             }
         return Outline.Generic(path)

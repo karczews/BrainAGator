@@ -62,6 +62,7 @@
     <string name="shape_star">Star</string>
     <string name="shape_diamond">Diamond</string>
     <string name="shape_heart">Heart</string>
+    <string name="shape_pentagon">Pentagon</string>
 
     <!-- Shape Match Game -->
     <string name="shape_match_select_instruction">Select a %1$s %2$s</string>

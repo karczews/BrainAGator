@@ -16,8 +16,6 @@
 
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -58,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
-import brainagator.composeapp.generated.resources.shape_match_progress
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.ui.navigation.GameType
@@ -88,7 +86,7 @@ val ShapeMatchGameInfo =
  * @param onGameWon Callback invoked when user completes all iterations
  * @param maxShapes Maximum number of different shapes to use (default: 5)
  * @param maxColors Maximum number of different colors to use (default: 5)
- * @param numbersOfItemsToSelect Number of shape-color pairs to display (default: 12)
+ * @param numbersOfItemsToSelect Number of shape-color pairs to display (default: 6)
  */
 @Composable
 fun ShapeMatchGameScreen(
@@ -97,7 +95,7 @@ fun ShapeMatchGameScreen(
     onGameWon: () -> Unit,
     maxShapes: Int = 5,
     maxColors: Int = 5,
-    numbersOfItemsToSelect: Int = 12,
+    numbersOfItemsToSelect: Int = 6,
 ) {
     // Validate input parameter
     require(numbersOfItemsToSelect >= 1) {
@@ -131,12 +129,8 @@ fun ShapeMatchGameScreen(
                 )
         }
 
-    // Animate border width for flash effect
-    val borderWidth by animateDpAsState(
-        targetValue = if (isIncorrectSelection) 8.dp else 0.dp,
-        animationSpec = tween(durationMillis = 150),
-        label = "border_flash",
-    )
+    // Flash color for incorrect selection
+    val flashBorderColor = if (isIncorrectSelection) MaterialTheme.colorScheme.error else Color.Transparent
 
     // Reset incorrect selection after animation
     LaunchedEffect(isIncorrectSelection) {
@@ -176,17 +170,12 @@ fun ShapeMatchGameScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
-                    .border(
-                        width = borderWidth,
-                        color = Color.Red,
-                        shape =
-                            androidx.compose.foundation.shape
-                                .RoundedCornerShape(16.dp),
-                    ).padding(horizontal = 24.dp, vertical = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // Instruction text - currentTarget is non-nullable
+            // Instruction Sign
             val (targetShape, targetColor) = currentTarget
             val instructionText =
                 stringResource(
@@ -194,16 +183,58 @@ fun ShapeMatchGameScreen(
                     stringResource(targetColor.nameRes),
                     stringResource(targetShape.nameRes),
                 )
+            val targetShapeName = stringResource(targetShape.nameRes)
+
             LaunchedEffect(instructionText) {
                 tts.speak(instructionText)
             }
-            Text(
-                text = instructionText,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            // Sign board with wooden post
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .border(4.dp, MaterialTheme.colorScheme.outline)
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "CURRENT GOAL",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = instructionText,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+                // Wooden post under the sign
+                Box(
+                    modifier = Modifier
+                        .width(20.dp)
+                        .height(44.dp)
+                        .background(Color(0xFF8B5E3C))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Flash bar for incorrect selection
+            if (isIncorrectSelection) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(flashBorderColor)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
 
             // Display colored shapes in a grid - adapts to orientation
             BoxWithConstraints(
@@ -212,12 +243,11 @@ fun ShapeMatchGameScreen(
                 val isLandscape = maxWidth > maxHeight
 
                 if (isLandscape) {
-                    // Landscape: horizontal grid with 3 rows, adaptive spacing
                     LazyHorizontalGrid(
-                        rows = GridCells.Fixed(3),
+                        rows = GridCells.Fixed(2),
                         modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(shapeColorPairs) { (shape, color) ->
                             ColoredShapeButton(
@@ -228,12 +258,11 @@ fun ShapeMatchGameScreen(
                         }
                     }
                 } else {
-                    // Portrait: vertical grid with 3 columns, adaptive spacing
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
+                        columns = GridCells.Fixed(2),
                         modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         items(shapeColorPairs) { (shape, color) ->
                             ColoredShapeButton(
@@ -260,13 +289,36 @@ private fun GameProgress(
     correctCount: Int,
     totalCount: Int,
 ) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = stringResource(Res.string.shape_match_progress, correctCount, totalCount),
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        textAlign = TextAlign.Center,
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(4.dp, MaterialTheme.colorScheme.outline)
+            .padding(16.dp)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "PROGRESS",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .background(MaterialTheme.colorScheme.outline)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+    }
 }
 
 /**
@@ -280,6 +332,7 @@ private fun GameProgressPreview() {
 
 /**
  * A colored shape button that displays a shape filled with a specific color.
+ * The shape is drawn large within the card to be clearly visible.
  *
  * @param shape The shape to display
  * @param color The color to fill the shape with
@@ -291,22 +344,49 @@ private fun ColoredShapeButton(
     color: GameColor,
     onClick: () -> Unit,
 ) {
-    val shapeName = stringResource(shape.nameRes)
+    val shapeName = stringResource(shape.nameRes).uppercase()
     val colorName = stringResource(color.nameRes)
     val buttonDescription = "$colorName $shapeName"
 
-    Box(
-        modifier =
-            Modifier
-                .aspectRatio(1f)
-                .padding(6.dp)
-                .clip(shape.shape)
-                .semantics {
-                    contentDescription = buttonDescription
-                }.clickable(onClick = onClick)
-                .background(color.color)
-                .border(2.dp, MaterialTheme.colorScheme.outline, shape.shape),
-    )
+    Column(
+        modifier = Modifier
+            .aspectRatio(0.85f)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .border(4.dp, MaterialTheme.colorScheme.outline)
+            .clickable(onClick = onClick)
+            .semantics {
+                contentDescription = buttonDescription
+            }
+            .padding(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // White inner box with shape drawn large
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .background(Color.White)
+                .border(2.dp, MaterialTheme.colorScheme.outline)
+                .padding(12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(0.7f)
+                    .aspectRatio(1f)
+                    .clip(shape.shape)
+                    .background(color.color)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = shapeName,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 /**
