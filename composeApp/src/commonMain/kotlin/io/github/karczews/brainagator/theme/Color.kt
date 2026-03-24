@@ -18,47 +18,41 @@ package io.github.karczews.brainagator.theme
 
 import androidx.compose.ui.graphics.Color
 
-// --- Retro-Futurist Play scheme ---
+// --- Retro Mario Color Palette ---
 
-// Primary: The "Brick Red"
-val Primary = Color(0xFFBB000A)
-val OnPrimary = Color(0xFFFFFFFF)
-val PrimaryContainer = Color(0xFFFFDAD6)
-val OnPrimaryContainer = Color(0xFF410002)
-val PrimaryDim = Color(0xFF8A0006)
+// Primary: Brick Red
+val BrickRed = Color(0xFFBB000A)
+val White = Color(0xFFFFFFFF)
+val PalePink = Color(0xFFFFDAD6)
+val DarkMaroon = Color(0xFF410002)
+val DeepCrimson = Color(0xFF8A0006)
 
-// Secondary: The "Pipe Green"
-val Secondary = Color(0xFF006B1C)
-val OnSecondary = Color(0xFFFFFFFF)
-val SecondaryContainer = Color(0xFF89FA95)
-val OnSecondaryContainer = Color(0xFF002105)
+// Secondary: Pipe Green
+val PipeGreen = Color(0xFF006B1C)
+val MintGreen = Color(0xFF89FA95)
+val DarkForestGreen = Color(0xFF002105)
 
 // Error
-val Error = Color(0xFFB41340)
-val OnError = Color(0xFFFFFFFF)
-val ErrorContainer = Color(0xFFFFDAD6)
-val OnErrorContainer = Color(0xFF410002)
+val CrimsonRose = Color(0xFFB41340)
+val ErrorPink = Color(0xFFFFDAD6)
+val ErrorMaroon = Color(0xFF410002)
 
-// Background & surface — light sky blue per reference image
-val Background = Color(0xFFADD8E6)
-val OnBackground = Color(0xFF422A00)
-val Surface = Color(0xFFADD8E6)
-val OnSurface = Color(0xFF422A00)
+// Background & Surface: Sky Blue
+val SkyBlue = Color(0xFFADD8E6)
+val EarthyBrown = Color(0xFF422A00)
 
-// Surface variants — warm cream/tan card tones per reference image
-val SurfaceVariant = Color(0xFFF5E6D0)
-val OnSurfaceVariant = Color(0xFF422A00)
-val SurfaceContainerLow = Color(0xFFF5E6D0)
-val SurfaceContainerHigh = Color(0xFFFFDFB9)
-val SurfaceContainerHighest = Color(0xFFF5E6D0)
+// Surface variants: Warm Cream & Tan
+val WarmCream = Color(0xFFF5E6D0)
+val GoldenTan = Color(0xFFFFDFB9)
 
-val Outline = Color(0xFF6B3A2A)
-val OutlineVariant = Color(0xFFD7A459)
+// Outline: Wooden Brown & Gold
+val WoodenBrown = Color(0xFF6B3A2A)
+val HoneyGold = Color(0xFFD7A459)
 
 // Inverse
-val InverseSurface = Color(0xFF322A25)
-val InverseOnSurface = Color(0xFFF5E0D4)
-val InversePrimary = Color(0xFFFFB4AB)
+val CharcoalBrown = Color(0xFF322A25)
+val RosyBeige = Color(0xFFF5E0D4)
+val SalmonPink = Color(0xFFFFB4AB)
 
 // Scrim
-val Scrim = Color(0xFF000000)
+val Black = Color(0xFF000000)
