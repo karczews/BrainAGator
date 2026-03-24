@@ -59,6 +59,7 @@ import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
+import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
@@ -327,7 +328,9 @@ private fun GameProgress(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 500)
 @Composable
 private fun GameProgressPreview() {
-    GameProgress(correctCount = 3, totalCount = 5)
+    AppTheme {
+        GameProgress(correctCount = 3, totalCount = 5)
+    }
 }
 
 /**
@@ -395,9 +398,11 @@ private fun ColoredShapeButton(
 @Preview
 @Composable
 private fun ShapeMatchGameScreenPreview() {
-    ShapeMatchGameScreen(
-        gameInfo = ShapeMatchGameInfo,
-        onBackClick = {},
-        onGameWon = {},
-    )
+    AppTheme {
+        ShapeMatchGameScreen(
+            gameInfo = ShapeMatchGameInfo,
+            onBackClick = {},
+            onGameWon = {},
+        )
+    }
 }
