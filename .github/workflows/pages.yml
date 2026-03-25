@@ -47,20 +47,20 @@ jobs:
       - name: Copy WASM to webpages
         run: |
           # Verify build output exists
-          if [ ! -d "composeApp/build/dist/wasmJs/productionExecutable" ]; then
+          if [ ! -d "composeApp/build/kotlin-webpack/wasmJs/productionExecutable" ]; then
             echo "Error: Build output directory not found"
-            echo "Contents of composeApp/build/dist/wasmJs/:"
-            ls -la composeApp/build/dist/wasmJs/ 2>/dev/null || echo "Directory does not exist"
+            echo "Searching for productionExecutable directories:"
+            find composeApp/build -type d -name "productionExecutable" 2>/dev/null | head -10
             exit 1
           fi
-          
+
           # Clean and recreate target directory
           rm -rf docs/webpages/app
           mkdir -p docs/webpages/app
-          
+
           # Copy files with verification
-          cp -r composeApp/build/dist/wasmJs/productionExecutable/* docs/webpages/app/
-          
+          cp -r composeApp/build/kotlin-webpack/wasmJs/productionExecutable/* docs/webpages/app/
+
           # Verify copy succeeded
           echo "Copied files:"
           ls -la docs/webpages/app/
