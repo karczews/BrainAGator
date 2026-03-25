@@ -40,6 +40,12 @@ Use for platform-specific APIs:
 - All UI components in `commonMain` using Compose Multiplatform
 - All platforms render `App()` composable from commonMain
 - Use `Material3` for consistent design
+- Use `MaterialTheme.colorScheme.*` tokens, not hardcoded `Color(0x...)` or `Color.White`
+
+### Internationalization
+- All user-facing strings must use `stringResource(Res.string.*)`
+- Hardcoded strings in UI code are a code review finding
+- Add translations in `composeResources/values-{locale}/strings.xml`
 
 ### Resource Management
 - Compose resources in `commonMain/composeResources/`
@@ -48,6 +54,29 @@ Use for platform-specific APIs:
 ## ANTI-PATTERNS
 - Don't put platform-specific code in `commonMain` - use expect/actual
 - Don't create platform-specific UI components - keep in commonMain when possible
+- **Never use `@Volatile` in `commonMain`** — it's JVM-only (`kotlin.jvm.Volatile`). Use `kotlinx.atomicfu` `atomic()` instead
+- **Don't use `MutableStateFlow` as an atomic variable** — it triggers recomposition and carries collection overhead
+
+### Threading
+- **`kotlinx.atomicfu`** provides `atomic<T>()` for thread-safe primitives across all KMP targets. Add via `implementation(libs.kotlinx.atomicfu)`.
+- The `atomic()` function works on JVM (volatile fields), Native (atomic intrinsics), Wasm/JS (single-threaded passthrough).
+
+### Detekt `LongMethod` Rule
+- Maximum function length is 60 lines. If you have repetitive blocks (e.g., N identical style definitions), extract a helper function early.
+
+### Code Quality
+Always run before committing (or push will fail CI):
+```bash
+./gradlew :composeApp:detekt
+./gradlew :composeApp:ktlintCheck
+./gradlew :composeApp:ktlintFormat  # auto-fix formatting
+```
+
+**Note on compile tasks**: KMP uses different naming per target:
+- JVM: `compileKotlinJvm`
+- Wasm: `compileKotlinWasmJs`
+- iOS: `compileKotlinIosArm64`, `compileKotlinIosSimulatorArm64`
+- Android: `compileAndroidMain` (not `compileKotlinAndroid`)
 
 ## NOTES
 - Module configured as `androidLibrary` for Android target

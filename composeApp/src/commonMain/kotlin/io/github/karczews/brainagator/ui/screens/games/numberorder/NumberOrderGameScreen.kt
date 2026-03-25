@@ -64,6 +64,7 @@ import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
 import brainagator.composeapp.generated.resources.subtitle_number_order
 import io.github.karczews.brainagator.Logger
+import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
@@ -267,7 +268,7 @@ private fun NumberBox(
     ) {
         Text(
             text = number.toString(),
-            fontSize = 28.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = if (isGreen) Color.White else MaterialTheme.colorScheme.onSurface,
         )
@@ -277,11 +278,13 @@ private fun NumberBox(
 @Preview
 @Composable
 private fun NumberOrderGameScreenPreview() {
-    NumberOrderGameScreen(
-        gameInfo = NumberOrderGameInfo,
-        onBackClick = {},
-        onGameWon = {},
-    )
+    AppTheme {
+        NumberOrderGameScreen(
+            gameInfo = NumberOrderGameInfo,
+            onBackClick = {},
+            onGameWon = {},
+        )
+    }
 }
 
 data class GameNumber(

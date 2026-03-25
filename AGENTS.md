@@ -61,8 +61,12 @@ We follow [Conventional Commits specification](https://www.conventionalcommits.o
 - Breaking changes: add `!` after type/scope or use `BREAKING CHANGE:` footer
 - Example: `feat: add shape match game with TTS queue support`
 
+### Concurrency in KMP
+See `composeApp/AGENTS.md` for KMP-specific threading guidelines.
+
 ## ANTI-PATTERNS (THIS PROJECT)
 - Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
+- **`@Volatile` in `commonMain`**: Will break Wasm/JS builds. Use `kotlinx.atomicfu` instead.
 
 ## UNIQUE STYLES
 - Hot reload support via Compose Hot Reload plugin
