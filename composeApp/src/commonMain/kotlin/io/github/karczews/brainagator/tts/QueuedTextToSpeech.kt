@@ -40,7 +40,8 @@ abstract class QueuedTextToSpeech : TextToSpeech {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
     private val queue = Channel<Job>(Channel.UNLIMITED)
     private var queueProcessor: Job? = null
-    private var currentJob: Job? = null
+
+    @Volatile private var currentJob: Job? = null
 
     init {
         startQueueProcessor()
