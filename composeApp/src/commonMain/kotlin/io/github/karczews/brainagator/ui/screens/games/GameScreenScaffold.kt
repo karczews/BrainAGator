@@ -133,7 +133,6 @@ fun GameScreenScaffold(
                             painter = painterResource(Res.drawable.ic_help_center_24dp_e3e3e3_fill0_wght400_grad0_opsz24),
                             contentDescription = stringResource(Res.string.repeat_instruction),
                             tint = MaterialTheme.colorScheme.primary,
-                            //  colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                         )
                     }
                 },
