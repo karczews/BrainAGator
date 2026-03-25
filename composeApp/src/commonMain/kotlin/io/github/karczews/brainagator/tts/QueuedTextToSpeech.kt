@@ -22,6 +22,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -63,12 +64,8 @@ abstract class QueuedTextToSpeech : TextToSpeech {
             }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun speak(text: String): Job {
-        if (queue.isClosedForSend) {
-            Logger.w { "TTS queue closed, restarting..." }
-            startQueueProcessor()
-        }
-
         val job =
             scope.launch(start = CoroutineStart.LAZY) {
                 try {
@@ -86,8 +83,19 @@ abstract class QueuedTextToSpeech : TextToSpeech {
 
         val result = queue.trySend(job)
         if (result.isFailure) {
-            Logger.w { "TTS queue closed, cannot enqueue: $text" }
-            job.cancel()
+            if (queue.isClosedForSend) {
+                Logger.w { "TTS queue closed, restarting..." }
+                startQueueProcessor()
+                // Retry once after restarting
+                val retryResult = queue.trySend(job)
+                if (retryResult.isFailure) {
+                    Logger.w { "TTS queue closed, cannot enqueue: $text" }
+                    job.cancel()
+                }
+            } else {
+                Logger.w { "TTS queue closed, cannot enqueue: $text" }
+                job.cancel()
+            }
         }
         return job
     }
