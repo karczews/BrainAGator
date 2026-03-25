@@ -122,6 +122,8 @@ fun GameScreenScaffold(
                 actions = {
                     IconButton(
                         onClick = {
+                            // Reset to null first to force a state change so LaunchedEffect relaunches
+                            speakRequest = null
                             speakRequest = description
                         },
                         modifier = Modifier.size(60.dp),
