@@ -72,6 +72,12 @@ Always run before committing (or push will fail CI):
 ./gradlew :composeApp:ktlintFormat  # auto-fix formatting
 ```
 
+**Note on compile tasks**: KMP uses different naming per target:
+- JVM: `compileKotlinJvm`
+- Wasm: `compileKotlinWasmJs`
+- iOS: `compileKotlinIosArm64`, `compileKotlinIosSimulatorArm64`
+- Android: `compileAndroidMain` (not `compileKotlinAndroid`)
+
 ## NOTES
 - Module configured as `androidLibrary` for Android target
 - Framework output: `ComposeApp.framework` (iOS, static)
