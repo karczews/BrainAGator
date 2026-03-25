@@ -83,19 +83,8 @@ abstract class QueuedTextToSpeech : TextToSpeech {
 
         val result = queue.trySend(job)
         if (result.isFailure) {
-            if (queue.isClosedForSend) {
-                Logger.w { "TTS queue closed, restarting..." }
-                startQueueProcessor()
-                // Retry once after restarting
-                val retryResult = queue.trySend(job)
-                if (retryResult.isFailure) {
-                    Logger.w { "TTS queue closed, cannot enqueue: $text" }
-                    job.cancel()
-                }
-            } else {
-                Logger.w { "TTS queue closed, cannot enqueue: $text" }
-                job.cancel()
-            }
+            Logger.w { "TTS queue closed, cannot enqueue: $text" }
+            job.cancel()
         }
         return job
     }

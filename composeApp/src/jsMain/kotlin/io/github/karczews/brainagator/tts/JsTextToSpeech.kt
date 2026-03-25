@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package io.github.karczews.brainagator.tts
 
 import androidx.compose.runtime.Composable
@@ -21,6 +23,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.karczews.brainagator.Logger
 import kotlinx.coroutines.CompletableDeferred
+import kotlin.js.ExperimentalWasmJsInterop
+import kotlin.js.JsArray
 
 /**
  * JS implementation of Text-to-Speech using the Web Speech API.
