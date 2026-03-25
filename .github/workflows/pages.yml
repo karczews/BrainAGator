@@ -8,13 +8,14 @@ on:
       - 'docs/webpages/**'
       - '.github/workflows/pages.yml'
       - 'gradle/**'
-      - '**.gradle.kts'
+      - '*.gradle.kts'
+      - '**/*.gradle.kts'
   workflow_dispatch:
 
-# Allow only one concurrent deployment; cancel any in-progress run
+# Allow only one concurrent deployment; do not cancel in-progress runs
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -42,10 +43,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build WASM
-        run: ./gradlew :composeApp:wasmJsBrowserProductionWebpack
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
       - name: Copy WASM to webpages
         run: |
+          rm -rf docs/webpages/app
           mkdir -p docs/webpages/app
           cp -r composeApp/build/dist/wasmJs/productionExecutable/* docs/webpages/app/
 
