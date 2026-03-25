@@ -43,13 +43,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build WASM
-        run: ./gradlew :composeApp:wasmJsBrowserProductionWebpack
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
       - name: Copy WASM to webpages
         run: |
           rm -rf docs/webpages/app
           mkdir -p docs/webpages/app
-          cp -r composeApp/build/kotlin-webpack/wasmJs/productionExecutable/* docs/webpages/app/
+          cp -r composeApp/build/dist/wasmJs/productionExecutable/* docs/webpages/app/
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
