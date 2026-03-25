@@ -102,6 +102,29 @@
     .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
     .btn-white { background: #fff; color: var(--primary); }
     .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.7); }
+    .btn-accent { background: #fff; color: var(--accent); }
+
+    /* ── Web App CTA ── */
+    .webapp-cta {
+      background: linear-gradient(135deg, #43C59E 0%, #2D8A6E 100%);
+      color: #fff;
+      padding: 4rem 2rem;
+      text-align: center;
+      border-radius: var(--radius);
+      margin: 3rem auto;
+      max-width: 800px;
+    }
+    .webapp-cta h2 {
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .webapp-cta p {
+      opacity: .92;
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
     /* ── Section wrapper ── */
     section { padding: 5rem 2rem; }
@@ -266,6 +289,16 @@
     <a class="btn btn-outline" href="#games">Explore Games</a>
   </div>
 </header>
+
+<!-- ── Web App CTA ── -->
+<section class="webapp-cta">
+  <h2>Play in Your Browser</h2>
+  <p>
+    No download needed — play Brainagator instantly in your browser using WebAssembly.
+    Works on desktop, tablet, and mobile.
+  </p>
+  <a class="btn btn-accent" href="app/">Launch Web App</a>
+</section>
 
 <!-- ── Key Features ── -->
 <section id="features">
