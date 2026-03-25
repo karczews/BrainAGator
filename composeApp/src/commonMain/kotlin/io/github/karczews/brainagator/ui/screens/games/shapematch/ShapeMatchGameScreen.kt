@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -311,19 +312,30 @@ private fun GameProgress(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(24.dp)
-                        .background(MaterialTheme.colorScheme.outline),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     modifier =
                         Modifier
-                            .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary),
+                            .weight(1f)
+                            .height(24.dp)
+                            .background(MaterialTheme.colorScheme.outline),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.primary),
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "$correctCount / $totalCount",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
