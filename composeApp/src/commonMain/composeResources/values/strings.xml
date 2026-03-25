@@ -65,6 +65,8 @@
     <string name="shape_pentagon">Pentagon</string>
 
     <!-- Shape Match Game -->
+    <string name="shape_match_current_goal">CURRENT GOAL</string>
+    <string name="shape_match_progress_label">PROGRESS</string>
     <string name="shape_match_select_instruction">Select a %1$s %2$s</string>
     <string name="shape_match_keep_going">Great! Keep going!</string>
     <string name="shape_match_select_shape">Select a shape</string>

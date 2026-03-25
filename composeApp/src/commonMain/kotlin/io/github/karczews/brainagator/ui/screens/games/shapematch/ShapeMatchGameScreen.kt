@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
+import brainagator.composeapp.generated.resources.shape_match_current_goal
+import brainagator.composeapp.generated.resources.shape_match_progress_label
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.theme.AppTheme
@@ -204,7 +206,7 @@ fun ShapeMatchGameScreen(
                 ) {
                     Column {
                         Text(
-                            text = "CURRENT GOAL",
+                            text = stringResource(Res.string.shape_match_current_goal),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                         )
@@ -304,7 +306,7 @@ private fun GameProgress(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "PROGRESS",
+                text = stringResource(Res.string.shape_match_progress_label),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
