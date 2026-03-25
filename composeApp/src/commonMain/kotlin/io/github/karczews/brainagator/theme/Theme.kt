@@ -23,48 +23,48 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
-private val RetroMarioColorScheme = lightColorScheme(
-    primary = BrickRed,
-    onPrimary = White,
-    primaryContainer = PalePink,
-    onPrimaryContainer = DarkMaroon,
-    secondary = PipeGreen,
-    onSecondary = White,
-    secondaryContainer = MintGreen,
-    onSecondaryContainer = DarkForestGreen,
-    error = CrimsonRose,
-    onError = White,
-    errorContainer = ErrorPink,
-    onErrorContainer = ErrorMaroon,
-    background = SkyBlue,
-    onBackground = EarthyBrown,
-    surface = SkyBlue,
-    onSurface = EarthyBrown,
-    surfaceVariant = WarmCream,
-    onSurfaceVariant = EarthyBrown,
-    surfaceContainerLow = WarmCream,
-    surfaceContainerHigh = GoldenTan,
-    surfaceContainerHighest = WarmCream,
-    outline = WoodenBrown,
-    outlineVariant = HoneyGold,
-    inverseSurface = CharcoalBrown,
-    inverseOnSurface = RosyBeige,
-    inversePrimary = SalmonPink,
-    scrim = Black,
-)
+private val RetroMarioColorScheme =
+    lightColorScheme(
+        primary = BrickRed,
+        onPrimary = White,
+        primaryContainer = PalePink,
+        onPrimaryContainer = DarkMaroon,
+        secondary = PipeGreen,
+        onSecondary = White,
+        secondaryContainer = MintGreen,
+        onSecondaryContainer = DarkForestGreen,
+        error = CrimsonRose,
+        onError = White,
+        errorContainer = ErrorPink,
+        onErrorContainer = ErrorMaroon,
+        background = SkyBlue,
+        onBackground = EarthyBrown,
+        surface = SkyBlue,
+        onSurface = EarthyBrown,
+        surfaceVariant = WarmCream,
+        onSurfaceVariant = EarthyBrown,
+        surfaceContainerLow = WarmCream,
+        surfaceContainerHigh = GoldenTan,
+        surfaceContainerHighest = WarmCream,
+        outline = WoodenBrown,
+        outlineVariant = HoneyGold,
+        inverseSurface = CharcoalBrown,
+        inverseOnSurface = RosyBeige,
+        inversePrimary = SalmonPink,
+        scrim = Black,
+    )
 
-private val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(0.dp),
-    small = RoundedCornerShape(0.dp),
-    medium = RoundedCornerShape(0.dp),
-    large = RoundedCornerShape(0.dp),
-    extraLarge = RoundedCornerShape(0.dp)
-)
+private val AppShapes =
+    Shapes(
+        extraSmall = RoundedCornerShape(0.dp),
+        small = RoundedCornerShape(0.dp),
+        medium = RoundedCornerShape(0.dp),
+        large = RoundedCornerShape(0.dp),
+        extraLarge = RoundedCornerShape(0.dp),
+    )
 
 @Composable
-fun AppTheme(
-    content: @Composable () -> Unit
-) {
+fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = RetroMarioColorScheme,
         typography = getAppTypography(),

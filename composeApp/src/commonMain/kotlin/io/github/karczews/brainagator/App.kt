@@ -25,7 +25,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import io.github.karczews.brainagator.theme.AppTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
+import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen

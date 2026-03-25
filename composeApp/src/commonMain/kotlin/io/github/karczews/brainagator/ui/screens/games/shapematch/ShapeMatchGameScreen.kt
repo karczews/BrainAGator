@@ -195,32 +195,34 @@ fun ShapeMatchGameScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                        .border(4.dp, MaterialTheme.colorScheme.outline)
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .border(4.dp, MaterialTheme.colorScheme.outline)
+                            .padding(16.dp),
                 ) {
                     Column {
                         Text(
                             text = "CURRENT GOAL",
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = instructionText,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
                 // Wooden post under the sign
                 Box(
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(44.dp)
-                        .background(Color(0xFF8B5E3C))
+                    modifier =
+                        Modifier
+                            .width(20.dp)
+                            .height(44.dp)
+                            .background(Color(0xFF8B5E3C)),
                 )
             }
 
@@ -229,10 +231,11 @@ fun ShapeMatchGameScreen(
             // Flash bar for incorrect selection
             if (isIncorrectSelection) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp)
-                        .background(flashBorderColor)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .background(flashBorderColor),
                 )
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -291,31 +294,34 @@ private fun GameProgress(
     totalCount: Int,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(4.dp, MaterialTheme.colorScheme.outline)
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(4.dp, MaterialTheme.colorScheme.outline)
+                .padding(16.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "PROGRESS",
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp)
-                    .background(MaterialTheme.colorScheme.outline)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(24.dp)
+                        .background(MaterialTheme.colorScheme.outline),
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primary)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primary),
                 )
             }
         }
@@ -352,34 +358,36 @@ private fun ColoredShapeButton(
     val buttonDescription = "$colorName $shapeName"
 
     Column(
-        modifier = Modifier
-            .aspectRatio(0.85f)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .border(4.dp, MaterialTheme.colorScheme.outline)
-            .clickable(onClick = onClick)
-            .semantics {
-                contentDescription = buttonDescription
-            }
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .aspectRatio(0.85f)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .border(4.dp, MaterialTheme.colorScheme.outline)
+                .clickable(onClick = onClick)
+                .semantics {
+                    contentDescription = buttonDescription
+                }.padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         // White inner box with shape drawn large
         Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .background(Color.White)
-                .border(2.dp, MaterialTheme.colorScheme.outline)
-                .padding(12.dp),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .border(2.dp, MaterialTheme.colorScheme.outline)
+                    .padding(12.dp),
+            contentAlignment = Alignment.Center,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize(0.7f)
-                    .aspectRatio(1f)
-                    .clip(shape.shape)
-                    .background(color.color)
+                modifier =
+                    Modifier
+                        .fillMaxSize(0.7f)
+                        .aspectRatio(1f)
+                        .clip(shape.shape)
+                        .background(color.color),
             )
         }
         Spacer(modifier = Modifier.height(8.dp))

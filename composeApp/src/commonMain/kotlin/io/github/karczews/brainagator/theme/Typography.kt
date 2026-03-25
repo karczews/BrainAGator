@@ -21,94 +21,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.lexend
 import org.jetbrains.compose.resources.Font
 
+private fun lexendStyle(
+    fontFamily: FontFamily,
+    weight: FontWeight,
+    fontSize: TextUnit,
+    lineHeight: TextUnit,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+) = TextStyle(fontFamily = fontFamily, fontWeight = weight, fontSize = fontSize, lineHeight = lineHeight, letterSpacing = letterSpacing)
+
 @Composable
-fun getLexendFontFamily(): FontFamily {
-    return FontFamily(
+fun getLexendFontFamily(): FontFamily =
+    FontFamily(
         Font(Res.font.lexend, FontWeight.Normal),
-        Font(Res.font.lexend, FontWeight.Bold)
+        Font(Res.font.lexend, FontWeight.SemiBold),
+        Font(Res.font.lexend, FontWeight.Bold),
+        Font(Res.font.lexend, FontWeight.ExtraBold),
     )
-}
 
 @Composable
 fun getAppTypography(): Typography {
     val lexend = getLexendFontFamily()
     return Typography(
-        displayLarge = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 56.sp,
-            lineHeight = 64.sp,
-            letterSpacing = (-0.02).sp
-        ),
-        displayMedium = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 45.sp,
-            lineHeight = 52.sp,
-        ),
-        displaySmall = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 36.sp,
-            lineHeight = 44.sp,
-        ),
-        headlineLarge = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
-            lineHeight = 40.sp,
-        ),
-        headlineMedium = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
-            lineHeight = 36.sp,
-        ),
-        titleLarge = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            lineHeight = 28.sp,
-        ),
-        titleMedium = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            letterSpacing = 0.15.sp
-        ),
-        bodyLarge = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            letterSpacing = 0.5.sp
-        ),
-        bodyMedium = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            letterSpacing = 0.25.sp
-        ),
-        labelLarge = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            letterSpacing = 0.1.sp
-        ),
-        labelMedium = TextStyle(
-            fontFamily = lexend,
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
-            lineHeight = 16.sp,
-            letterSpacing = 0.5.sp
-        )
+        displayLarge = lexendStyle(lexend, FontWeight.Bold, 56.sp, 64.sp, (-0.02).sp),
+        displayMedium = lexendStyle(lexend, FontWeight.Bold, 45.sp, 52.sp),
+        displaySmall = lexendStyle(lexend, FontWeight.Bold, 36.sp, 44.sp),
+        headlineLarge = lexendStyle(lexend, FontWeight.Bold, 32.sp, 40.sp),
+        headlineMedium = lexendStyle(lexend, FontWeight.Bold, 28.sp, 36.sp),
+        titleLarge = lexendStyle(lexend, FontWeight.Bold, 22.sp, 28.sp),
+        titleMedium = lexendStyle(lexend, FontWeight.Bold, 16.sp, 24.sp, 0.15.sp),
+        bodyLarge = lexendStyle(lexend, FontWeight.Normal, 16.sp, 24.sp, 0.5.sp),
+        bodyMedium = lexendStyle(lexend, FontWeight.Normal, 14.sp, 20.sp, 0.25.sp),
+        labelLarge = lexendStyle(lexend, FontWeight.Bold, 14.sp, 20.sp, 0.1.sp),
+        labelMedium = lexendStyle(lexend, FontWeight.Bold, 12.sp, 16.sp, 0.5.sp),
     )
 }
