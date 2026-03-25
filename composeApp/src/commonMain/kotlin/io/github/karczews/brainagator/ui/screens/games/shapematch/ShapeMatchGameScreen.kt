@@ -225,7 +225,7 @@ fun ShapeMatchGameScreen(
                         Modifier
                             .width(20.dp)
                             .height(44.dp)
-                            .background(Color(0xFF8B5E3C)),
+                            .background(MaterialTheme.colorScheme.secondaryContainer),
                 )
             }
 
@@ -390,7 +390,7 @@ private fun ColoredShapeButton(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
                     .border(2.dp, MaterialTheme.colorScheme.outline)
                     .padding(12.dp),
             contentAlignment = Alignment.Center,
