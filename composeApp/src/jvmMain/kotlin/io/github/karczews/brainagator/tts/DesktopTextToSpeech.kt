@@ -21,8 +21,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -122,11 +124,17 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 currentProcess = process
 
                 try {
-                    process.waitFor()
+                    runInterruptible {
+                        process.waitFor()
+                    }
                     Logger.v { "TTS completed: \"$text\"" }
                 } finally {
                     currentProcess = null
                 }
+            } catch (_: CancellationException) {
+                // Normal cancellation, not an error
+                Logger.d { "TTS cancelled: \"$text\"" }
+                throw CancellationException("TTS cancelled")
             } catch (e: Exception) {
                 Logger.e(e) { "TTS not available on this system" }
                 throw e

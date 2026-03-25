@@ -17,6 +17,7 @@
 package io.github.karczews.brainagator.tts
 
 import io.github.karczews.brainagator.Logger
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +42,8 @@ abstract class QueuedTextToSpeech : TextToSpeech {
     private val queue = Channel<Job>(Channel.UNLIMITED)
     private var queueProcessor: Job? = null
 
+    private val currentJob = atomic<Job?>(null)
+
     init {
         startQueueProcessor()
     }
@@ -50,7 +53,12 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         queueProcessor =
             scope.launch {
                 for (job in queue) {
-                    job.join()
+                    currentJob.value = job
+                    try {
+                        job.join()
+                    } finally {
+                        currentJob.value = null
+                    }
                 }
             }
     }
@@ -85,6 +93,16 @@ abstract class QueuedTextToSpeech : TextToSpeech {
     }
 
     override fun stop() {
+        // Cancel all pending jobs in the queue
+        var result = queue.tryReceive()
+        while (result.isSuccess) {
+            result.getOrNull()?.cancel()
+            result = queue.tryReceive()
+        }
+
+        // Cancel the currently executing job
+        currentJob.value?.cancel()
+
         performStop()
     }
 
