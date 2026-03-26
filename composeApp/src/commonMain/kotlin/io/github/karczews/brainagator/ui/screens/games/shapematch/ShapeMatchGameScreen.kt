@@ -225,7 +225,7 @@ fun ShapeMatchGameScreen(
                         Modifier
                             .width(20.dp)
                             .height(44.dp)
-                            .background(MaterialTheme.colorScheme.secondaryContainer),
+                            .background(MaterialTheme.colorScheme.outline),
                 )
             }
 

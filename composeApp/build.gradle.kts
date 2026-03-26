@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.atomicfu)
 }
 
 kotlin {
@@ -85,6 +84,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.atomicfu)
             implementation(libs.kermit)
         }
         commonTest.dependencies {
