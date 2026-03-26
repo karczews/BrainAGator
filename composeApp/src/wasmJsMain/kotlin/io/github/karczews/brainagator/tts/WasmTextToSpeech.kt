@@ -52,7 +52,8 @@ class WasmTextToSpeech : QueuedTextToSpeech() {
         utterance.pitch = currentPitch.toDouble()
         utterance.volume = 1.0
 
-        val voices = synthesis.getVoices()
+        // Wait for voices to be loaded before speaking
+        val voices = waitForVoices(synthesis)
         val voiceCount = voices.length
         Logger.d { "TTS voices: $voiceCount, rate: $currentRate, pitch: $currentPitch" }
         if (voiceCount > 0) {
@@ -69,6 +70,25 @@ class WasmTextToSpeech : QueuedTextToSpeech() {
         synthesis.speak(utterance)
 
         completable.await()
+    }
+
+    private suspend fun waitForVoices(synthesis: SpeechSynthesis): JsArray<SpeechSynthesisVoice> {
+        var voices = synthesis.getVoices()
+        if (voices.length > 0) {
+            return voices
+        }
+
+        // Voices not loaded yet, wait for voiceschanged event
+        Logger.d { "TTS voices not ready, waiting for voiceschanged event" }
+        val voicesDeferred = CompletableDeferred<Unit>()
+        setOnVoicesChanged(synthesis) {
+            voicesDeferred.complete(Unit)
+        }
+        voicesDeferred.await()
+
+        voices = synthesis.getVoices()
+        Logger.d { "TTS voices loaded: ${voices.length}" }
+        return voices
     }
 
     override fun performStop() {
@@ -155,4 +175,16 @@ external fun setUtteranceCallbacks(
     utterance: SpeechSynthesisUtterance,
     onEnd: () -> Unit,
     onError: () -> Unit,
+)
+
+@JsFun(
+    """
+    (synthesis, callback) => {
+        synthesis.onvoiceschanged = callback;
+    }
+""",
+)
+external fun setOnVoicesChanged(
+    synthesis: SpeechSynthesis,
+    callback: () -> Unit,
 )
