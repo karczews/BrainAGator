@@ -99,7 +99,7 @@ class AndroidTextToSpeech(
         )
 
         val utteranceId = UUID.randomUUID().toString()
-        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_ADD, null, utteranceId)
+        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
         completable.await()
     }
 
