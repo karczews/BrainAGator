@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import android.content.Context
 import android.speech.tts.UtteranceProgressListener
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import kotlinx.coroutines.CompletableDeferred
@@ -98,7 +99,7 @@ class AndroidTextToSpeech(
         )
 
         val utteranceId = UUID.randomUUID().toString()
-        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
+        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_ADD, null, utteranceId)
         completable.await()
     }
 
@@ -137,11 +138,11 @@ fun createTextToSpeech(context: Context): io.github.karczews.brainagator.tts.Tex
 actual fun rememberTextToSpeech(): io.github.karczews.brainagator.tts.TextToSpeech {
     // Return dummy implementation for Compose Preview
     if (LocalInspectionMode.current) {
-        return androidx.compose.runtime.remember<io.github.karczews.brainagator.tts.TextToSpeech> { DummyTextToSpeech() }
+        return remember<io.github.karczews.brainagator.tts.TextToSpeech> { DummyTextToSpeech() }
     }
 
     val context = LocalContext.current
-    val tts = androidx.compose.runtime.remember<io.github.karczews.brainagator.tts.TextToSpeech> { createTextToSpeech(context) }
+    val tts = remember { createTextToSpeech(context) }
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         onDispose {

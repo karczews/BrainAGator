@@ -29,6 +29,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -69,7 +70,7 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         val job =
             scope.launch(start = CoroutineStart.LAZY) {
                 try {
-                    if (isActive) {
+                    if (isActive && this.coroutineContext.job.isActive) {
                         performSpeak(text)
                     }
                 } catch (e: CancellationException) {
