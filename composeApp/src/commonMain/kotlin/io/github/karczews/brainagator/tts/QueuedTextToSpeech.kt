@@ -44,7 +44,10 @@ abstract class QueuedTextToSpeech(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : TextToSpeech {
     private val scope = CoroutineScope(SupervisorJob() + dispatcher + CoroutineName("TTS-Queue"))
-    private val queue = Channel<Job>(Channel.UNLIMITED)
+
+    // Use BUFFERED channel to prevent unbounded memory growth while allowing
+    // reasonable buffering for rapid speak() calls
+    private val queue = Channel<Job>(Channel.BUFFERED)
     private var queueProcessor: Job? = null
 
     private val currentJob = atomic<Job?>(null)
@@ -105,6 +108,10 @@ abstract class QueuedTextToSpeech(
         currentJob.value?.cancel()
 
         performStop()
+
+        // Restart queue processor to ensure future speak() calls work correctly
+        // The processor may have exited if the queue was empty
+        startQueueProcessor()
     }
 
     override fun shutdown() {

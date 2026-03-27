@@ -220,6 +220,210 @@ class QueuedTextToSpeechTest {
         }
 
     // ------------------------------------------------------------------
+    // Job interruption — repeated start/cancel cycles
+    // ------------------------------------------------------------------
+
+    @Test
+    fun repeatedSpeakCancelCycles() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            job1.cancel()
+            job1.join()
+            delay(50)
+
+            val job2 = tts.speak("B")
+            delay(50)
+            job2.cancel()
+            job2.join()
+            delay(50)
+
+            val job3 = tts.speak("C")
+            delay(50)
+            tts.releaseSpeak()
+            job3.join()
+
+            assertEquals(listOf("C"), tts.spokenTexts)
+            assertTrue(job1.isCancelled)
+            assertTrue(job2.isCancelled)
+            assertTrue(job3.isCompleted)
+            assertEquals(2, tts.stopCount)
+            tts.shutdown()
+        }
+
+    // ------------------------------------------------------------------
+    // Job interruption — selective cancellation of queued jobs
+    // ------------------------------------------------------------------
+
+    @Test
+    fun cancelMiddleQueuedJobSkipsIt() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            val job2 = tts.speak("B")
+            val job3 = tts.speak("C")
+
+            job2.cancel()
+
+            tts.releaseSpeak()
+            job1.join()
+            delay(50)
+            tts.releaseSpeak()
+            job3.join()
+
+            assertEquals(listOf("A", "C"), tts.spokenTexts)
+            assertTrue(job2.isCancelled)
+            tts.shutdown()
+        }
+
+    @Test
+    fun cancelFirstAndLastOfThreeQueuedJobs() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            val job2 = tts.speak("B")
+            val job3 = tts.speak("C")
+
+            job1.cancel()
+            job3.cancel()
+
+            delay(50)
+            tts.releaseSpeak()
+            job2.join()
+
+            assertEquals(listOf("B"), tts.spokenTexts)
+            assertTrue(job1.isCancelled)
+            assertTrue(job3.isCancelled)
+            assertFalse(job2.isCancelled)
+            tts.shutdown()
+        }
+
+    @Test
+    fun cancellingCurrentJobAllowsRemainingQueuedJobsToExecute() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            val job2 = tts.speak("B")
+            val job3 = tts.speak("C")
+
+            job1.cancel()
+            delay(50)
+            tts.releaseSpeak()
+            job2.join()
+            delay(50)
+            tts.releaseSpeak()
+            job3.join()
+
+            assertEquals(listOf("B", "C"), tts.spokenTexts)
+            assertTrue(job1.isCancelled)
+            assertFalse(job2.isCancelled)
+            assertFalse(job3.isCancelled)
+            tts.shutdown()
+        }
+
+    // ------------------------------------------------------------------
+    // stop() — clears all pending and current jobs
+    // ------------------------------------------------------------------
+
+    @Test
+    fun stopCancelsAllPendingAndCurrentJobs() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            val job2 = tts.speak("B")
+            val job3 = tts.speak("C")
+            val job4 = tts.speak("D")
+
+            tts.stop()
+            delay(50)
+
+            assertTrue(job1.isCancelled)
+            assertTrue(job2.isCancelled)
+            assertTrue(job3.isCancelled)
+            assertTrue(job4.isCancelled)
+            assertEquals(emptyList<String>(), tts.spokenTexts)
+            tts.shutdown()
+        }
+
+    @Test
+    fun speakAfterStopResumesQueueProcessing() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            delay(50)
+            tts.stop()
+            delay(50)
+
+            assertTrue(job1.isCancelled)
+
+            val job2 = tts.speak("B")
+            delay(50)
+            tts.releaseSpeak()
+            job2.join()
+
+            assertEquals(listOf("B"), tts.spokenTexts)
+            assertFalse(job2.isCancelled)
+            tts.shutdown()
+        }
+
+    @Test
+    fun stopWhenIdleIsHarmless() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+            delay(50)
+
+            tts.stop()
+
+            assertEquals(1, tts.stopCount)
+            assertEquals(emptyList<String>(), tts.spokenTexts)
+
+            val job = tts.speak("after idle stop")
+            delay(50)
+            tts.releaseSpeak()
+            job.join()
+
+            assertEquals(listOf("after idle stop"), tts.spokenTexts)
+            tts.shutdown()
+        }
+
+    // ------------------------------------------------------------------
+    // Job interruption — rapid interleaving
+    // ------------------------------------------------------------------
+
+    @Test
+    fun rapidSpeakAndCancelOnlyLastCompletes() =
+        runTest {
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+
+            val job1 = tts.speak("A")
+            val job2 = tts.speak("B")
+            val job3 = tts.speak("C")
+
+            job1.cancel()
+            job2.cancel()
+            delay(50)
+            tts.releaseSpeak()
+            job3.join()
+
+            assertEquals(listOf("C"), tts.spokenTexts)
+            assertTrue(job1.isCancelled)
+            assertTrue(job2.isCancelled)
+            assertTrue(job3.isCompleted)
+            tts.shutdown()
+        }
+
+    // ------------------------------------------------------------------
     // shutdown()
     // ------------------------------------------------------------------
 

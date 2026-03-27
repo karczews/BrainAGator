@@ -131,10 +131,10 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 } finally {
                     currentProcess = null
                 }
-            } catch (_: CancellationException) {
+            } catch (e: CancellationException) {
                 // Normal cancellation, not an error
                 Logger.d { "TTS cancelled: \"$text\"" }
-                throw CancellationException("TTS cancelled")
+                throw e
             } catch (e: Exception) {
                 Logger.e(e) { "TTS not available on this system" }
                 throw e
