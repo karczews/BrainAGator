@@ -76,7 +76,7 @@ abstract class QueuedTextToSpeech(
         val job =
             scope.launch(start = CoroutineStart.LAZY) {
                 try {
-                    if (isActive && this.coroutineContext.job.isActive) {
+                    if (isActive) {
                         performSpeak(text)
                     }
                 } catch (e: CancellationException) {

@@ -84,7 +84,11 @@ class WasmTextToSpeech : QueuedTextToSpeech() {
         setOnVoicesChanged(synthesis) {
             voicesDeferred.complete(Unit)
         }
-        voicesDeferred.await()
+        try {
+            voicesDeferred.await()
+        } finally {
+            setOnVoicesChanged(synthesis) {} // clear the listener
+        }
 
         voices = synthesis.getVoices()
         Logger.d { "TTS voices loaded: ${voices.length}" }

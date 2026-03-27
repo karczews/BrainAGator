@@ -16,6 +16,7 @@
 
 package io.github.karczews.brainagator.tts
 
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -34,16 +35,16 @@ class FakeQueuedTextToSpeech(
     private var _stopCount = 0
 
     /** Deferred used to block the current [performSpeak] call. */
-    private var speakGate: CompletableDeferred<Unit>? = null
+    private val speakGate = atomic<CompletableDeferred<Unit>?>(null)
 
     /** Completes the currently suspended [performSpeak], allowing it to return. */
     fun releaseSpeak() {
-        speakGate?.complete(Unit)
+        speakGate.value?.complete(Unit)
     }
 
     override suspend fun performSpeak(text: String) {
         val gate = CompletableDeferred<Unit>()
-        speakGate = gate
+        speakGate.value = gate
         gate.await()
         spokenTexts.add(text)
     }
