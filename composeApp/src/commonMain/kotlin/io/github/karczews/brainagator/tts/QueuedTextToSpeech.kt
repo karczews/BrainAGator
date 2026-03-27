@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import io.github.karczews.brainagator.Logger
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -39,8 +40,10 @@ import kotlinx.coroutines.launch
  * Subclasses must implement [performSpeak] to actually speak text,
  * and [performStop] to stop current speech.
  */
-abstract class QueuedTextToSpeech : TextToSpeech {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
+abstract class QueuedTextToSpeech(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : TextToSpeech {
+    private val scope = CoroutineScope(SupervisorJob() + dispatcher + CoroutineName("TTS-Queue"))
     private val queue = Channel<Job>(Channel.UNLIMITED)
     private var queueProcessor: Job? = null
 
