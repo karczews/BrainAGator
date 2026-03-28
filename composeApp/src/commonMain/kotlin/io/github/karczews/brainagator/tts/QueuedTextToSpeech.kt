@@ -19,6 +19,7 @@ package io.github.karczews.brainagator.tts
 import io.github.karczews.brainagator.Logger
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -29,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -38,9 +40,14 @@ import kotlinx.coroutines.launch
  * Subclasses must implement [performSpeak] to actually speak text,
  * and [performStop] to stop current speech.
  */
-abstract class QueuedTextToSpeech : TextToSpeech {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default + CoroutineName("TTS-Queue"))
-    private val queue = Channel<Job>(Channel.UNLIMITED)
+abstract class QueuedTextToSpeech(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+) : TextToSpeech {
+    private val scope = CoroutineScope(SupervisorJob() + dispatcher + CoroutineName("TTS-Queue"))
+
+    // Use BUFFERED channel to prevent unbounded memory growth while allowing
+    // reasonable buffering for rapid speak() calls
+    private val queue = Channel<Job>(Channel.BUFFERED)
     private var queueProcessor: Job? = null
 
     private val currentJob = atomic<Job?>(null)
@@ -101,6 +108,10 @@ abstract class QueuedTextToSpeech : TextToSpeech {
         currentJob.value?.cancel()
 
         performStop()
+
+        // Restart queue processor to ensure future speak() calls work correctly
+        // The processor may have exited if the queue was empty
+        startQueueProcessor()
     }
 
     override fun shutdown() {
