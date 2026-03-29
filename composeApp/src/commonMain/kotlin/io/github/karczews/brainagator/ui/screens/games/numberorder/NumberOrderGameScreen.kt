@@ -134,7 +134,11 @@ fun NumberOrderGameScreen(
         LaunchedEffect(feedbackEventId) {
             feedbackMessage?.let {
                 val job = tts.speak(it)
-                job.join()
+                try {
+                    job.join()
+                } finally {
+                    job.cancel()
+                }
             }
         }
         Box(

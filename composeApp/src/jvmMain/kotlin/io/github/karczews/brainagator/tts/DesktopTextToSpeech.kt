@@ -21,6 +21,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalInspectionMode
 import io.github.karczews.brainagator.Logger
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -47,7 +48,7 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
     private val isMac = osName.contains("mac")
     private val systemLanguage: String = Locale.getDefault().language
     private val cachedVoice: String? by lazy { findBestVoice() }
-    private var currentProcess: Process? = null
+    private val currentProcess = atomic<Process?>(null)
 
     /**
      * Finds the best voice for the current system language.
@@ -121,7 +122,7 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 Logger.d { "TTS executing: $command" }
 
                 val process = ProcessBuilder(command).start()
-                currentProcess = process
+                currentProcess.value = process
 
                 try {
                     runInterruptible {
@@ -129,7 +130,8 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                     }
                     Logger.v { "TTS completed: \"$text\"" }
                 } finally {
-                    currentProcess = null
+                    process.destroy()
+                    currentProcess.compareAndSet(process, null)
                 }
             } catch (e: CancellationException) {
                 // Normal cancellation, not an error
@@ -185,13 +187,12 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
     }
 
     override fun performStop() {
-        currentProcess?.destroy()
-        currentProcess = null
+        currentProcess.getAndSet(null)?.destroy()
     }
 
     override fun shutdown() {
         super.shutdown()
-        currentProcess?.destroy()
+        currentProcess.getAndSet(null)?.destroy()
     }
 }
 
