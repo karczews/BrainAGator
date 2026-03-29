@@ -131,7 +131,7 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                     Logger.v { "TTS completed: \"$text\"" }
                 } finally {
                     process.destroy()
-                    currentProcess.value = null
+                    currentProcess.compareAndSet(process, null)
                 }
             } catch (e: CancellationException) {
                 // Normal cancellation, not an error
@@ -187,13 +187,12 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
     }
 
     override fun performStop() {
-        currentProcess.value?.destroy()
-        currentProcess.value = null
+        currentProcess.getAndSet(null)?.destroy()
     }
 
     override fun shutdown() {
         super.shutdown()
-        currentProcess.value?.destroy()
+        currentProcess.getAndSet(null)?.destroy()
     }
 }
 
