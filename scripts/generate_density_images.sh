@@ -16,6 +16,14 @@ if ! command -v ffmpeg &> /dev/null; then
     exit 1
 fi
 
+# Check if bc is available
+if ! command -v bc &> /dev/null; then
+    echo "Error: bc is not installed. Please install bc to use this script."
+    echo "  macOS: brew install bc"
+    echo "  Ubuntu/Debian: sudo apt-get install bc"
+    exit 1
+fi
+
 # Check arguments
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <image_path> <mdpi_size>"
@@ -67,6 +75,14 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 TEMP_DIR="/tmp/density_gen_$(date +%s)"
 RESOURCE_DIR="$PROJECT_ROOT/composeApp/src/commonMain/composeResources"
 
+# Cleanup temp directory on exit (success or failure)
+cleanup() {
+    if [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+    fi
+}
+trap cleanup EXIT
+
 MDPI_DIR="$RESOURCE_DIR/drawable-mdpi"
 HDPI_DIR="$RESOURCE_DIR/drawable-hdpi"
 XHDPI_DIR="$RESOURCE_DIR/drawable-xhdpi"
@@ -90,22 +106,22 @@ echo "  xxhdpi: ${XXHDPI_MAX}px"
 echo ""
 
 # Generate mdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -i "$INPUT_IMAGE" -vf "scale=${MDPI_MAX}:${MDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/${FILENAME}" 2>/dev/null
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${MDPI_MAX}:${MDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/${FILENAME}"
 
 echo "Created: mdpi (max ${MDPI_MAX}px)"
 
 # Generate hdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -i "$INPUT_IMAGE" -vf "scale=${HDPI_MAX}:${HDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/hdpi_${FILENAME}" 2>/dev/null
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${HDPI_MAX}:${HDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/hdpi_${FILENAME}"
 
 echo "Created: hdpi (max ${HDPI_MAX}px)"
 
 # Generate xhdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -i "$INPUT_IMAGE" -vf "scale=${XHDPI_MAX}:${XHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xhdpi_${FILENAME}" 2>/dev/null
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XHDPI_MAX}:${XHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xhdpi_${FILENAME}"
 
 echo "Created: xhdpi (max ${XHDPI_MAX}px)"
 
 # Generate xxhdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -i "$INPUT_IMAGE" -vf "scale=${XXHDPI_MAX}:${XXHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xxhdpi_${FILENAME}" 2>/dev/null
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XXHDPI_MAX}:${XXHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xxhdpi_${FILENAME}"
 
 echo "Created: xxhdpi (max ${XXHDPI_MAX}px)"
 echo ""
@@ -123,8 +139,7 @@ echo "Copied to: drawable-xhdpi/${FILENAME}"
 cp "$TEMP_DIR/xxhdpi_${FILENAME}" "$XXHDPI_DIR/${FILENAME}"
 echo "Copied to: drawable-xxhdpi/${FILENAME}"
 
-# Cleanup
-rm -rf "$TEMP_DIR"
+# Cleanup handled by trap
 
 echo ""
 echo "Done! Images copied to composeResources drawable folders."
