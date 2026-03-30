@@ -251,7 +251,6 @@ fun GameCard(
     game: GameInfo,
     onClick: () -> Unit,
 ) {
-    val title = stringResource(game.titleRes)
     val subtitle = stringResource(game.subtitleRes)
 
     Card(
