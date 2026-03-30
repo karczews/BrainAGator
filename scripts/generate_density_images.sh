@@ -106,22 +106,22 @@ echo "  xxhdpi: ${XXHDPI_MAX}px"
 echo ""
 
 # Generate mdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${MDPI_MAX}:${MDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/${FILENAME}"
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${MDPI_MAX}:${MDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" -update 1 "$TEMP_DIR/${FILENAME}"
 
 echo "Created: mdpi (max ${MDPI_MAX}px)"
 
 # Generate hdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${HDPI_MAX}:${HDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/hdpi_${FILENAME}"
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${HDPI_MAX}:${HDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" -update 1 "$TEMP_DIR/hdpi_${FILENAME}"
 
 echo "Created: hdpi (max ${HDPI_MAX}px)"
 
 # Generate xhdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XHDPI_MAX}:${XHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xhdpi_${FILENAME}"
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XHDPI_MAX}:${XHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" -update 1 "$TEMP_DIR/xhdpi_${FILENAME}"
 
 echo "Created: xhdpi (max ${XHDPI_MAX}px)"
 
 # Generate xxhdpi version (preserves aspect ratio, fits within max dimension)
-ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XXHDPI_MAX}:${XXHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" "$TEMP_DIR/xxhdpi_${FILENAME}"
+ffmpeg -y -loglevel warning -i "$INPUT_IMAGE" -vf "scale=${XXHDPI_MAX}:${XXHDPI_MAX}:force_original_aspect_ratio=decrease:flags=lanczos" -update 1 "$TEMP_DIR/xxhdpi_${FILENAME}"
 
 echo "Created: xxhdpi (max ${XXHDPI_MAX}px)"
 echo ""
