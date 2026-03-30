@@ -23,6 +23,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,7 +63,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
+import brainagator.composeapp.generated.resources.alligator_v1
 import brainagator.composeapp.generated.resources.app_tagline
+import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
+import brainagator.composeapp.generated.resources.gator_long
+import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
@@ -75,6 +80,7 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 val games =
@@ -135,7 +141,11 @@ fun GameSelectionScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("🧠", fontSize = 32.sp)
+                Image(
+                    modifier = Modifier.size(80.dp),
+                    painter = painterResource(Res.drawable.gator_kid_in_suit_1),
+                    contentDescription = null
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text =
@@ -154,7 +164,6 @@ fun GameSelectionScreen(
                         ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("🐊", fontSize = 32.sp)
             }
 
             Text(
@@ -214,15 +223,12 @@ fun GameSelectionScreen(
                 }
             }
 
-            // Balloon at the bottom
-            Text(
-                text = "🎈",
-                fontSize = 48.sp,
-                modifier =
-                    Modifier
-                        .padding(bottom = 32.dp)
-                        .offset(y = 10.dp),
+            Image(
+                modifier = Modifier.height(110.dp),
+                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
+                contentDescription = null
             )
+
         }
 
         // Build info at bottom right (absolute positioning)
