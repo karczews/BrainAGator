@@ -56,3 +56,16 @@ val SalmonPink = Color(0xFFFFB4AB)
 
 // Scrim
 val Black = Color(0xFF000000)
+
+// App Title Colors
+val BrainPurple = Color(0xFF9C27B0)
+val GatorPink = Color(0xFFEC407A)
+
+val GatorGreen = Color(0xFF6F8F4E)
+val GatorPlum = Color(0xFF75577A)
+val MutedPurple = Color(0xFF7B1FA2)
+
+// Gradient Background Colors
+val VeryLightYellow = Color(0xFFFFFDE7)
+val Cream = Color(0xFFFFF8E1)
+val VeryLightPink = Color(0xFFF8BBD0)

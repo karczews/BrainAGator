@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -63,15 +62,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.alligator_v1
 import brainagator.composeapp.generated.resources.app_tagline
 import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
-import brainagator.composeapp.generated.resources.gator_long
 import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.Cream
+import io.github.karczews.brainagator.theme.GatorGreen
+import io.github.karczews.brainagator.theme.GatorPink
+import io.github.karczews.brainagator.theme.MutedPurple
+import io.github.karczews.brainagator.theme.VeryLightPink
+import io.github.karczews.brainagator.theme.VeryLightYellow
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
@@ -121,11 +124,11 @@ fun GameSelectionScreen(
                         colors =
                             listOf(
                                 // Very Light Yellow
-                                Color(0xFFFFFDE7),
+                                VeryLightYellow,
                                 // Cream
-                                Color(0xFFFFF8E1),
+                                Cream,
                                 // Very Light Pink
-                                Color(0xFFF8BBD0).copy(alpha = 0.3f),
+                                VeryLightPink.copy(alpha = 0.3f),
                             ),
                     ),
                 ),
@@ -150,11 +153,14 @@ fun GameSelectionScreen(
                 Text(
                     text =
                         buildAnnotatedString {
-                            withStyle(SpanStyle(color = Color(0xFF9C27B0))) {
+                            withStyle(SpanStyle(color = MutedPurple)) {
                                 append("Brain")
                             }
-                            withStyle(SpanStyle(color = Color(0xFFEC407A))) {
-                                append("agator")
+                            withStyle(SpanStyle(color = GatorPink)) {
+                                append("a")
+                            }
+                            withStyle(SpanStyle(color = GatorGreen)) {
+                                append("gator")
                             }
                         },
                     style =
