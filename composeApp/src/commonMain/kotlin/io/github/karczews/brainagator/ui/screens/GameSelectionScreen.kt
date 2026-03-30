@@ -147,7 +147,7 @@ fun GameSelectionScreen(
                 Image(
                     modifier = Modifier.size(80.dp),
                     painter = painterResource(Res.drawable.gator_kid_in_suit_1),
-                    contentDescription = null
+                    contentDescription = null,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -232,9 +232,8 @@ fun GameSelectionScreen(
             Image(
                 modifier = Modifier.height(110.dp),
                 painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
-                contentDescription = null
+                contentDescription = null,
             )
-
         }
 
         // Build info at bottom right (absolute positioning)
