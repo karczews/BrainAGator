@@ -16,8 +16,14 @@
 
 package io.github.karczews.brainagator.ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +33,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -53,13 +58,23 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
+import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
+import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.Cream
+import io.github.karczews.brainagator.theme.GatorGreen
+import io.github.karczews.brainagator.theme.GatorPink
+import io.github.karczews.brainagator.theme.MutedPurple
+import io.github.karczews.brainagator.theme.VeryLightPink
+import io.github.karczews.brainagator.theme.VeryLightYellow
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
@@ -68,6 +83,7 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 val games =
@@ -108,11 +124,11 @@ fun GameSelectionScreen(
                         colors =
                             listOf(
                                 // Very Light Yellow
-                                Color(0xFFFFFDE7),
+                                VeryLightYellow,
                                 // Cream
-                                Color(0xFFFFF8E1),
+                                Cream,
                                 // Very Light Pink
-                                Color(0xFFF8BBD0).copy(alpha = 0.3f),
+                                VeryLightPink.copy(alpha = 0.3f),
                             ),
                     ),
                 ),
@@ -128,16 +144,23 @@ fun GameSelectionScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("🧠", fontSize = 32.sp)
+                Image(
+                    modifier = Modifier.size(80.dp),
+                    painter = painterResource(Res.drawable.gator_kid_in_suit_1),
+                    contentDescription = null,
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text =
                         buildAnnotatedString {
-                            withStyle(SpanStyle(color = Color(0xFF9C27B0))) {
+                            withStyle(SpanStyle(color = MutedPurple)) {
                                 append("Brain")
                             }
-                            withStyle(SpanStyle(color = Color(0xFFEC407A))) {
-                                append("agator")
+                            withStyle(SpanStyle(color = GatorPink)) {
+                                append("a")
+                            }
+                            withStyle(SpanStyle(color = GatorGreen)) {
+                                append("gator")
                             }
                         },
                     style =
@@ -147,7 +170,6 @@ fun GameSelectionScreen(
                         ),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("🐊", fontSize = 32.sp)
             }
 
             Text(
@@ -207,14 +229,10 @@ fun GameSelectionScreen(
                 }
             }
 
-            // Balloon at the bottom
-            Text(
-                text = "🎈",
-                fontSize = 48.sp,
-                modifier =
-                    Modifier
-                        .padding(bottom = 32.dp)
-                        .offset(y = 10.dp),
+            Image(
+                modifier = Modifier.height(110.dp),
+                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
+                contentDescription = null,
             )
         }
 
@@ -244,7 +262,6 @@ fun GameCard(
     game: GameInfo,
     onClick: () -> Unit,
 ) {
-    val title = stringResource(game.titleRes)
     val subtitle = stringResource(game.subtitleRes)
 
     Card(
@@ -328,5 +345,26 @@ private fun GameTitleText(
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun GameSelectionScreenPreview() {
+    AppTheme {
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = "preview",
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+            ) { _ ->
+                GameSelectionScreen(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    onGameSelected = {},
+                    onWelcomeSpoken = {},
+                    shouldSpeakWelcome = false,
+                )
+            }
+        }
     }
 }

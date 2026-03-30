@@ -42,6 +42,9 @@ Use for platform-specific APIs:
 - Use `Material3` for consistent design
 - Use `MaterialTheme.colorScheme.*` tokens, not hardcoded `Color(0x...)` or `Color.White`
 
+### Previews
+To generate Compose previews for UI components, use `androidx.compose.ui.tooling.preview.Preview` annotation in `androidMain` source set. This is the fully KMP compatible way to preview composables - place preview functions alongside your Android-specific code while keeping the actual composables in `commonMain`.
+
 ### Internationalization
 - All user-facing strings must use `stringResource(Res.string.*)`
 - Hardcoded strings in UI code are a code review finding
