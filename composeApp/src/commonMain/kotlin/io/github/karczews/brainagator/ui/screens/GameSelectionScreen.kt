@@ -16,8 +16,13 @@
 
 package io.github.karczews.brainagator.ui.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,6 +58,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
@@ -60,6 +66,7 @@ import brainagator.composeapp.generated.resources.app_tagline
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
@@ -328,5 +335,26 @@ private fun GameTitleText(
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun GameSelectionScreenPreview() {
+    AppTheme {
+        SharedTransitionLayout {
+            AnimatedContent(
+                targetState = "preview",
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+            ) { _ ->
+                GameSelectionScreen(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    onGameSelected = {},
+                    onWelcomeSpoken = {},
+                    shouldSpeakWelcome = false,
+                )
+            }
+        }
     }
 }
