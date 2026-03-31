@@ -1,87 +1,99 @@
 # COMPOSEAPP MODULE
 
-**Purpose**: Shared multiplatform library containing all common UI and business logic
+Shared multiplatform library containing all common UI and business logic.
 
-## STRUCTURE
+## Structure
+
 ```
-composeApp/
-├── src/
-│   ├── commonMain/kotlin/        # Shared code (all platforms)
-│   ├── androidMain/kotlin/       # Android-specific
-│   ├── iosMain/kotlin/           # iOS-specific
-│   ├── jvmMain/kotlin/           # Desktop/JVM-specific
-│   ├── webMain/kotlin/            # Web-specific
-│   ├── jsMain/kotlin/             # JS-specific
-│   ├── wasmJsMain/kotlin/         # Wasm-specific
-│   └── commonTest/kotlin/         # Shared tests
+composeApp/src/
+  commonMain/kotlin/io/github/karczews/brainagator/  # Shared code (all platforms)
+  androidMain/kotlin/   # Android-specific
+  iosMain/kotlin/       # iOS-specific
+  jvmMain/kotlin/       # Desktop/JVM-specific
+  jsMain/kotlin/        # JS-specific
+  wasmJsMain/kotlin/    # Wasm-specific
+  commonTest/kotlin/    # Shared tests
+  jvmTest/kotlin/       # JVM tests (coroutine tests go here)
 ```
 
-## WHERE TO LOOK
+## Where to Look
+
 | Task | Location |
 |------|----------|
-| Shared UI | commonMain/kotlin/com/example/brainagator/App.kt |
-| Platform abstraction | commonMain/kotlin/.../Platform.kt (expect class) |
-| Android impl | androidMain/kotlin/.../Platform.android.kt (actual class) |
-| iOS impl | iosMain/kotlin/.../Platform.ios.kt (actual class) |
-| JVM impl | jvmMain/kotlin/.../Platform.jvm.kt (actual class) |
-| Web entry | webMain/kotlin/com/example/brainagator/main.kt |
-| Desktop entry | jvmMain/kotlin/com/example/brainagator/main.kt |
+| Shared UI | `commonMain/.../App.kt`, `ui/screens/` |
+| Navigation | `commonMain/.../ui/navigation/Routes.kt` |
+| Theme | `commonMain/.../theme/` (Color.kt, Typography.kt, Theme.kt) |
+| TTS abstraction | `commonMain/.../tts/QueuedTextToSpeech.kt` (expect) |
+| TTS JVM impl | `jvmMain/.../tts/DesktopTextToSpeech.kt` |
+| TTS Wasm impl | `wasmJsMain/.../tts/WasmTextToSpeech.kt` |
+| Platform abstraction | `commonMain/.../Platform.kt` (expect class) |
+| Logger | `commonMain/.../Logger.kt` (typealias facade) |
+| Resources | `commonMain/composeResources/` |
 
-## CONVENTIONS
+## Compose UI Conventions
 
-### expect/actual Pattern
-Use for platform-specific APIs:
-- Define `expect class` in `commonMain` with the same name as the file (e.g., `Platform` in `Platform.kt`)
-- Provide `actual class` implementations in each `{platform}Main` with matching filenames (e.g., `Platform.android.kt` contains `actual class Platform`)
+### Theming & Colors
+- All UI in `commonMain` using Compose Multiplatform + Material3
+- Use `MaterialTheme.colorScheme.*` tokens, not hardcoded `Color(0x...)` or raw `Color.White`
+- Named color constants (e.g., `MutedPurple`) are acceptable in `theme/Color.kt` but should ultimately flow through the theme system — prefer `MaterialTheme.colorScheme` for anything user-visible
+- When adding custom colors, register them in the theme so they adapt to light/dark mode
 
-**Enforced by detekt**: The `MatchingDeclarationName` rule is enabled with `multiplatformTargets` configured. This requires that platform-specific classes match their filenames to avoid naming violations. Using `expect class` with identical names across platforms satisfies this requirement and is the idiomatic KMP approach.
-
-### Shared UI Rules
-- All UI components in `commonMain` using Compose Multiplatform
-- All platforms render `App()` composable from commonMain
-- Use `Material3` for consistent design
-- Use `MaterialTheme.colorScheme.*` tokens, not hardcoded `Color(0x...)` or `Color.White`
-
-### Previews
-To generate Compose previews for UI components, use `androidx.compose.ui.tooling.preview.Preview` annotation in `androidMain` source set. This is the fully KMP compatible way to preview composables - place preview functions alongside your Android-specific code while keeping the actual composables in `commonMain`.
-
-### Internationalization
-- All user-facing strings must use `stringResource(Res.string.*)`
-- Hardcoded strings in UI code are a code review finding
+### Strings & Resources
+- All user-facing strings: `stringResource(Res.string.*)` — no hardcoded strings in UI code
 - Add translations in `composeResources/values-{locale}/strings.xml`
-
-### Resource Management
 - Compose resources in `commonMain/composeResources/`
 - Generated accessors in `brainagator.composeapp.generated.resources`
 
-## ANTI-PATTERNS
-- Don't put platform-specific code in `commonMain` - use expect/actual
-- Don't create platform-specific UI components - keep in commonMain when possible
-- **Never use `@Volatile` in `commonMain`** — it's JVM-only (`kotlin.jvm.Volatile`). Use `kotlinx.atomicfu` `atomic()` instead
-- **Don't use `MutableStateFlow` as an atomic variable** — it triggers recomposition and carries collection overhead
+### Previews
+- Use `@Preview` annotation in `commonMain` (not `androidMain`) — supported since Compose Multiplatform 1.10
+- Use `androidx.compose.ui.tooling.preview.Preview`
 
-### Threading
-- **`kotlinx.atomicfu`** provides `atomic<T>()` for thread-safe primitives across all KMP targets. Add via `implementation(libs.kotlinx.atomicfu)`.
-- The `atomic()` function works on JVM (volatile fields), Native (atomic intrinsics), Wasm/JS (single-threaded passthrough).
-
-### Detekt `LongMethod` Rule
-- Maximum function length is 60 lines. If you have repetitive blocks (e.g., N identical style definitions), extract a helper function early.
+### Shared Element Transitions
+- Use `SharedTransitionLayout` + `NavDisplay` for navigation animations
+- Provide `SharedTransitionContext` via `CompositionLocalProvider` so screens can access scopes without mandatory parameters
+- `LaunchedEffect` key changes: setting a value to X then back to X in the same synchronous block does not trigger recomposition — use a counter or separate trigger instead
 
 ### Code Quality
-Always run before committing (or push will fail CI):
+- Extract repetitive `TextStyle` / style blocks into helper functions (detekt `LongMethod` = 60 lines)
+- Remove unused parameters, imports, and variables immediately — detekt flags `UnusedParameter`, `UnusedPrivateProperty`, `UnusedVariable`
+- Never leave commented-out code in production files — remove it or track intent in issues
+
+## Concurrency (KMP-specific)
+
+### Atomic State
+- **Never** `@Volatile` in `commonMain` — it's JVM-only (`kotlin.jvm.Volatile`), breaks Wasm/JS builds. Use `kotlinx.atomicfu` `atomic()` instead
+- For shared mutable state, use atomic operations (`getAndSet`, `compareAndSet`) rather than separate read-then-write — the two-step pattern creates race conditions
+- **Don't** use `MutableStateFlow` as an atomic variable — triggers recomposition and carries collection overhead
+- `kotlinx.atomicfu` works across all KMP targets: JVM (volatile fields), Native (atomic intrinsics), Wasm/JS (single-threaded passthrough)
+
+### Coroutines
+- Use `kotlinx.coroutines` for async work
+- Test with `runTest` + `StandardTestDispatcher` (see `jvmTest/` for patterns)
+- Inject dispatchers, don't hardcode `Dispatchers.IO` (detekt `InjectDispatcher`)
+- Cleanup event listeners / callbacks in `finally` blocks after `await()` to avoid leaks
+
+### External Processes (JVM)
+- Always `destroy()` processes in `finally` blocks to prevent orphaned subprocesses
+- Use atomic swap (`getAndSet(null)`) rather than separate read + null-assign for process cleanup
+- Use `runInterruptible` for blocking `waitFor()` calls so cancellation works correctly
+
+## expect/actual Pattern
+
+- `expect` declarations in `commonMain`, `actual` in each `{platform}Main`
+- File names must match class names (detekt `MatchingDeclarationName` with `multiplatformTargets`)
+- Keep platform-specific code out of `commonMain` — use expect/actual
+
+## Module Build Commands
+
 ```bash
-./gradlew :composeApp:detekt
-./gradlew :composeApp:ktlintCheck
-./gradlew :composeApp:ktlintFormat  # auto-fix formatting
+./gradlew :composeApp:detekt       # Static analysis
+./gradlew :composeApp:ktlintCheck  # Formatting check
+./gradlew :composeApp:ktlintFormat # Auto-fix formatting
+./gradlew :composeApp:jvmTest      # Run JVM tests
 ```
 
-**Note on compile tasks**: KMP uses different naming per target:
-- JVM: `compileKotlinJvm`
-- Wasm: `compileKotlinWasmJs`
-- iOS: `compileKotlinIosArm64`, `compileKotlinIosSimulatorArm64`
-- Android: `compileAndroidMain` (not `compileKotlinAndroid`)
-
-## NOTES
+## Notes
 - Module configured as `androidLibrary` for Android target
 - Framework output: `ComposeApp.framework` (iOS, static)
 - Desktop executable configured for DMG/MSI/DEB formats
+- `jvmTest` has `kotlinx-coroutines-test` dependency; `commonTest` has only `kotlin-test`
