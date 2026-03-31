@@ -22,10 +22,12 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +59,11 @@ import brainagator.composeapp.generated.resources.congratulations
 import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.ui.FireworksAnimation
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import brainagator.composeapp.generated.resources.gator_win_1
+import brainagator.composeapp.generated.resources.star_1
+import io.github.karczews.brainagator.theme.AppTheme
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun GameWonScreen(onBackToMainClick: () -> Unit) {
@@ -104,10 +111,10 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             verticalArrangement = Arrangement.Center,
         ) {
             // Trophy emoji with animation
-            Text(
-                text = "🏆",
-                fontSize = 120.sp,
+            Image(
                 modifier = Modifier.scale(scale),
+                painter = painterResource(Res.drawable.gator_win_1),
+                contentDescription = null
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -136,11 +143,15 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Star emojis
-            Text(
-                text = "⭐ ⭐ ⭐",
-                fontSize = 48.sp,
-            )
+            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                repeat(3) {
+                    Image(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        painter = painterResource(Res.drawable.star_1),
+                        contentDescription = null
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -176,5 +187,13 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun GameWonScreenPreview() {
+    AppTheme {
+        GameWonScreen(onBackToMainClick = {})
     }
 }
