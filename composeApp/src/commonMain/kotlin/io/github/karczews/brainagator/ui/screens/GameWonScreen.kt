@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -47,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -80,6 +82,43 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
         label = "scale",
     )
 
+    val starRotation by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(750, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "star_rotation",
+    )
+
+
+    val starRotation2 by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(550, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "star_rotation",
+    )
+
+
+    val starRotation3 by infiniteTransition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(650, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "star_rotation",
+    )
+
+    val rotations = listOf(starRotation, starRotation2, starRotation3)
+
     Box(
         modifier =
             Modifier
@@ -105,12 +144,10 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
+                    .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            // Trophy emoji with animation
             Image(
                 modifier = Modifier.scale(scale),
                 painter = painterResource(Res.drawable.gator_win_1),
@@ -144,9 +181,12 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                repeat(3) {
+                repeat(3) { index ->
                     Image(
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier
+                            .size(80.dp)
+                            .padding(horizontal = 4.dp)
+                            .rotate(rotations[index]),
                         painter = painterResource(Res.drawable.star_1),
                         contentDescription = null
                     )
@@ -160,7 +200,8 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 onClick = onBackToMainClick,
                 modifier =
                     Modifier
-                        .fillMaxWidth(0.8f)
+                        .padding(horizontal = 40.dp)
+                        .fillMaxWidth(1f)
                         .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors =
