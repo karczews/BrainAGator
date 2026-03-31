@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -53,19 +52,19 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
-import brainagator.composeapp.generated.resources.you_won
-import io.github.karczews.brainagator.ui.FireworksAnimation
-import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.gator_win_1
 import brainagator.composeapp.generated.resources.star_1
+import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.ui.FireworksAnimation
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameWonScreen(onBackToMainClick: () -> Unit) {
@@ -93,7 +92,6 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
         label = "star_rotation",
     )
 
-
     val starRotation2 by infiniteTransition.animateFloat(
         initialValue = -10f,
         targetValue = 10f,
@@ -104,7 +102,6 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             ),
         label = "star_rotation",
     )
-
 
     val starRotation3 by infiniteTransition.animateFloat(
         initialValue = -10f,
@@ -151,7 +148,7 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             Image(
                 modifier = Modifier.scale(scale),
                 painter = painterResource(Res.drawable.gator_win_1),
-                contentDescription = null
+                contentDescription = null,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -183,12 +180,13 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 repeat(3) { index ->
                     Image(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .padding(horizontal = 4.dp)
-                            .rotate(rotations[index]),
+                        modifier =
+                            Modifier
+                                .size(80.dp)
+                                .padding(horizontal = 4.dp)
+                                .rotate(rotations[index]),
                         painter = painterResource(Res.drawable.star_1),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             }
