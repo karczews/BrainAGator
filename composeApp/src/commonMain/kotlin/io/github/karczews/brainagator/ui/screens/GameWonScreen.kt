@@ -22,10 +22,12 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,17 +47,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
+import brainagator.composeapp.generated.resources.gator_win_1
+import brainagator.composeapp.generated.resources.star_1
 import brainagator.composeapp.generated.resources.you_won
+import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.FireworksAnimation
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -72,6 +80,21 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             ),
         label = "scale",
     )
+
+    val rotations =
+        listOf(750, 550, 650).mapIndexed { index, duration ->
+            infiniteTransition
+                .animateFloat(
+                    initialValue = -10f,
+                    targetValue = 10f,
+                    animationSpec =
+                        infiniteRepeatable(
+                            animation = tween(duration, easing = FastOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    label = "star_rotation_$index",
+                ).value
+        }
 
     Box(
         modifier =
@@ -98,16 +121,14 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
+                    .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            // Trophy emoji with animation
-            Text(
-                text = "🏆",
-                fontSize = 120.sp,
+            Image(
                 modifier = Modifier.scale(scale),
+                painter = painterResource(Res.drawable.gator_win_1),
+                contentDescription = null,
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -136,11 +157,19 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Star emojis
-            Text(
-                text = "⭐ ⭐ ⭐",
-                fontSize = 48.sp,
-            )
+            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                repeat(3) { index ->
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(80.dp)
+                                .padding(horizontal = 4.dp)
+                                .rotate(rotations[index]),
+                        painter = painterResource(Res.drawable.star_1),
+                        contentDescription = null,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -149,7 +178,8 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 onClick = onBackToMainClick,
                 modifier =
                     Modifier
-                        .fillMaxWidth(0.8f)
+                        .padding(horizontal = 40.dp)
+                        .fillMaxWidth(1f)
                         .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors =
@@ -176,5 +206,13 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun GameWonScreenPreview() {
+    AppTheme {
+        GameWonScreen(onBackToMainClick = {})
     }
 }

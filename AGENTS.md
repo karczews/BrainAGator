@@ -1,109 +1,140 @@
-# PROJECT KNOWLEDGE BASE
+# BrainAGator — Agent Instructions
 
-**Generated:** 2026-02-23
+Kotlin Multiplatform (KMP) project targeting Android, iOS, Web (Wasm/JS), and Desktop (JVM). Shared UI via Compose Multiplatform + Material3.
 
-## OVERVIEW
-Kotlin Multiplatform project targeting Android, iOS, Web, and Desktop (JVM). Uses Compose Multiplatform for shared UI code across all platforms.
+## Project Structure
 
-## STRUCTURE
+```text
+composeApp/src/
+  commonMain/kotlin/io/github/karczews/brainagator/  # Shared UI + logic (ALL platforms)
+  androidMain/  iosMain/  jvmMain/  jsMain/  wasmJsMain/  # Platform-specific (expect/actual)
+  commonTest/   jvmTest/   # Tests
+androidApp/  # Android app entry point
+iosApp/      # iOS app entry point (SwiftUI + Compose framework)
 ```
-brainagator/
-├── composeApp/    # Shared multiplatform library (main codebase)
-├── androidApp/    # Android application entry point
-└── iosApp/        # iOS application entry point
-```
 
-## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
-| Shared UI/Logic | composeApp/src/commonMain/kotlin | Common code for all platforms |
-| Platform-specific | composeApp/src/{platform}Main/kotlin | androidMain, iosMain, jvmMain, jsMain, wasmJsMain |
-| Android entry | androidApp/src/main/java | MainActivity with Compose integration |
-| iOS entry | iosApp/iosApp | SwiftUI app embedding Compose framework |
-| Platform abstraction | composeApp/src/*/kotlin/Platform*.kt | expect/actual pattern for platform APIs |
+Base package: `io.github.karczews.brainagator`
 
-## CONVENTIONS
+## Build & Run Commands
 
-### Multiplatform Architecture
-- **commonMain**: All shared business logic and Compose UI components
-- **Source sets**: Separate source sets per platform (androidMain, iosMain, jvmMain, etc.)
-- **expect/actual**: Use for platform-specific APIs (see Platform.kt pattern)
-
-### Entry Point Pattern
-All platforms render the same `App()` composable from `composeApp/src/commonMain/kotlin/io/github/karczews/brainagator/App.kt`
-
-### Build System
-- **Gradle version catalog**: All dependencies defined in `gradle/libs.versions.toml`
-- **Toolchains**: JVM 21 for Kotlin toolchain
-- **Memory**: High allocation configured (4GB Gradle, 3GB Kotlin daemon)
-
-### Code Quality
-- **Detekt**: Static analysis via `detekt.yml` workflow
-- **License checking**: Enforced via `.github/workflows/check-copyrights.yml`
-
-### Communication Guidelines
-- **Avoid assumptions**: When investigating issues, verify claims with evidence rather than making assumptions
-- **Verify "known issues"**: Don't label issues as "known" or "tracked" without verifying ticket/issue tracker references
-- **Be precise**: Distinguish between what is actually known vs. what is inferred from symptoms
-- **Prefer new commits**: When making updates to existing changes (including during code review), create new commits instead of amending existing ones. This preserves the history and makes it easier to track what changed.
-
-**Example of inferred vs. known:**
-- ❌ *Inferred*: "This is a known issue with Kotlin 2.3.10" (without evidence)
-- ✅ *Known*: "The stack trace shows the warning originates from Kotlin plugin's internal artifact creation code at `KotlinTargetArtifactKt.createPublishArtifact`"
-
-### Commit Message Guidelines
-We follow [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/). See `docs/CONTRIBUTING.md` for the complete guide.
-
-**Quick reference:**
-- Format: `<type>[optional scope]: <description>`
-- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
-- Description: imperative, present tense, lowercase, no period, under 72 chars
-- Breaking changes: add `!` after type/scope or use `BREAKING CHANGE:` footer
-- Example: `feat: add shape match game with TTS queue support`
-
-### Concurrency in KMP
-See `composeApp/AGENTS.md` for KMP-specific threading guidelines.
-
-## ANTI-PATTERNS (THIS PROJECT)
-- Dual Android modules: Both `androidApp` (app) and `composeApp` (library) are Android targets - potentially confusing
-- **`@Volatile` in `commonMain`**: Will break Wasm/JS builds. Use `kotlinx.atomicfu` instead.
-
-## UNIQUE STYLES
-- Hot reload support via Compose Hot Reload plugin
-- Configuration cache and build caching enabled by default
-- Non-transitive R classes for Android
-- Kotlin code style: official
-
-## COMMANDS
 ```bash
-# Android (androidApp is the application module, composeApp is the library)
-./gradlew :androidApp:assembleDebug    # Debug APK
-./gradlew :androidApp:assembleRelease  # Release APK
-
-# Desktop (JVM)
-./gradlew :composeApp:run
-
-# Web Wasm
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun     # Start dev server (local development)
-./gradlew :composeApp:wasmJsBrowserDevelopmentWebpack # Build WASM dev bundle (CI/artifacts)
-./gradlew :composeApp:wasmJsBrowserProductionWebpack  # Build WASM prod bundle (releases)
-
-# Web JS
-./gradlew :composeApp:jsBrowserDevelopmentRun
-
-# Hot Reload
-./gradlew reload
-
-# Tests
-./gradlew testDebug
-
-# Code Quality
-./gradlew detekt  # Run detekt static analysis
-./gradlew detektBaseline  # Generate detekt baseline
-./gradlew ktlintCheck  # Run ktlint formatting check
-./gradlew ktlintFormat  # Auto-format code with ktlint
+./gradlew build                                    # Full build
+./gradlew :androidApp:assembleDebug                # Android debug APK
+./gradlew :composeApp:run                          # Desktop (JVM)
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Web dev server
+./gradlew :composeApp:jsBrowserDevelopmentRun      # Web (JS) dev server
+./gradlew reload                                   # Hot reload (desktop, needs JB runtime)
 ```
 
-## NOTES
-- Project has dual Android modules (androidApp + composeApp as androidLibrary) - document rationale if intentional
-- **Read CONTRIBUTING.md**: Always review `docs/CONTRIBUTING.md` for project-specific setup instructions, code style guidelines, and contribution workflow before making changes
+## Test Commands
+
+```bash
+./gradlew testDebug                                        # All tests (debug)
+./gradlew :composeApp:jvmTest                              # JVM tests only
+./gradlew :composeApp:testDebugUnitTest                    # Android unit tests
+./gradlew :composeApp:jvmTest --tests "*.QueuedTextToSpeechTest"  # Single test class
+./gradlew :composeApp:jvmTest --tests "*.speakExecutesPerformSpeak"      # Single test
+```
+
+Test framework: `kotlin.test` (`assertEquals`, `assertTrue`, `assertFalse`). Coroutine tests use `kotlinx-coroutines-test` with `runTest` + `StandardTestDispatcher`.
+
+## Lint & Format Commands
+
+```bash
+./gradlew ktlintCheck       # Check formatting (CI runs this)
+./gradlew ktlintFormat      # Auto-fix formatting
+./gradlew detekt            # Static analysis (CI runs this)
+./gradlew detektBaseline    # Generate detekt baseline
+```
+
+**Always run `ktlintCheck` and `detekt` before committing** — CI enforces both.
+
+## Code Style
+
+### Formatting (.editorconfig)
+- Indent: 4 spaces, no tabs
+- Max line length: 140 chars (ktlint), 180 chars (detekt)
+- Charset: UTF-8, LF line endings, final newline required
+- `ktlint_function_naming_ignore_when_annotated_with=Composable`
+
+### License Header
+Every `.kt` file starts with the Apache 2.0 copyright header (enforced by CI):
+```kotlin
+/*
+ * Copyright <YEAR> Krzysztof Karczewski
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * ...
+ */
+```
+
+### Imports
+- No wildcard imports (detekt `WildcardImport` active, except `java.util.*`)
+- Order: standard ktlint import ordering
+- Import `Logger` as `io.github.karczews.brainagator.Logger` — **never** import Kermit directly
+
+### Naming
+- Classes: `PascalCase` — detekt enforces `[A-Z][a-zA-Z0-9]*`
+- Functions: `camelCase` — `@Composable` functions exempted from naming rules
+- Variables/params: `camelCase`
+- Constants: `SCREAMING_SNAKE_CASE` or `camelCase` for top-level properties
+- Enum entries: `PascalCase` (e.g., `ShapeMatch`, `NumberOrder`)
+
+### Types & Nullability
+- Use Kotlin non-null types preferentially; avoid `!!` (detekt `UnsafeCallOnNullableType`)
+- Use safe calls `?.`, elvis `?:`, and safe casts `as?`
+- No referential equality on strings (`===`) — use structural `==` (detekt `AvoidReferentialEquality`)
+
+### Error Handling
+- Use `check`, `require`, `error` for programming errors (detekt `UseCheckOrError`, `UseRequire`)
+- No swallowed exceptions — at minimum log them
+- No `printStackTrace()` — use Logger instead
+- No generic `Exception` catches in production code (detekt `TooGenericExceptionCaught`)
+- `CancellationException` pattern: catch, perform cleanup (stop/release resources), rethrow
+
+### Logger Usage
+```kotlin
+import io.github.karczews.brainagator.Logger
+
+Logger.i { "Started" }
+Logger.e(e) { "Failed to do X" }  // Exception as first param, no ${e.message} in string
+```
+
+### Detekt Key Limits
+- `LongMethod`: 60 lines
+- `LargeClass`: 600 lines
+- `LongParameterList`: 6 function params, 7 constructor params (data classes exempt)
+- `NestedBlockDepth`: 4 levels
+- `ReturnCount`: max 2 returns per function
+- `CyclomaticComplexMethod`: complexity ≤ 15
+- `TooManyFunctions`: 11 per file/class/interface/object (tests exempt)
+- `NewLineAtEndOfFile`: files must end with a newline
+- No `FIXME:`, `STOPSHIP:`, `TODO:` comments (detekt `ForbiddenComment`)
+
+## Commit Messages
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+```text
+<type>(scope): <lowercase imperative description>
+<type>: <lowercase imperative description>
+
+Types: feat fix docs style refactor perf test chore ci
+Breaking: <type>!: description or BREAKING CHANGE: footer
+```
+CI validates commit message format via `commisery`.
+
+## CI Checks (all must pass)
+- `ktlintCheck` — formatting
+- `detekt` — static analysis
+- `testDebug` — unit tests
+- `check-copyrights` — license headers
+- `conventional-commits` — commit message format
+- `android-instrumentation-tests`, `ios-build`, `wasm-build` — platform builds
+
+## Key Dependencies
+- Compose Multiplatform 1.10.3, Material3
+- Navigation 3 (navigation3-ui)
+- Kotlin 2.3.20, JVM toolchain 21
+- kotlinx-serialization-json, kotlinx-atomicfu
+- Kermit (via Logger typealias)
+- Kotlin test + kotlinx-coroutines-test for testing
