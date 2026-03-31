@@ -4,7 +4,7 @@ Kotlin Multiplatform (KMP) project targeting Android, iOS, Web (Wasm/JS), and De
 
 ## Project Structure
 
-```
+```text
 composeApp/src/
   commonMain/kotlin/io/github/karczews/brainagator/  # Shared UI + logic (ALL platforms)
   androidMain/  iosMain/  jvmMain/  jsMain/  wasmJsMain/  # Platform-specific (expect/actual)
@@ -114,11 +114,12 @@ Logger.e(e) { "Failed to do X" }  // Exception as first param, no ${e.message} i
 ## Commit Messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
-```
-<type>[!(scope)]: <lowercase imperative description>
+```text
+<type>(scope): <lowercase imperative description>
+<type>: <lowercase imperative description>
 
 Types: feat fix docs style refactor perf test chore ci
-Breaking: add ! after type/scope or BREAKING CHANGE: footer
+Breaking: <type>!: description or BREAKING CHANGE: footer
 ```
 CI validates commit message format via `commisery`.
 

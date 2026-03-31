@@ -4,7 +4,7 @@ Shared multiplatform library containing all common UI and business logic.
 
 ## Structure
 
-```
+```text
 composeApp/src/
   commonMain/kotlin/io/github/karczews/brainagator/  # Shared code (all platforms)
   androidMain/kotlin/   # Android-specific

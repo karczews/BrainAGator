@@ -81,40 +81,20 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
         label = "scale",
     )
 
-    val starRotation by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(750, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "star_rotation",
-    )
-
-    val starRotation2 by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(550, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "star_rotation",
-    )
-
-    val starRotation3 by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(650, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "star_rotation",
-    )
-
-    val rotations = listOf(starRotation, starRotation2, starRotation3)
+    val rotations =
+        listOf(750, 550, 650).mapIndexed { index, duration ->
+            infiniteTransition
+                .animateFloat(
+                    initialValue = -10f,
+                    targetValue = 10f,
+                    animationSpec =
+                        infiniteRepeatable(
+                            animation = tween(duration, easing = FastOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    label = "star_rotation_$index",
+                ).value
+        }
 
     Box(
         modifier =
