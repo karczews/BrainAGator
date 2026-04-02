@@ -29,7 +29,10 @@ jobs:
 
       - name: Write version name
         run: |
-          VERSION_NAME=$(git describe --tags --abbrev=0)
+          if ! VERSION_NAME=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null); then
+            echo "::error::No release tag found (expected format: vX.Y.Z)."
+            exit 1
+          fi
           echo "app.versionName=${VERSION_NAME#v}" >> gradle.properties
 
       - name: Build release APK
