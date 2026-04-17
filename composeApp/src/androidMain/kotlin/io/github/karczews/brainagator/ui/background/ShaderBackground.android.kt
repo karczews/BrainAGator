@@ -16,10 +16,7 @@
 
 package io.github.karczews.brainagator.ui.background
 
-import android.graphics.RuntimeShader
 import android.os.Build
-import android.util.AndroidRuntimeException
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -31,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import io.github.karczews.brainagator.Logger
+import java.lang.reflect.InvocationTargetException
 
 /**
  * AGSL shader code for a simple animated gradient.
@@ -59,46 +57,72 @@ vec4 main(vec2 coord) {
 
 /**
  * Android implementation of ShaderBackground using AGSL RuntimeShader.
- * Only available on Android 13+ (API 33+).
+ * Only available on Android 13+ (API 33+). Falls back to gradient on older versions.
  */
 @Composable
 actual fun ShaderBackground(
     modifier: Modifier,
     time: Float,
 ) {
-    val shaderBrush = createShaderBrush(time)
-
     Box(
         modifier =
             modifier
                 .fillMaxSize()
                 .drawBehind {
-                    if (shaderBrush != null) {
-                        drawRect(brush = shaderBrush)
-                    } else {
-                        drawFallbackGradient()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val shaderBrush = createShaderBrush(time)
+                        if (shaderBrush != null) {
+                            drawRect(brush = shaderBrush)
+                            return@drawBehind
+                        }
                     }
+                    drawFallbackGradient()
                 },
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Composable
+/**
+ * Creates a ShaderBrush using AGSL RuntimeShader via reflection.
+ * This avoids class loading issues on older Android versions.
+ */
+@Suppress("SwallowedException", "TooGenericExceptionCaught")
 private fun createShaderBrush(time: Float): ShaderBrush? {
     return try {
-        val shader = RuntimeShader(AGSL_SHADER_CODE)
+        // Use reflection to avoid class loading issues on older Android versions
+        val runtimeShaderClass = Class.forName("android.graphics.RuntimeShader")
+        val constructor = runtimeShaderClass.getConstructor(String::class.java)
+        val shader = constructor.newInstance(AGSL_SHADER_CODE)
+
+        val setFloatUniformMethod =
+            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, Float::class.java, Float::class.java)
+        val setFloatUniformTimeMethod =
+            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, Float::class.java)
+
         object : ShaderBrush() {
             override fun createShader(size: Size): android.graphics.Shader {
-                shader.setFloatUniform("resolution", size.width, size.height)
-                shader.setFloatUniform("time", time)
-                return shader
+                setFloatUniformMethod.invoke(shader, "resolution", size.width, size.height)
+                setFloatUniformTimeMethod.invoke(shader, "time", time)
+                @Suppress("USELESS_CAST")
+                return shader as android.graphics.Shader
             }
         }
-    } catch (e: AndroidRuntimeException) {
-        Logger.e(e) { "Failed to create RuntimeShader" }
+    } catch (e: ClassNotFoundException) {
+        // RuntimeShader not available on this Android version - expected on older devices
         null
-    } catch (e: IllegalArgumentException) {
-        Logger.e(e) { "Invalid AGSL shader code" }
+    } catch (e: NoSuchMethodException) {
+        Logger.e(e) { "RuntimeShader method not found" }
+        null
+    } catch (e: IllegalAccessException) {
+        Logger.e(e) { "Cannot access RuntimeShader" }
+        null
+    } catch (e: InstantiationException) {
+        Logger.e(e) { "Failed to instantiate RuntimeShader" }
+        null
+    } catch (e: InvocationTargetException) {
+        Logger.e(e) { "RuntimeShader constructor threw an exception" }
+        null
+    } catch (e: SecurityException) {
+        Logger.e(e) { "Security exception when accessing RuntimeShader" }
         null
     }
 }
