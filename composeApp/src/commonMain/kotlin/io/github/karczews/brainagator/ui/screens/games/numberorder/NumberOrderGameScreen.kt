@@ -114,7 +114,7 @@ fun NumberOrderGameScreen(
             Logger.d { "Number clicked: ${gameNumber.number}, gameNumbersInOrder=$gameNumbersInOrder" }
             val nextNumber = gameNumbersInOrder.firstOrNull()
             if (nextNumber != null && gameNumber.number == nextNumber) {
-                gameNumbersInOrder.removeFirst()
+                gameNumbersInOrder.removeAt(0)
                 gameNumbers.remove(gameNumber)
                 val position = gameNumbers.indexOfLast { it.matched } + 1
                 gameNumbers.add(position, gameNumber.copy(matched = true))
