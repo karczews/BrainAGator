@@ -101,6 +101,11 @@ fun NumberOrderGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
+    /**
+     * Generates a list of 5 unique random numbers from 1 to 9.
+     *
+     * @return A shuffled list containing 5 distinct integers in the range 1-9
+     */
     fun generateNumbers(): List<Int> = (1..9).shuffled().take(5)
 
     val generatedNumbers = remember { generateNumbers() }
