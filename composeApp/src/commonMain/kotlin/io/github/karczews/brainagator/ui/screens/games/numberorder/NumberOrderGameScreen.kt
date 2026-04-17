@@ -83,6 +83,18 @@ val NumberOrderGameInfo =
         gameType = GameType.NumberOrder,
     )
 
+/**
+ * Main game screen for the Number Order game.
+ *
+ * Presents a sequence of shuffled numbers that the user must click in ascending order.
+ * The game generates 5 random numbers from 1-9 and requires the player to tap them
+ * from smallest to largest. Correct selections are highlighted in green, and
+ * speech feedback is provided for both correct and incorrect answers.
+ *
+ * @param gameInfo Information about the game (title, subtitle, icon)
+ * @param onBackClick Callback when the back button is pressed
+ * @param onGameWon Callback when all numbers are correctly ordered
+ */
 @Composable
 fun NumberOrderGameScreen(
     gameInfo: GameInfo,
@@ -179,6 +191,17 @@ fun NumberOrderGameScreen(
     }
 }
 
+/**
+ * Displays a horizontal row of number boxes for the Number Order game.
+ *
+ * Renders each number as an interactive box that can be tapped. The row is
+ * horizontally scrollable and uses animated placement. Incorrect selections
+ * trigger a visual shake effect via [isIncorrectSelection].
+ *
+ * @param gameNumbers List of game numbers to display with their matched state
+ * @param correctNextNumber The next number that should be tapped in sequence
+ * @param onNumberClick Callback invoked when a number box is tapped
+ */
 @Composable
 private fun NumberBoxesRow(
     gameNumbers: List<GameNumber>,
@@ -217,6 +240,19 @@ private fun NumberBoxesRow(
     }
 }
 
+/**
+ * A single number box in the Number Order game.
+ *
+ * Displays a number inside a rounded box that responds to taps. The box changes color
+ * based on [isGreen] (matched/correct) and shows a red border when [isIncorrectSelection]
+ * is true. A shake animation plays when an incorrect selection is made.
+ *
+ * @param modifier Modifier for layout and styling
+ * @param number The number to display in the box
+ * @param isGreen Whether this number has been correctly matched (shown in green)
+ * @param isIncorrectSelection Whether this was an incorrect tap (triggers shake)
+ * @param onClick Callback invoked when the box is tapped
+ */
 @Composable
 private fun NumberBox(
     modifier: Modifier,
@@ -291,6 +327,12 @@ private fun NumberOrderGameScreenPreview() {
     }
 }
 
+/**
+ * Represents a number in the Number Order game.
+ *
+ * @property number The numeric value to display (1-9)
+ * @property matched Whether this number has been correctly selected in sequence
+ */
 data class GameNumber(
     val number: Int,
     val matched: Boolean,
