@@ -101,6 +101,14 @@ fun NumberOrderGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
+    /**
+     * Generates a list of 5 unique random numbers between 1 and 9.
+     *
+     * Shuffles the range 1-9 and takes the first 5 numbers to create
+     * the game sequence that the player must order.
+     *
+     * @return A list of 5 unique integers in random order
+     */
     fun generateNumbers(): List<Int> = (1..9).shuffled().take(5)
 
     val generatedNumbers = remember { generateNumbers() }
