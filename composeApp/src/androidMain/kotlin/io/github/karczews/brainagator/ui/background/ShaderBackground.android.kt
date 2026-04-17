@@ -94,9 +94,9 @@ private fun createShaderBrush(time: Float): ShaderBrush? {
         val shader = constructor.newInstance(AGSL_SHADER_CODE)
 
         val setFloatUniformMethod =
-            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, Float::class.java, Float::class.java)
+            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, java.lang.Float.TYPE, java.lang.Float.TYPE)
         val setFloatUniformTimeMethod =
-            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, Float::class.java)
+            runtimeShaderClass.getMethod("setFloatUniform", String::class.java, java.lang.Float.TYPE)
 
         object : ShaderBrush() {
             override fun createShader(size: Size): android.graphics.Shader {
