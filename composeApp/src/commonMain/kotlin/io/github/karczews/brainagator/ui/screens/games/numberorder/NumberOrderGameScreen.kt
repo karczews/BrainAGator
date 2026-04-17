@@ -101,11 +101,6 @@ fun NumberOrderGameScreen(
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
 ) {
-    /**
-     * Generates a list of 5 unique random numbers from 1 to 9.
-     *
-     * @return A shuffled list containing 5 distinct integers in the range 1-9
-     */
     fun generateNumbers(): List<Int> = (1..9).shuffled().take(5)
 
     val generatedNumbers = remember { generateNumbers() }
@@ -201,7 +196,7 @@ fun NumberOrderGameScreen(
  *
  * Renders each number as an interactive box that can be tapped. The row is
  * horizontally scrollable and uses animated placement. Incorrect selections
- * trigger a visual shake effect via [isIncorrectSelection].
+ * trigger a visual shake effect.
  *
  * @param gameNumbers List of game numbers to display with their matched state
  * @param correctNextNumber The next number that should be tapped in sequence
