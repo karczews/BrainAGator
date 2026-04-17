@@ -51,6 +51,7 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameScreen
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameScreen
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameScreen
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameScreen
+import io.github.karczews.brainagator.ui.background.AnimatedShaderBackground
 
 @Composable
 @Preview
@@ -59,7 +60,9 @@ fun App() {
         Logger.i { "App composable started" }
     }
     AppTheme {
-        AppNavigation(modifier = Modifier.fillMaxSize())
+        AnimatedShaderBackground(modifier = Modifier.fillMaxSize()) {
+            AppNavigation(modifier = Modifier.fillMaxSize())
+        }
     }
 }
 
