@@ -61,7 +61,6 @@ vec4 main(vec2 coord) {
  * Android implementation of ShaderBackground using AGSL RuntimeShader.
  * Only available on Android 13+ (API 33+).
  */
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 actual fun ShaderBackground(
     modifier: Modifier,
