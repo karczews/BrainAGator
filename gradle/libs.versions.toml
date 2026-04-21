@@ -21,7 +21,7 @@ kotlinx-coroutines = "1.10.2"
 kotlinx-atomicfu = "0.32.1"
 kermit = "2.1.0"
 composeBom = "2026.03.01"
-navigation3 = "1.1.0-rc01"
+navigation3 = "1.1.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
