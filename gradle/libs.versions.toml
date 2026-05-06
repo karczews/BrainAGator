@@ -1,5 +1,5 @@
 [versions]
-agp = "9.2.0"
+agp = "9.2.1"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.3"
 android-compileSdk = "36"
