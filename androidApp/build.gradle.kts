@@ -92,7 +92,7 @@ play {
     // To use a local JSON key file instead, uncomment the next line:
     // serviceAccountCredentials.set(file("play-service-account.json"))
 
-    track.set("internal")
+    track.set("alpha")
     defaultToAppBundles.set(true)
     resolutionStrategy.set(ResolutionStrategy.AUTO)
 }
