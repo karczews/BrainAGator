@@ -1,8 +1,10 @@
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.gradlePlayPublisher)
 }
 
 android {
@@ -83,4 +85,14 @@ dependencies {
     androidTestImplementation(libs.androidx.testExt.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+}
+
+play {
+    // Credentials are read from the ANDROID_PUBLISHER_CREDENTIALS env var (no file committed).
+    // To use a local JSON key file instead, uncomment the next line:
+    // serviceAccountCredentials.set(file("play-service-account.json"))
+
+    track.set("alpha")
+    defaultToAppBundles.set(true)
+    resolutionStrategy.set(ResolutionStrategy.AUTO)
 }

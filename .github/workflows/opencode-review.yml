@@ -45,11 +45,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - uses: anomalyco/opencode/github@latest
+        continue-on-error: true
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          model: opencode-go/kimi-k2.5
+          model: opencode/hy3-preview-free
           use_github_token: true
           prompt: |
             Review this pull request:
