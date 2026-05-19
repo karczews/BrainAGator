@@ -21,7 +21,7 @@ kotlin = "2.3.21"
 kotlinx-coroutines = "1.11.0"
 kotlinx-atomicfu = "0.32.1"
 kermit = "2.1.0"
-composeBom = "2026.05.00"
+composeBom = "2026.05.01"
 navigation3 = "1.1.1"
 
 [libraries]
