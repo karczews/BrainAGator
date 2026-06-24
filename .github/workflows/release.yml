@@ -23,7 +23,7 @@ jobs:
 
       - name: Determine next version
         id: version
-        uses: tomtom-international/commisery-action/bump@v5
+        uses: tomtom-international/commisery-action/bump@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           create-release: false
@@ -87,7 +87,7 @@ jobs:
 
       - name: Create release
         if: steps.version.outputs.next-version != ''
-        uses: tomtom-international/commisery-action/bump@v5
+        uses: tomtom-international/commisery-action/bump@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           create-release: true
