@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Check for Conventional Commit compliance
-        uses: tomtom-international/commisery-action@v5
+        uses: tomtom-international/commisery-action@v8
         with:
           token: ${{ github.token }}
 
