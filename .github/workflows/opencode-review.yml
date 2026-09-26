@@ -50,7 +50,7 @@ jobs:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          model: opencode/hy3-preview-free
+          model: opencode/nemotron-3-ultra-free
           use_github_token: true
           prompt: |
             Review this pull request:
