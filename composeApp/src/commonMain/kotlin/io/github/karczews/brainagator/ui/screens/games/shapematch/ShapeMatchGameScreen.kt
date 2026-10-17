@@ -321,24 +321,14 @@ private fun ColoredShapeButton(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
         ) {
-            // Soft inner well with the shape drawn as large as the well allows
-            BoxWithConstraints(
+            ShapeWell(
+                shape = shape,
+                color = color,
                 modifier =
                     Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
-                        .padding(Dimens.spaceXs),
-                contentAlignment = Alignment.Center,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(minOf(maxWidth, maxHeight) * SHAPE_FILL_FRACTION)
-                            .clip(shape.shape)
-                            .background(color.color),
-                )
-            }
+                        .fillMaxWidth(),
+            )
             Text(
                 text = shapeName,
                 style = MaterialTheme.typography.labelLarge,
@@ -352,6 +342,30 @@ private fun ColoredShapeButton(
                     ),
             )
         }
+    }
+}
+
+/** Soft inner well with the shape drawn as large as the well allows. */
+@Composable
+private fun ShapeWell(
+    shape: GameShape,
+    color: GameColor,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
+                .padding(Dimens.spaceXs),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(minOf(maxWidth, maxHeight) * SHAPE_FILL_FRACTION)
+                    .clip(shape.shape)
+                    .background(color.color),
+        )
     }
 }
 
