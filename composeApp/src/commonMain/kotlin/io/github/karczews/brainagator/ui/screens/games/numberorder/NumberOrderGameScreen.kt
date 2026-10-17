@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
-import brainagator.composeapp.generated.resources.gator_long
+import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
@@ -65,11 +65,12 @@ import io.github.karczews.brainagator.ui.elements.shake
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
+import io.github.karczews.brainagator.ui.screens.games.GameProgress
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import kotlin.random.Random
 
 val NumberOrderGameInfo =
@@ -118,6 +119,7 @@ fun NumberOrderGameScreen(
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        progress = GameProgress(current = generatedNumbers.size - gameNumbersInOrder.size, total = generatedNumbers.size),
     ) { innerPadding, tts ->
 
         var feedbackMessage by remember { mutableStateOf<String?>(null) }
@@ -203,8 +205,10 @@ private fun NumberOrderBoard(
                     Modifier
                         .weight(1f, fill = false)
                         .padding(horizontal = Dimens.spaceMd)
-                        .heightIn(max = Dimens.illustrationMaxHeight),
-                imageVector = vectorResource(Res.drawable.gator_long),
+                        .fillMaxWidth()
+                        .height(Dimens.illustrationMaxHeight),
+                // PROTOTYPE (adventure map): the pixel-art gator, matching the mascot everywhere else.
+                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
                 contentDescription = null,
             )
 

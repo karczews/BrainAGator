@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -43,11 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.repeat_instruction
-import io.github.karczews.brainagator.LocalSharedTransitionContext
 import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
@@ -55,6 +58,7 @@ import io.github.karczews.brainagator.theme.darken
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
+import io.github.karczews.brainagator.ui.elements.StarProgress
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileIconButton
 import io.github.karczews.brainagator.ui.screens.GameInfo
@@ -63,14 +67,25 @@ import org.jetbrains.compose.resources.stringResource
 
 private const val TITLE_DARKEN_FRACTION = 0.2f
 
+/** How far a game has got: [current] of [total] stars earned. */
+@Immutable
+data class GameProgress(
+    val current: Int,
+    val total: Int,
+)
+
 /**
  * Common frame for every game: the game's [PlayfulBackground], a top bar with back and
  * "repeat instructions" buttons, and spoken instructions when the screen opens.
+ *
+ * PROTOTYPE (adventure map): when the game reports [progress], the top bar shows it as stars instead of the
+ * game's title, so the board below gets the room a separate progress card used to take.
  */
 @Composable
 fun GameScreenScaffold(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
+    progress: GameProgress? = null,
     bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
@@ -97,6 +112,7 @@ fun GameScreenScaffold(
             topBar = {
                 GameTopBar(
                     gameInfo = gameInfo,
+                    progress = progress,
                     onBackClick = onBackClick,
                     onHelpClick = { speakCount++ },
                 )
@@ -111,6 +127,7 @@ fun GameScreenScaffold(
 @Composable
 private fun GameTopBar(
     gameInfo: GameInfo,
+    progress: GameProgress?,
     onBackClick: () -> Unit,
     onHelpClick: () -> Unit,
 ) {
@@ -128,13 +145,15 @@ private fun GameTopBar(
             onClick = onBackClick,
             colors = TactileDefaults.surfaceColors(content = gameInfo.accentColor),
         )
-        GameTitle(
-            gameInfo = gameInfo,
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(horizontal = Dimens.spaceSm),
-        )
+        val middleModifier =
+            Modifier
+                .weight(1f)
+                .padding(horizontal = Dimens.spaceSm)
+        if (progress != null) {
+            TopBarProgress(gameInfo = gameInfo, progress = progress, modifier = middleModifier)
+        } else {
+            GameTitle(gameInfo = gameInfo, modifier = middleModifier)
+        }
         // The help button is the accent-colored one: replaying instructions matters most for non-readers.
         TactileIconButton(
             icon = Icons.Rounded.QuestionMark,
@@ -145,27 +164,34 @@ private fun GameTopBar(
     }
 }
 
+/** Progress stars in the middle of the top bar; the (unread) title stays available to screen readers. */
+@Composable
+private fun TopBarProgress(
+    gameInfo: GameInfo,
+    progress: GameProgress,
+    modifier: Modifier = Modifier,
+) {
+    val title = stringResource(gameInfo.titleRes)
+    Box(
+        modifier =
+            modifier.semantics {
+                heading()
+                contentDescription = title
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        StarProgress(current = progress.current, total = progress.total)
+    }
+}
+
 @Composable
 private fun GameTitle(
     gameInfo: GameInfo,
     modifier: Modifier = Modifier,
 ) {
-    val sharedTransitionContext = LocalSharedTransitionContext.current
-    val sharedModifier =
-        if (sharedTransitionContext != null) {
-            with(sharedTransitionContext.sharedTransitionScope) {
-                Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(gameInfo.titleRes),
-                    animatedVisibilityScope = sharedTransitionContext.animatedContentScope,
-                )
-            }
-        } else {
-            Modifier
-        }
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Text(
             text = stringResource(gameInfo.titleRes),
-            modifier = sharedModifier,
             color = gameInfo.accentColor.darken(TITLE_DARKEN_FRACTION),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,

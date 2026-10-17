@@ -35,6 +35,7 @@ val OddOneOutGameInfo =
         descriptionRes = Res.string.desc_odd_one_out,
         icon = Icons.AutoMirrored.Rounded.HelpOutline,
         accentColor = GameIndigo,
+        isComingSoon = true,
         gameType = GameType.OddOneOut,
     )
 

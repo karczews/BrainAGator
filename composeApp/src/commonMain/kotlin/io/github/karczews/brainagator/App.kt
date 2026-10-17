@@ -16,17 +16,12 @@
 
 package io.github.karczews.brainagator
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +31,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
+import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
 import io.github.karczews.brainagator.ui.screens.GameWonScreen
 import io.github.karczews.brainagator.ui.screens.games
@@ -51,6 +46,7 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameScreen
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameScreen
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameScreen
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameScreen
+import io.github.karczews.brainagator.ui.screens.map.SessionProgress
 
 @Composable
 @Preview
@@ -71,79 +67,75 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     // Track if a welcome message has been spoken - persists across navigation
     var hasSpokenWelcome by rememberSaveable { mutableStateOf(false) }
 
-    SharedTransitionLayout(modifier) {
-        // Create a lookup map for GameInfo by GameType
-        val gameInfoMap = remember { games.associateBy { it.gameType } }
+    // PROTOTYPE (adventure map): stars per game for this session only; nothing is persisted.
+    var progress by remember { mutableStateOf(SessionProgress()) }
 
-        // NavDisplay manages the mapping from routes to content using entryProvider DSL
-        NavDisplay(
-            backStack = backStack,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
-            popTransitionSpec = { fadeIn() togetherWith fadeOut() },
-            /* transitionSpec = {
-                 // Slide in from right with fade when entering
-                 (slideInHorizontally { width -> width } + fadeIn()) togetherWith
-                     (slideOutHorizontally { width -> -width / 2 } + fadeOut())
-             },
-             popTransitionSpec = {
-                 // Slide in from left with fade when popping back
-                 (slideInHorizontally { width -> -width } + fadeIn()) togetherWith
-                     (slideOutHorizontally { width -> width } + fadeOut())
-             },*/
-            entryProvider =
-                entryProvider {
-                    entry<Route.GameSelection> {
-                        GameSelectionScreen(
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedContentScope = LocalNavAnimatedContentScope.current,
-                            onGameSelected = { game ->
-                                backStack.add(Route.Game(game.gameType))
-                            },
-                            onWelcomeSpoken = {
-                                hasSpokenWelcome = true
-                            },
-                            shouldSpeakWelcome = !hasSpokenWelcome,
-                        )
-                    }
-                    entry<Route.Game> { route ->
-                        val gameInfo =
-                            gameInfoMap[route.gameType]
-                                ?: error("Unknown game type: ${route.gameType}")
-                        val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
-                        val onGameWon: () -> Unit = { backStack.add(Route.GameWon) }
+    // Create a lookup map for GameInfo by GameType
+    val gameInfoMap = remember { games.associateBy { it.gameType } }
 
-                        CompositionLocalProvider(
-                            LocalSharedTransitionContext provides
-                                SharedTransitionContext(this@SharedTransitionLayout, LocalNavAnimatedContentScope.current),
-                        ) {
-                            when (route.gameType) {
-                                GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.ColorMatch -> ColorMatchGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.SizeOrder -> SizeOrderGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.Pattern -> PatternGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.OddOneOut -> OddOneOutGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.SpotDifference -> SpotDifferenceGameScreen(gameInfo, onBackClick, onGameWon)
-                            }
-                        }
-                    }
-                    entry<Route.GameWon> {
-                        GameWonScreen(
-                            onBackToMainClick = {
-                                backStack.clear()
-                                backStack.add(Route.GameSelection)
-                            },
-                        )
-                    }
-                },
-        )
+    fun showMap() {
+        backStack.clear()
+        backStack.add(Route.GameSelection)
     }
+
+    NavDisplay(
+        modifier = modifier,
+        backStack = backStack,
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        popTransitionSpec = { fadeIn() togetherWith fadeOut() },
+        entryProvider =
+            entryProvider {
+                entry<Route.GameSelection> {
+                    GameSelectionScreen(
+                        progress = progress,
+                        onGameSelected = { game ->
+                            backStack.add(Route.Game(game.gameType))
+                        },
+                        onWelcomeSpoken = {
+                            hasSpokenWelcome = true
+                        },
+                        shouldSpeakWelcome = !hasSpokenWelcome,
+                    )
+                }
+                entry<Route.Game> { route ->
+                    val gameInfo =
+                        gameInfoMap[route.gameType]
+                            ?: error("Unknown game type: ${route.gameType}")
+                    val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
+                    val onGameWon: () -> Unit = {
+                        progress = progress.withWin(route.gameType)
+                        backStack.add(Route.GameWon(route.gameType))
+                    }
+                    GameScreen(gameType = route.gameType, gameInfo = gameInfo, onBackClick = onBackClick, onGameWon = onGameWon)
+                }
+                entry<Route.GameWon> { route ->
+                    GameWonScreen(
+                        onNextStopClick = ::showMap,
+                        onPlayAgainClick = {
+                            // Map underneath, so back from the replayed game returns to the journey.
+                            showMap()
+                            backStack.add(Route.Game(route.gameType))
+                        },
+                    )
+                }
+            },
+    )
 }
 
-data class SharedTransitionContext(
-    val sharedTransitionScope: SharedTransitionScope,
-    val animatedContentScope: AnimatedContentScope,
-)
-
-val LocalSharedTransitionContext =
-    compositionLocalOf<SharedTransitionContext?> { null }
+@Composable
+private fun GameScreen(
+    gameType: GameType,
+    gameInfo: GameInfo,
+    onBackClick: () -> Unit,
+    onGameWon: () -> Unit,
+) {
+    when (gameType) {
+        GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.ColorMatch -> ColorMatchGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.SizeOrder -> SizeOrderGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.Pattern -> PatternGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.OddOneOut -> OddOneOutGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.SpotDifference -> SpotDifferenceGameScreen(gameInfo, onBackClick, onGameWon)
+    }
+}

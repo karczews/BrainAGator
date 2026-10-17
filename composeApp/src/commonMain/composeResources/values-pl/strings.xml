@@ -38,6 +38,13 @@
     <string name="congratulations">Gratulacje!</string>
     <string name="you_won">Wygrałeś grę!</string>
     <string name="back_to_main">Wróć do Ekranu Głównego</string>
+    <string name="next_stop">Następny przystanek</string>
+    <string name="play_again">Zagraj jeszcze raz</string>
+
+    <!-- Adventure Map (prototype) -->
+    <string name="map_next_stop_prompt">Następny przystanek: %1$s!</string>
+    <string name="map_stop_stars">%1$s, gwiazdki: %2$d z %3$d</string>
+    <string name="map_stop_locked">%1$s, wkrótce</string>
 
     <!-- Game Screen -->
     <string name="go_back">Wróć</string>

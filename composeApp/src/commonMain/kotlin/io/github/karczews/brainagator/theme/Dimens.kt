@@ -65,6 +65,24 @@ object Dimens {
     val illustrationMaxHeight = 128.dp
     val rewardStar = 80.dp
 
+    // Adventure map (PROTOTYPE): round stops along a trail, sized from the space available
+
+    /** Largest face of a map stop; smaller screens shrink stops down to [touchTarget]. */
+    val mapStopMaxFace = 88.dp
+
+    /** Widest box (face plus label) a map stop takes, so labels stay close to their stop on wide screens. */
+    val mapStopMaxWidth = 140.dp
+    val mapStopStar = 14.dp
+    val mapStopLabelHeight = 16.dp
+
+    /** Below this portrait screen height the stops would overlap, so the home screen scrolls instead. */
+    val mapScreenMinHeight = 560.dp
+
+    /** Height of the map when the home screen scrolls. */
+    val mapScrollHeight = 460.dp
+    val mapTrailDot = 5.dp
+    val mapTrailDotGap = 14.dp
+
     /** Narrowest landscape side column (instruction and progress) before a game board stacks instead. */
     val sidePanelMinWidth = 120.dp
 

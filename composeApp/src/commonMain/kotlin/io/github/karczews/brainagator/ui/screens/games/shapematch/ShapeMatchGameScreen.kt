@@ -60,8 +60,6 @@ import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameGrape
 import io.github.karczews.brainagator.ui.elements.InstructionCard
-import io.github.karczews.brainagator.ui.elements.PlayCard
-import io.github.karczews.brainagator.ui.elements.StarProgress
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileSurface
 import io.github.karczews.brainagator.ui.elements.rememberShakeState
@@ -69,6 +67,7 @@ import io.github.karczews.brainagator.ui.elements.shake
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
+import io.github.karczews.brainagator.ui.screens.games.GameProgress
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -156,6 +155,7 @@ fun ShapeMatchGameScreen(
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        progress = GameProgress(current = correctCount, total = totalIterations),
     ) { innerPadding, tts ->
         val (targetShape, targetColor) = currentTarget
         val instructionText =
@@ -186,7 +186,8 @@ fun ShapeMatchGameScreen(
                     accent = gameInfo.accentColor,
                 )
             },
-            progress = { GameProgress(correctCount, totalIterations) },
+            // PROTOTYPE (adventure map): progress lives in the top bar, so the board takes this space.
+            progress = {},
         ) { isLandscape, boardModifier ->
             // Each round starts with fresh tiles, so a wiggle or coral tint from a wrong answer
             // never carries over to the next round's answers.
@@ -242,37 +243,6 @@ private fun ShapeGrid(
                 }
             }
         }
-    }
-}
-
-/**
- * Displays the game progress as stars earned out of total iterations.
- *
- * @param correctCount Number of correct selections made by the user
- * @param totalCount Total number of iterations required to complete the game
- */
-@Composable
-private fun GameProgress(
-    correctCount: Int,
-    totalCount: Int,
-) {
-    PlayCard(modifier = Modifier.fillMaxWidth()) {
-        StarProgress(
-            current = correctCount,
-            total = totalCount,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-/**
- * Preview wrapper for GameProgress composable.
- */
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, widthDp = 500)
-@Composable
-private fun GameProgressPreview() {
-    AppTheme {
-        GameProgress(correctCount = 3, totalCount = 5)
     }
 }
 

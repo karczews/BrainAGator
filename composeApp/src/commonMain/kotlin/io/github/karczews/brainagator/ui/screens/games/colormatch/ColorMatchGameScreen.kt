@@ -36,6 +36,7 @@ val ColorMatchGameInfo =
         descriptionRes = Res.string.desc_color_match,
         icon = Icons.Rounded.Palette,
         accentColor = GameBerry,
+        isComingSoon = true,
         gameType = GameType.ColorMatch,
     )
 

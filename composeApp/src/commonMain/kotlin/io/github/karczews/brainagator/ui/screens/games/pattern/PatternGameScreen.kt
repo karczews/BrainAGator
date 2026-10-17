@@ -35,6 +35,7 @@ val PatternGameInfo =
         descriptionRes = Res.string.desc_pattern,
         icon = Icons.Rounded.GridView,
         accentColor = GameTeal,
+        isComingSoon = true,
         gameType = GameType.Pattern,
     )
 

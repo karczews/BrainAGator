@@ -16,8 +16,6 @@
 
 package io.github.karczews.brainagator
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
@@ -108,22 +106,15 @@ class DesktopScreenshotTest {
 
     @Composable
     private fun GameSelectionContent() {
-        SharedTransitionLayout {
-            AnimatedContent(targetState = "preview") {
-                GameSelectionScreen(
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@AnimatedContent,
-                    shouldSpeakWelcome = false,
-                )
-            }
-        }
+        GameSelectionScreen(shouldSpeakWelcome = false)
     }
 
     @Test
     fun gameWon() {
         capture {
             GameWonScreen(
-                onBackToMainClick = {},
+                onNextStopClick = {},
+                onPlayAgainClick = {},
                 showFireworks = false,
             )
         }

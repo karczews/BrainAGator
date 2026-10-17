@@ -38,6 +38,13 @@
     <string name="congratulations">Congratulations!</string>
     <string name="you_won">You won the game!</string>
     <string name="back_to_main">Back to Main Screen</string>
+    <string name="next_stop">Next stop</string>
+    <string name="play_again">Play again</string>
+
+    <!-- Adventure Map (prototype) -->
+    <string name="map_next_stop_prompt">Next stop: %1$s!</string>
+    <string name="map_stop_stars">%1$s, %2$d of %3$d stars</string>
+    <string name="map_stop_locked">%1$s, coming soon</string>
 
     <!-- Game Screen -->
     <string name="go_back">Go back</string>

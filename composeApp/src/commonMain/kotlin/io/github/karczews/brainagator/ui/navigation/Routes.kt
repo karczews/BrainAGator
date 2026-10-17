@@ -46,6 +46,9 @@ sealed interface Route {
         val gameType: GameType,
     ) : Route
 
+    /** Win screen for [gameType], so it can offer to play the same game again. */
     @Serializable
-    data object GameWon : Route
+    data class GameWon(
+        val gameType: GameType,
+    ) : Route
 }

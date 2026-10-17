@@ -39,7 +39,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,9 +52,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
-import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
 import brainagator.composeapp.generated.resources.gator_win_1
+import brainagator.composeapp.generated.resources.next_stop
+import brainagator.composeapp.generated.resources.play_again
 import brainagator.composeapp.generated.resources.star_1
 import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.theme.AppTheme
@@ -62,12 +64,19 @@ import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.ui.FireworksAnimation
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
 import io.github.karczews.brainagator.ui.elements.TactileButton
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileIconButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Celebrates a win. PROTOTYPE (adventure map): the main action continues the journey ("Next stop" returns to the map,
+ * where the won stop now has its stars and the gator has moved on); a round button replays the same game.
+ */
 @Composable
 fun GameWonScreen(
-    onBackToMainClick: () -> Unit,
+    onNextStopClick: () -> Unit,
+    onPlayAgainClick: () -> Unit,
     showFireworks: Boolean = true,
 ) {
     PlayfulBackground(modifier = Modifier.fillMaxSize(), accent = AppTheme.extendedColors.reward) {
@@ -95,7 +104,11 @@ fun GameWonScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick, modifier = Modifier.weight(1f))
+                    WinMessage(
+                        onNextStopClick = onNextStopClick,
+                        onPlayAgainClick = onPlayAgainClick,
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             } else {
                 Column(
@@ -105,17 +118,18 @@ fun GameWonScreen(
                 ) {
                     // Shrinks on short screens instead of pushing the button off-screen.
                     BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick)
+                    WinMessage(onNextStopClick = onNextStopClick, onPlayAgainClick = onPlayAgainClick)
                 }
             }
         }
     }
 }
 
-/** Title, stars and the way home; scrolls only if a screen is too short to show it all. */
+/** Title, stars and the way on; scrolls only if a screen is too short to show it all. */
 @Composable
 private fun WinMessage(
-    onBackToMainClick: () -> Unit,
+    onNextStopClick: () -> Unit,
+    onPlayAgainClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -143,15 +157,35 @@ private fun WinMessage(
             textAlign = TextAlign.Center,
         )
         WinStars()
+        WinActions(onNextStopClick = onNextStopClick, onPlayAgainClick = onPlayAgainClick)
+    }
+}
+
+@Composable
+private fun WinActions(
+    onNextStopClick: () -> Unit,
+    onPlayAgainClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .padding(top = Dimens.spaceSm)
+                .widthIn(max = Dimens.buttonMaxWidth)
+                .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TactileIconButton(
+            icon = Icons.Rounded.Replay,
+            contentDescription = stringResource(Res.string.play_again),
+            onClick = onPlayAgainClick,
+            colors = TactileDefaults.surfaceColors(content = MaterialTheme.colorScheme.primary),
+        )
         TactileButton(
-            text = stringResource(Res.string.back_to_main),
-            onClick = onBackToMainClick,
-            icon = Icons.Rounded.Home,
-            modifier =
-                Modifier
-                    .padding(top = Dimens.spaceSm)
-                    .widthIn(max = Dimens.buttonMaxWidth)
-                    .fillMaxWidth(),
+            text = stringResource(Res.string.next_stop),
+            onClick = onNextStopClick,
+            icon = Icons.AutoMirrored.Rounded.ArrowForward,
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -207,6 +241,6 @@ private fun WinStars() {
 @Composable
 private fun GameWonScreenPreview() {
     AppTheme {
-        GameWonScreen(onBackToMainClick = {})
+        GameWonScreen(onNextStopClick = {}, onPlayAgainClick = {})
     }
 }

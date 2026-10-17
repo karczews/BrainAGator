@@ -35,6 +35,7 @@ val SizeOrderGameInfo =
         descriptionRes = Res.string.desc_size_order,
         icon = Icons.Rounded.SwapVert,
         accentColor = GameTangerine,
+        isComingSoon = true,
         gameType = GameType.SizeOrder,
     )
 

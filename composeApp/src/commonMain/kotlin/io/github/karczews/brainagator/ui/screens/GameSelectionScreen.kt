@@ -16,54 +16,38 @@
 
 package io.github.karczews.brainagator.ui.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
-import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
-import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
+import brainagator.composeapp.generated.resources.map_next_stop_prompt
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
@@ -75,8 +59,9 @@ import io.github.karczews.brainagator.theme.LogoBerry
 import io.github.karczews.brainagator.theme.LogoGrape
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
+import io.github.karczews.brainagator.ui.elements.TactileButton
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
-import io.github.karczews.brainagator.ui.elements.TactileSurface
+import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.oddoneout.OddOneOutGameInfo
@@ -84,10 +69,11 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.painterResource
+import io.github.karczews.brainagator.ui.screens.map.AdventureMap
+import io.github.karczews.brainagator.ui.screens.map.SessionProgress
 import org.jetbrains.compose.resources.stringResource
 
+/** The games in map order: the trail starts at the first and ends at the last. */
 val games =
     listOf(
         ShapeMatchGameInfo,
@@ -99,222 +85,137 @@ val games =
         SpotDifferenceGameInfo,
     )
 
-private const val MIN_COLUMNS = 2
-private const val MAX_COLUMNS = 4
 private const val BUILD_INFO_ALPHA = 0.6f
 
+/**
+ * PROTOTYPE home screen: the swamp map. Instead of a menu of tiles, the gator stands at the suggested next stop and
+ * one big button starts it; any other playable stop can still be tapped directly.
+ */
 @Composable
 fun GameSelectionScreen(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
+    progress: SessionProgress = SessionProgress(),
     onGameSelected: (GameInfo) -> Unit = {},
     onWelcomeSpoken: () -> Unit = {},
     shouldSpeakWelcome: Boolean = true,
 ) {
     val tts = rememberTextToSpeech()
+    val suggested = progress.suggestedGame(games)
     val welcomeText = stringResource(Res.string.welcome_message)
+    val nextStopText = suggested?.let { stringResource(Res.string.map_next_stop_prompt, stringResource(it.titleRes)) }
 
-    // Speak welcome message only once per app session
+    // Welcome once per app session; after a win, the gator announces where the journey goes next.
     LaunchedEffect(Unit) {
         if (shouldSpeakWelcome) {
             tts.speak(welcomeText)
             onWelcomeSpoken()
+        } else if (progress.lastWon != null && nextStopText != null) {
+            tts.speak(nextStopText)
         }
     }
     PlayfulBackground(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg),
-        ) {
-            SelectionHeader()
-            GameGrid(
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                onGameSelected = onGameSelected,
-            )
-            Image(
-                modifier = Modifier.height(Dimens.illustrationHeight),
-                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
-                contentDescription = null,
-            )
-            BuildInfo(modifier = Modifier.align(Alignment.End))
-        }
-    }
-}
-
-@Composable
-private fun SelectionHeader() {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Image(
-            modifier = Modifier.size(Dimens.headerMascot),
-            painter = painterResource(Res.drawable.gator_kid_in_suit_1),
-            contentDescription = null,
-        )
-        Column(
-            modifier = Modifier.weight(1f, fill = false),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-        ) {
-            // Shrinks on narrow phones rather than breaking the name across lines.
-            BasicText(
-                text =
-                    buildAnnotatedString {
-                        withStyle(SpanStyle(color = LogoGrape)) {
-                            append("Brain")
-                        }
-                        withStyle(SpanStyle(color = LogoBerry)) {
-                            append("a")
-                        }
-                        withStyle(SpanStyle(color = GatorGreen)) {
-                            append("gator")
-                        }
-                    },
-                style = MaterialTheme.typography.displaySmall,
-                maxLines = 1,
-                autoSize =
-                    TextAutoSize.StepBased(
-                        minFontSize = AutoSizeMin.display,
-                        maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
-                    ),
-            )
-            Text(
-                text = stringResource(Res.string.app_tagline),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+            val isLandscape = maxWidth > maxHeight
+            // Short portrait windows scroll rather than overlapping stops; landscape always fits across.
+            val scrolls = !isLandscape && maxHeight < Dimens.mapScreenMinHeight
+            Column(
                 modifier =
                     Modifier
-                        .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
-                        .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs),
-            )
-        }
-    }
-}
-
-/** Lays games out in as many columns as fit (2 to 4), centering a shorter last row. */
-@Composable
-private fun GameGrid(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    onGameSelected: (GameInfo) -> Unit,
-) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        // Count the gaps too, so each tile really gets at least the minimum width.
-        val columns =
-            ((maxWidth + Dimens.spaceMd) / (Dimens.gameTileMinWidth + Dimens.spaceMd)).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
-        val tileWidth = (maxWidth - Dimens.spaceMd * (columns - 1)) / columns
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
-            games.chunked(columns).forEach { rowGames ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterHorizontally),
+                        .fillMaxSize()
+                        .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceSm),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+            ) {
+                MapHeader(isLandscape = isLandscape)
+                // Only the map scrolls, so the big button stays on screen.
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .then(if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier),
                 ) {
-                    rowGames.forEach { game ->
-                        GameTile(
-                            modifier = Modifier.width(tileWidth),
-                            game = game,
-                            sharedTransitionScope = sharedTransitionScope,
-                            animatedContentScope = animatedContentScope,
-                            onClick = { onGameSelected(game) },
-                        )
-                    }
+                    AdventureMap(
+                        games = games,
+                        progress = progress,
+                        suggested = suggested,
+                        onGameSelected = onGameSelected,
+                        modifier =
+                            if (scrolls) {
+                                // Inset so the suggested stop's halo isn't clipped by the scroll area.
+                                Modifier.fillMaxWidth().padding(vertical = Dimens.spaceSm).height(Dimens.mapScrollHeight)
+                            } else {
+                                Modifier.fillMaxSize()
+                            },
+                    )
                 }
+                if (suggested != null) {
+                    TactileButton(
+                        text = stringResource(suggested.titleRes),
+                        onClick = { onGameSelected(suggested) },
+                        icon = Icons.Rounded.PlayArrow,
+                        colors = TactileDefaults.colors(suggested.accentColor),
+                        modifier = Modifier.widthIn(max = Dimens.buttonMaxWidth).fillMaxWidth(),
+                    )
+                }
+                BuildInfo(modifier = Modifier.align(Alignment.End))
             }
         }
     }
 }
 
+/** Logo and tagline: stacked in portrait, side by side in landscape to leave the map more height. */
 @Composable
-private fun GameTile(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    game: GameInfo,
-    onClick: () -> Unit,
-) {
-    TactileSurface(
-        modifier = modifier.height(Dimens.gameTileHeight),
-        colors = TactileDefaults.colors(game.accentColor),
-        shape = MaterialTheme.shapes.extraLarge,
-        onClick = onClick,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(Dimens.gameTilePadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+private fun MapHeader(isLandscape: Boolean) {
+    if (isLandscape) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            GameIcon(icon = game.icon, tint = game.accentColor)
-
-            Spacer(modifier = Modifier.height(Dimens.spaceSm))
-
-            GameTitleText(
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                titleRes = game.titleRes,
-            )
-
-            Text(
-                text = stringResource(game.subtitleRes),
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Logo()
+            Tagline()
+        }
+    } else {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Logo()
+            Tagline()
         }
     }
 }
 
 @Composable
-private fun GameIcon(
-    icon: ImageVector,
-    tint: Color,
-) {
-    Box(
-        modifier =
-            Modifier
-                .size(Dimens.iconBadge)
-                .background(MaterialTheme.colorScheme.surface, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(Dimens.iconBadgeIcon),
-        )
-    }
+private fun Logo() {
+    // Shrinks on narrow phones rather than breaking the name across lines.
+    BasicText(
+        text =
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = LogoGrape)) {
+                    append("Brain")
+                }
+                withStyle(SpanStyle(color = LogoBerry)) {
+                    append("a")
+                }
+                withStyle(SpanStyle(color = GatorGreen)) {
+                    append("gator")
+                }
+            },
+        style = MaterialTheme.typography.headlineLarge,
+        maxLines = 1,
+        autoSize =
+            TextAutoSize.StepBased(
+                minFontSize = AutoSizeMin.display,
+                maxFontSize = MaterialTheme.typography.headlineLarge.fontSize,
+            ),
+    )
 }
 
+/** Plain text rather than a pill, so it doesn't read as a button. */
 @Composable
-private fun GameTitleText(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    titleRes: StringResource,
-) {
-    with(sharedTransitionScope) {
-        Text(
-            modifier =
-                Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = titleRes),
-                    animatedVisibilityScope = animatedContentScope,
-                ),
-            text = stringResource(titleRes),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
+private fun Tagline() {
+    Text(
+        text = stringResource(Res.string.app_tagline),
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
@@ -333,19 +234,9 @@ private fun BuildInfo(modifier: Modifier = Modifier) {
 @Composable
 private fun GameSelectionScreenPreview() {
     AppTheme {
-        SharedTransitionLayout {
-            AnimatedContent(
-                targetState = "preview",
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-            ) { _ ->
-                GameSelectionScreen(
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this@AnimatedContent,
-                    onGameSelected = {},
-                    onWelcomeSpoken = {},
-                    shouldSpeakWelcome = false,
-                )
-            }
-        }
+        GameSelectionScreen(
+            progress = SessionProgress().withWin(GameType.ShapeMatch),
+            shouldSpeakWelcome = false,
+        )
     }
 }

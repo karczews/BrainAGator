@@ -35,6 +35,7 @@ val SpotDifferenceGameInfo =
         descriptionRes = Res.string.desc_spot_difference,
         icon = Icons.Rounded.Search,
         accentColor = GamePlum,
+        isComingSoon = true,
         gameType = GameType.SpotDifference,
     )
 

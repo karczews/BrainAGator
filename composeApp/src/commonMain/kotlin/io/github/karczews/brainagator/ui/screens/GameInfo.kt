@@ -29,4 +29,6 @@ data class GameInfo(
     /** Identity color of the game: its tile, top bar, background tint and highlights. */
     val accentColor: Color,
     val gameType: GameType,
+    /** Not built yet: shown as a locked stone on the map instead of a playable stop. */
+    val isComingSoon: Boolean = false,
 )
