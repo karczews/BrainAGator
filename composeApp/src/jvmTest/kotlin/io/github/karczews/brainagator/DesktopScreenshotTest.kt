@@ -43,20 +43,33 @@ import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class DesktopScreenshotTest {
-    private val roborazziOptions =
+    private val lenientComparator = SimpleImageComparator(maxDistance = 0.01F)
+    private val defaultRoborazziOptions =
         RoborazziOptions(
-            // Tolerates OS rasterization noise (gradient dithering, font/emoji
-            // substitution between macOS-recorded goldens and Linux CI).
             compareOptions =
                 RoborazziOptions.CompareOptions(
                     changeThreshold = 0.025F,
-                    imageComparator = SimpleImageComparator(maxDistance = 0.01F),
+                    imageComparator = lenientComparator,
+                ),
+        )
+
+    // Placeholder screen carries a color-emoji glyph plus large display text:
+    // cross-OS rasterization moves ~4.3% of pixels, so it gets extra headroom.
+    private val colorMatchRoborazziOptions =
+        RoborazziOptions(
+            compareOptions =
+                RoborazziOptions.CompareOptions(
+                    changeThreshold = 0.06F,
+                    imageComparator = lenientComparator,
                 ),
         )
 
     // Portrait 400x860dp: 800x1720px window at density 2. The runner defaults
     // to 1x (800x1720dp), so the density override is what pins the viewport.
-    private fun capture(content: @Composable () -> Unit) {
+    private fun capture(
+        roborazziOptions: RoborazziOptions = defaultRoborazziOptions,
+        content: @Composable () -> Unit,
+    ) {
         runDesktopComposeUiTest(width = VIEWPORT_WIDTH_PX, height = VIEWPORT_HEIGHT_PX) {
             setContent {
                 CompositionLocalProvider(
@@ -127,7 +140,7 @@ class DesktopScreenshotTest {
 
     @Test
     fun colorMatch() {
-        capture {
+        capture(roborazziOptions = colorMatchRoborazziOptions) {
             ColorMatchGameScreen(
                 gameInfo = ColorMatchGameInfo,
                 onBackClick = {},
