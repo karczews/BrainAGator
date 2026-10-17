@@ -47,7 +47,10 @@ Helpers: `Color.darken(fraction)` makes lips and readable accent-colored text; `
 
 **Lexend** only (a variable font, so all weights render natively). It was designed for reading fluency,
 which suits early readers. The scale in `theme/Typography.kt` is a step larger than Material defaults:
-body text starts at 16sp and headings are ExtraBold. Keep copy short: one instruction, one line where possible.
+body text is 16–18sp and headings are ExtraBold. The one smaller size is `bodySmall` (14sp), reserved for
+secondary captions such as the subtitles on home-screen tiles, where space is tight and the tile's icon and
+title carry the meaning. Text that must fit on one line auto-sizes down to the floors in `AutoSizeMin`.
+Keep copy short: one instruction, one line where possible.
 
 ## 4. Shape & Depth
 
