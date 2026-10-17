@@ -80,11 +80,15 @@ private const val PULSE_SCALE = 1.06f
 private const val PULSE_MILLIS = 900
 private const val HALO_ALPHA = 0.25f
 private const val LABEL_DARKEN_FRACTION = 0.2f
+private const val LABEL_BACKDROP_ALPHA = 0.85f
 
-/** The gator is drawn this tall relative to the stop it stands at, and sticks out past it by this share of its width. */
-private const val RIDER_HEIGHT_FRACTION = 0.72f
+/**
+ * The gator is drawn this tall relative to the stop it stands beside, and this share of its width sits outside the
+ * stop: it only touches the circle's rim, never the icon, and still fits within the screen padding at the edges.
+ */
+private const val RIDER_HEIGHT_FRACTION = 0.6f
 private const val RIDER_ASPECT = 84f / 96f
-private const val RIDER_OVERHANG = 0.35f
+private const val RIDER_OVERHANG = 0.8f
 
 /**
  * One stop on the map: the game's round face, the stars won there this session and its name. Playable stops are
@@ -108,15 +112,16 @@ internal fun MapStop(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs / 2),
     ) {
-        Box(modifier = Modifier.size(width = face, height = face + Dimens.lipHeight)) {
-            if (game.isComingSoon) {
-                // PROTOTYPE: release builds can't open unbuilt games; debug builds still can, to reach "Test: Trigger Win".
-                LockedStone(
-                    face = face,
-                    description = stringResource(Res.string.map_stop_locked, title),
-                    onClick = onClick.takeIf { isDebugBuild },
-                )
-            } else {
+        if (game.isComingSoon) {
+            // PROTOTYPE: release builds can't open unbuilt games; debug builds still can, to reach "Test: Trigger Win".
+            LockedStone(
+                face = face,
+                description = stringResource(Res.string.map_stop_locked, title),
+                onClick = onClick.takeIf { isDebugBuild },
+            )
+            StopLabel(title = title, width = labelWidth, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        } else {
+            Box(modifier = Modifier.size(width = face, height = face + Dimens.lipHeight)) {
                 PlayableStop(
                     game = game,
                     face = face,
@@ -124,23 +129,34 @@ internal fun MapStop(
                     description = stringResource(Res.string.map_stop_stars, title, stars, MAX_STOP_STARS),
                     onClick = onClick,
                 )
+                if (isSuggested) {
+                    GatorRider(face = face, onEnd = riderOnEnd)
+                }
             }
-            if (isSuggested) {
-                GatorRider(face = face, onEnd = riderOnEnd)
-            }
+            StopStars(stars = stars)
+            StopLabel(title = title, width = labelWidth, color = game.accentColor.darken(LABEL_DARKEN_FRACTION))
         }
-        StopStars(stars = if (game.isComingSoon) null else stars)
+    }
+}
+
+/** A stop's name, right under it. May be wider than the stop itself: neighbouring labels never sit at the same height. */
+@Composable
+private fun StopLabel(
+    title: String,
+    width: Dp,
+    color: Color,
+) {
+    Box(modifier = Modifier.requiredWidth(width), contentAlignment = Alignment.Center) {
         Text(
             text = title,
-            // May be wider than the stop itself: neighbouring labels never sit at the same height.
-            modifier = Modifier.requiredWidth(labelWidth).clearAndSetSemantics {},
+            modifier =
+                Modifier
+                    // A soft backdrop keeps the trail's dots from running through the name.
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = LABEL_BACKDROP_ALPHA), MaterialTheme.shapes.small)
+                    .padding(horizontal = Dimens.spaceXs)
+                    .clearAndSetSemantics {},
             style = MaterialTheme.typography.labelSmall,
-            color =
-                if (game.isComingSoon) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    game.accentColor.darken(LABEL_DARKEN_FRACTION)
-                },
+            color = color,
             textAlign = TextAlign.Center,
             maxLines = 1,
             autoSize =
@@ -189,19 +205,21 @@ private fun PlayableStop(
     }
 }
 
-/** A flat (lipless) stone: nothing to press until the game exists. */
+/**
+ * A flat (lipless) stone: nothing to press until the game exists. Smaller than a playable stop so the games you can
+ * play stand out, and centred where a stop's face would be, so the trail still runs through it.
+ */
 @Composable
 private fun LockedStone(
     face: Dp,
     description: String,
     onClick: (() -> Unit)?,
 ) {
-    // Smaller than playable stops, centred where a face would be, so the games you can play stand out.
     val stone = face * STONE_FRACTION
     Box(
         modifier =
             Modifier
-                .padding(start = (face - stone) / 2, top = (face - stone) / 2)
+                .padding(top = (face - stone) / 2)
                 .size(stone)
                 .background(MaterialTheme.colorScheme.outlineVariant, CircleShape)
                 .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
@@ -218,7 +236,7 @@ private fun LockedStone(
     }
 }
 
-/** The pixel-art gator standing beside the stop it suggests, overlapping it a little. */
+/** The pixel-art gator standing beside the stop it suggests, just touching its rim. */
 @Composable
 private fun GatorRider(
     face: Dp,
@@ -227,32 +245,33 @@ private fun GatorRider(
     val height = face * RIDER_HEIGHT_FRACTION
     val width = height * RIDER_ASPECT
     val overhang = width * RIDER_OVERHANG
+    val x = if (onEnd) face - width + overhang else -overhang
+    // Feet level with the stop's stars, so its head stays below neighbouring labels.
+    val feet = face + StopExtraHeight - Dimens.mapStopLabelHeight
     Image(
         painter = painterResource(Res.drawable.gator_kid_in_suit_1),
         contentDescription = null,
         modifier =
             Modifier
                 .size(width = width, height = height)
-                .offset(x = if (onEnd) face - width + overhang else -overhang, y = face + Dimens.lipHeight - height),
+                .offset(x = x, y = feet - height),
     )
 }
 
-/** Stars won at a stop; locked stops ([stars] = null) keep the space empty so labels line up. */
+/** Stars won at a playable stop. */
 @Composable
-private fun StopStars(stars: Int?) {
+private fun StopStars(stars: Int) {
     val earnedFill = AppTheme.extendedColors.reward
     val earnedOutline = AppTheme.extendedColors.onReward
     val emptyOutline = MaterialTheme.colorScheme.outline
     Row(modifier = Modifier.height(Dimens.mapStopStar).clearAndSetSemantics {}) {
-        if (stars != null) {
-            repeat(MAX_STOP_STARS) { index ->
-                val isEarned = index < stars
-                Box(modifier = Modifier.size(Dimens.mapStopStar)) {
-                    if (isEarned) {
-                        StarIcon(filled = true, tint = earnedFill)
-                    }
-                    StarIcon(filled = false, tint = if (isEarned) earnedOutline else emptyOutline)
+        repeat(MAX_STOP_STARS) { index ->
+            val isEarned = index < stars
+            Box(modifier = Modifier.size(Dimens.mapStopStar)) {
+                if (isEarned) {
+                    StarIcon(filled = true, tint = earnedFill)
                 }
+                StarIcon(filled = false, tint = if (isEarned) earnedOutline else emptyOutline)
             }
         }
     }
