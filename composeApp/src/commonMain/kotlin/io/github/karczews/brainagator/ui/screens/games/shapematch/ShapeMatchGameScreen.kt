@@ -21,16 +21,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Category
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +73,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 private const val TILE_ASPECT_RATIO = 0.85f
+private const val MAX_TILE_WIDTH_RATIO = 1.5f
 private val TileSpacing = 12.dp
 private val MinTileHeight = 100.dp
 private const val SHAPE_FILL_FRACTION = 0.85f
@@ -184,20 +183,25 @@ fun ShapeMatchGameScreen(
             },
             progress = { GameProgress(correctCount, totalIterations) },
         ) { isLandscape, boardModifier ->
-            ShapeGrid(
-                shapeColorPairs = shapeColorPairs,
-                currentTarget = currentTarget,
-                isLandscape = isLandscape,
-                onCorrectClick = ::handleCorrectSelection,
-                modifier = boardModifier,
-            )
+            // Each round starts with fresh tiles, so a wiggle or coral tint from a wrong answer
+            // never carries over to the next round's answers.
+            key(correctCount) {
+                ShapeGrid(
+                    shapeColorPairs = shapeColorPairs,
+                    currentTarget = currentTarget,
+                    isLandscape = isLandscape,
+                    onCorrectClick = ::handleCorrectSelection,
+                    modifier = boardModifier,
+                )
+            }
         }
     }
 }
 
 /**
- * Grid of shape tiles. In portrait, tiles shrink so that all of them fit without scrolling
- * (down to [MinTileHeight]); in landscape they fill two rows.
+ * Grid of shape tiles: two columns in portrait, two rows in landscape. Tiles are sized from both the
+ * available width and height so every answer stays visible without scrolling (down to [MinTileHeight];
+ * only below that does the grid scroll).
  */
 @Composable
 private fun ShapeGrid(
@@ -207,45 +211,29 @@ private fun ShapeGrid(
     onCorrectClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val spacing = Arrangement.spacedBy(TileSpacing, Alignment.CenterHorizontally)
-    val verticalSpacing = Arrangement.spacedBy(TileSpacing, Alignment.CenterVertically)
-    BoxWithConstraints(modifier = modifier) {
-        if (isLandscape) {
-            LazyHorizontalGrid(
-                rows = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = spacing,
-                verticalArrangement = verticalSpacing,
-            ) {
-                items(shapeColorPairs) { pair ->
-                    ColoredShapeButton(
-                        shape = pair.first,
-                        color = pair.second,
-                        isCorrect = pair == currentTarget,
-                        onCorrectClick = onCorrectClick,
-                        modifier = Modifier.aspectRatio(TILE_ASPECT_RATIO),
-                    )
-                }
-            }
-        } else {
-            val rows = (shapeColorPairs.size + 1) / 2
-            val cellWidth = (maxWidth - TileSpacing) / 2
-            val fittingHeight = (maxHeight - TileSpacing * (rows - 1)) / rows
-            val tileHeight = minOf(fittingHeight, cellWidth / TILE_ASPECT_RATIO).coerceAtLeast(MinTileHeight)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = spacing,
-                verticalArrangement = verticalSpacing,
-            ) {
-                items(shapeColorPairs) { pair ->
-                    ColoredShapeButton(
-                        shape = pair.first,
-                        color = pair.second,
-                        isCorrect = pair == currentTarget,
-                        onCorrectClick = onCorrectClick,
-                        modifier = Modifier.height(tileHeight),
-                    )
+    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
+        val columns = if (isLandscape) (shapeColorPairs.size + 1) / 2 else 2
+        val rows = (shapeColorPairs.size + columns - 1) / columns
+        val cellWidth = (maxWidth - TileSpacing * (columns - 1)) / columns
+        val cellHeight = (maxHeight - TileSpacing * (rows - 1)) / rows
+        val tileHeight = minOf(cellHeight, cellWidth / TILE_ASPECT_RATIO).coerceAtLeast(MinTileHeight)
+        val tileWidth = minOf(cellWidth, tileHeight * MAX_TILE_WIDTH_RATIO)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(TileSpacing),
+        ) {
+            shapeColorPairs.chunked(columns).forEach { rowPairs ->
+                Row(horizontalArrangement = Arrangement.spacedBy(TileSpacing)) {
+                    rowPairs.forEach { pair ->
+                        ColoredShapeButton(
+                            shape = pair.first,
+                            color = pair.second,
+                            isCorrect = pair == currentTarget,
+                            onCorrectClick = onCorrectClick,
+                            modifier = Modifier.size(width = tileWidth, height = tileHeight),
+                        )
+                    }
                 }
             }
         }
