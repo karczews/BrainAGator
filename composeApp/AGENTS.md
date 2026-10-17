@@ -22,7 +22,10 @@ composeApp/src/
 |------|----------|
 | Shared UI | `commonMain/.../App.kt`, `ui/screens/` |
 | Navigation | `commonMain/.../ui/navigation/Routes.kt` |
-| Theme | `commonMain/.../theme/` (Color.kt, Typography.kt, Theme.kt) |
+| Theme & design tokens | `commonMain/.../theme/` (Color.kt, Typography.kt, Theme.kt, ExtendedColors.kt, Dimens.kt) |
+| Reusable UI building blocks | `commonMain/.../ui/elements/` (TactileSurface, TactileButton, PlayCard, StarProgress, …) |
+| Game screen frame & layout | `commonMain/.../ui/screens/games/` (GameScreenScaffold, GameBoardLayout) |
+| Design system rules | `docs/DESIGN.md` |
 | TTS abstraction | `commonMain/.../tts/QueuedTextToSpeech.kt` (expect) |
 | TTS JVM impl | `jvmMain/.../tts/DesktopTextToSpeech.kt` |
 | TTS Wasm impl | `wasmJsMain/.../tts/WasmTextToSpeech.kt` |
@@ -35,8 +38,9 @@ composeApp/src/
 ### Theming & Colors
 - All UI in `commonMain` using Compose Multiplatform + Material3
 - Use `MaterialTheme.colorScheme.*` tokens, not hardcoded `Color(0x...)` or raw `Color.White`
-- Named color constants (e.g., `MutedPurple`) are acceptable in `theme/Color.kt` but should ultimately flow through the theme system — prefer `MaterialTheme.colorScheme` for anything user-visible
-- When adding custom colors, register them in the theme so they adapt to light/dark mode
+- Named color constants (e.g., `GameGrape`) are acceptable in `theme/Color.kt` but should ultimately flow through the theme system — prefer `MaterialTheme.colorScheme` for anything user-visible
+- When adding custom colors, register them in the theme so they adapt to light/dark mode (`ExtendedColors`, read via `AppTheme.extendedColors`)
+- Spacing and sizes come from `theme/Dimens.kt`; build screens from `ui/elements/` components rather than styling Material components per screen — see `docs/DESIGN.md`
 
 ### Strings & Resources
 - All user-facing strings: `stringResource(Res.string.*)` — no hardcoded strings in UI code

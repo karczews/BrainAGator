@@ -1,66 +1,127 @@
-# Design System Strategy: The Pixel-Plush Editorial
+# Design System: Gator Jungle
 
-## 1. Overview & Creative North Star
-This design system translates the raw, high-contrast energy of classic 8-bit adventures into a sophisticated, premium digital experience. The Creative North Star is **"Retro-Futurist Play."** 
+## 1. North Star: "Toys You Can Press"
 
-We are not merely copying pixel art; we are elevating it. By pairing the sharp, aggressive corners of the 8-bit era (0px roundedness) with the soft, friendly geometry of Lexend typography, we create a visual tension that feels both nostalgic and avant-garde. The layout philosophy breaks the "standard grid" by using intentional asymmetry—think of elements as floating "power-up" blocks or "pipes" emerging from the ground—creating an editorial flow that rewards exploration.
+Brainagator is for young children, many of whom cannot read yet. Every screen should feel like a box of
+friendly, chunky toys: bright, rounded, obvious to tap, and impossible to get lost in. The pixel-art gator
+mascot is the guide. It appears on the home screen, "speaks" every instruction, and celebrates wins.
 
-## 2. Colors
-Our palette is a high-fidelity tribute to iconic gaming landscapes, utilizing deep earthy tones and vibrant action hues to guide the user's eye.
+Four rules drive every decision:
 
-*   **Primary (`#bb000a`):** The "Brick Red." Reserved for critical actions and brand-heavy moments.
-*   **Secondary (`#006b1c`):** The "Pipe Green." Used for success states, secondary navigation, and growth-oriented components.
-*   **Surface Hierarchy:** We utilize a "Subterranean Depth" model.
-    *   **Background (`#fff5ec`):** The canvas, a warm parchment that prevents the high-contrast colors from feeling sterile.
-    *   **Surface-Container-Low (`#ffeedc`) to Highest (`#ffd6a1`):** These define our "floating platforms." 
-*   **The "No-Line" Rule:** Sectioning must never be achieved with 1px lines. Use the transition from `surface` to `surface-container-low` to define content boundaries.
-*   **Glass & Gradient Rule:** For "Overworld" navigation or floating HUD elements, use a semi-transparent `surface-container-low` with a 20px backdrop blur. Apply a subtle linear gradient from `primary` to `primary-container` on hero CTAs to give them a "glowing" 16-bit sprite effect.
+1. **If it has a lip, you can press it.** Tappable things are raised blocks with a darker "lip" underneath that
+   sinks when pressed. Things you only look at (instructions, progress) are flat cards with no lip.
+2. **One color per game.** Each game owns an accent color. Its tile on the home screen, its top bar, its
+   background wash and its highlights all use that color, so children recognise a game by color alone.
+3. **Show, don't write.** Use icons, stars, shapes and the mascot before text. Speech (TTS) carries the
+   instructions; on-screen text is a backup for grown-ups.
+4. **Mistakes are gentle.** A wrong answer wiggles and turns soft coral. Never use alarming red, error sounds
+   or anything that feels like punishment.
+
+## 2. Color
+
+Defined in `theme/Color.kt` and exposed through `MaterialTheme.colorScheme` plus
+`AppTheme.extendedColors` (see `theme/ExtendedColors.kt`). Screens must read colors from the theme; only
+`theme/Color.kt` may contain raw hex values for UI colors.
+
+Two kinds of color are content rather than UI chrome, so they keep their own fixed palettes next to the code
+that uses them instead of theme tokens:
+
+- **Gameplay colors** (`ui/screens/games/shapematch/GameColor.kt`): the real-world colors children are asked
+  to name and find ("red", "blue"). They must look like their names, not follow the theme.
+- **Decorative effect palettes** (`ui/FireworksAnimation.kt`, `ui/screens/games/Brushes.kt`): celebration
+  particles and rainbow brushes, which carry no meaning and need no contrast.
+
+| Role | Token | Value | Use |
+|------|-------|-------|-----|
+| Primary | `primary` | Gator Green `#1F7E37` | Main call to action, logo |
+| Secondary | `secondary` | Sunny Yellow `#FFC233` | Rewards, stars, tagline pill (dark text only) |
+| Tertiary | `tertiary` | Sky Blue `#1770BF` | Supporting accents |
+| Error | `error` / `errorContainer` | Coral `#E04A3C` / `#FFDDD8` | Wrong answers (soft, never scary) |
+| Background | `background` | Cream `#FFF8EC` | Screen canvas |
+| Surface | `surface` | White | Tiles, cards |
+| Text | `onBackground` / `onSurface` | Plum Ink `#2B2541` | All body text (softer than black) |
+| Success | `AppTheme.extendedColors.success` | Gator Green | Correct answers |
+| Reward | `AppTheme.extendedColors.reward` / `onReward` | Sunny Yellow / Honey Brown | Earned stars (always outlined in `onReward`), win screen |
+
+**Game accents** (`GameInfo.accentColor`): Grape `#7A52E8`, Ocean `#1770BF`, Berry `#CF296C`, Tangerine
+`#B74F0C`, Teal `#0C7C75`, Indigo `#4C5FD7`, Plum `#A23CB4`. Every accent (and the primary green) has at least
+5:1 contrast with white, which keeps 4.5:1 under the tactile highlight, so white labels of any size stay
+readable. Pick new accents with the same constraint, and keep them clear of the feedback colors (coral, green,
+yellow) so right/wrong/reward cues never blend into a game's own color.
+
+Helpers: `Color.darken(fraction)` makes lips and readable accent-colored text; `Color.lighten(fraction)` makes tints.
 
 ## 3. Typography
-We use **Lexend** exclusively. Its hyper-legible, rounded forms act as the necessary counterweight to our sharp-edged UI containers.
 
-*   **Display (Lg/Md/Sm):** These are our "Boss Battle" moments. Use `display-lg` (3.5rem) with tight letter-spacing (-0.02em) for hero headlines.
-*   **Headline & Title:** Use these to label "World Zones." The contrast between the bold `headline-lg` and the minimal `body-md` creates an authoritative, editorial feel.
-*   **Body (Lg/Md/Sm):** Set in `on-surface` (`#422a00`). The earthy brown text on the warm background ensures maximum readability without the harshness of pure black.
-*   **Labels:** Use `label-md` in uppercase for a "HUD" feel, especially in buttons and navigation headers.
+**Lexend** only (a variable font, so all weights render natively). It was designed for reading fluency,
+which suits early readers. The scale in `theme/Typography.kt` is a step larger than Material defaults:
+body text is 16–18sp and headings are ExtraBold. The one smaller size is `bodySmall` (14sp), reserved for
+secondary captions such as the subtitles on home-screen tiles, where space is tight and the tile's icon and
+title carry the meaning. Text that must fit on one line auto-sizes down to the floors in `AutoSizeMin`.
+Keep copy short: one instruction, one line where possible.
 
-## 4. Elevation & Depth
-In this design system, we reject the rounded "soft UI" trend. Depth is achieved through **Tonal Layering** and **Pixel Shadows.**
+## 4. Shape & Depth
 
-*   **The Layering Principle:** Avoid traditional shadows where possible. Instead, "stack" your blocks. A `surface-container-highest` card sitting on a `surface` background provides all the hierarchy needed.
-*   **Ambient Shadows:** When an element must "jump" (like a modal or floating action button), use an extra-diffused shadow: `0 20px 40px rgba(66, 42, 0, 0.08)`. The use of the `on-surface` brown tint in the shadow keeps the light feeling natural.
-*   **The "Ghost Border" Fallback:** If a container needs more definition, use a 2px "Ghost Border" using `outline-variant` (`#d7a459`) at 15% opacity. 
-*   **Hard Edges:** Every container, button, and input must maintain a **0px border-radius**. This is non-negotiable; the "roundedness" comes from the typography, while the "structure" remains classic and rigid.
+- **Rounded everywhere.** `MaterialTheme.shapes`: 8 / 12 / 20 / 28 / 36dp. Buttons are pills or circles.
+- **Depth comes from the lip, not shadows.** A tactile block is a face on top of a darker lip
+  (`Dimens.lipHeight` = 6dp). On press, the face sinks into the lip with a bouncy spring.
+- **Flat cards** (`PlayCard`) use a white fill with a 2dp `outlineVariant` border and no lip.
+- **Backgrounds** (`PlayfulBackground`) are a soft vertical wash of the screen's accent over cream, with a
+  few large, low-contrast bubbles. Keep decoration away from the top bar and interactive content.
 
-## 5. Components
+## 5. Sizing
 
-### Buttons
-*   **Primary:** Background `primary`, text `on-primary`. 0px radius. Use a 4px bottom "inset" shadow of `primary-dim` to simulate a tactile, pressable block.
-*   **Secondary:** Background `secondary`, text `on-secondary`.
-*   **Tertiary:** No background. Use `label-md` styling with a `primary` color.
+Tokens live in `theme/Dimens.kt`: spacing, touch targets, and the sizes of game tiles, answer tiles, icon
+badges, illustrations and width caps. Screens use these tokens rather than raw `dp` values.
 
-### Input Fields
-*   **Style:** Flat `surface-container-highest` background with a 2px bottom border of `outline`.
-*   **States:** On focus, the bottom border shifts to `primary`. Errors use `error` (`#b41340`) for both text and border.
+- Minimum touch target: **64dp** (`Dimens.touchTarget`), larger than the 48dp adult guideline.
+- Round icon buttons: 64dp face plus lip.
+- Spacing scale: 4 / 8 / 16 / 24 / 32dp; screen edge padding 20dp.
+- Game boards must fit on screen without scrolling where possible: children do not know to scroll to
+  find a hidden answer. Size tiles from the available space (see `ShapeGrid` and `NumberBoxesRow`).
 
-### Chips
-*   **Action Chips:** Small rectangular blocks using `surface-container-high`. No rounding. Label set in `label-sm`.
+## 6. Components
 
-### Cards & Lists
-*   **Rule:** No dividers. Use `8` (2rem) spacing from the scale to separate list items.
-*   **Cards:** Use `surface-container-low` with a 0px radius. For "Featured" content, use a background shift to `surface-container-highest` or a subtle `primary-container` tint.
+All shared building blocks live in `composeApp/src/commonMain/kotlin/io/github/karczews/brainagator/ui/elements/`.
+Build screens from these instead of styling Material components by hand.
 
-### Navigation (The HUD)
-*   **The HUD Bar:** A top-screen floating bar using glassmorphism (surface color @ 80% opacity + blur). 
+| Component | Purpose |
+|-----------|---------|
+| `TactileSurface` | Core pressable block with a lip. Colors come from `TactileDefaults` (`colors(accent)`, `surfaceColors()`, `primaryColors()`, `successColors()`, `wrongColors()`). |
+| `TactileButton` | Pill button with an optional leading icon. Use for main actions. |
+| `TactileIconButton` | Round icon button (back, help). |
+| `PlayCard` | Flat, non-interactive card. |
+| `InstructionCard` | `PlayCard` in which the gator "says" the instruction, with an optional label. |
+| `StarProgress` | Progress as stars that pop in when earned. |
+| `PlayfulBackground` | Accent-tinted background with bubbles; every screen uses it. |
+| `ShakeState` / `Modifier.shake` | Shared wrong-answer wiggle; pair with `TactileDefaults.wrongColors()` while `isShaking`. |
 
-## 6. Do's and Don'ts
+Game-level scaffolding lives in `ui/screens/games/`:
+
+| Component | Purpose |
+|-----------|---------|
+| `GameScreenScaffold` | Background in the game's accent, top bar (back, title, help/replay), spoken instructions. |
+| `GameBoardLayout` | Instruction on top, board in the middle, progress at the bottom; side column in landscape. |
+| `GamePlaceholder` | "Coming soon" screen for games not built yet. |
+
+### Building a new game screen
+
+1. Add a `GameInfo` with a new accent color from `theme/Color.kt` and a `Icons.Rounded.*` icon.
+2. Wrap the screen in `GameScreenScaffold`.
+3. Use `GameBoardLayout` with an `InstructionCard`, your board and `StarProgress` in a `PlayCard`.
+4. Make answers `TactileSurface`s: `surfaceColors(content = accent)` while open, `successColors()` when
+   right, and a `ShakeState` + `wrongColors()` when wrong.
+
+## 7. Do's and Don'ts
 
 ### Do
-*   **Do** use asymmetrical layouts. Place a large `display-lg` heading on the left and offset the body text to the right to mimic a level's "starting line."
-*   **Do** embrace the earthy brown (`on-surface`) for all text. It is softer and more premium than black.
-*   **Do** use large blocks of `secondary` (Pipe Green) to highlight "safe" zones or successful user journeys.
+- Do use the game's accent for its identity and the theme's success/reward colors for feedback.
+- Do keep one clear task per screen with large targets and lots of breathing room.
+- Do let the mascot carry instructions and celebrations.
+- Do check new screens at 360dp wide and in landscape.
 
 ### Don't
-*   **Don't** ever use a border-radius. Even a 2px radius destroys the "8-bit" editorial aesthetic.
-*   **Don't** use 1px grey borders. If a section needs a break, use a `surface` color shift or a large vertical gap from the spacing scale (e.g., `12` or `16`).
-*   **Don't** clutter the screen. Classic games used negative space (the "sky") to let the hero breathe; do the same for your content.
+- Don't add a lip (or a shadow that looks like one) to anything that cannot be tapped.
+- Don't use sharp corners, thin 1px lines or pure black text.
+- Don't hardcode colors or dimensions in screens. Add tokens to `theme/` instead.
+- Don't put essential information in text alone. Pair it with an icon, color or speech.

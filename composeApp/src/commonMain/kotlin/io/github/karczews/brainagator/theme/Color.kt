@@ -17,55 +17,58 @@
 package io.github.karczews.brainagator.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
-// --- Retro Mario Color Palette ---
+// --- "Gator Jungle" palette: bright, friendly hues that keep white text readable ---
+// Colors carrying white text reach at least 5:1 on white (4.5:1 under the tactile highlight).
 
-// Primary: Brick Red
-val BrickRed = Color(0xFFBB000A)
+// Primary: Gator Green (the mascot)
+val GatorGreen = Color(0xFF1F7E37)
+val LeafMint = Color(0xFFD4F5D6)
+val DeepLeaf = Color(0xFF0B4F21)
+
+// Secondary: Sunny Yellow (stars and rewards; pair with dark text)
+val SunnyYellow = Color(0xFFFFC233)
+val ButterCream = Color(0xFFFFEDB8)
+val HoneyBrown = Color(0xFF5C3D00)
+
+// Tertiary: Sky Blue
+val SkyBlue = Color(0xFF1770BF)
+val SkyMist = Color(0xFFD8ECFF)
+val DeepSky = Color(0xFF00325E)
+
+// Error: soft coral instead of an alarming red
+val CoralRed = Color(0xFFE04A3C)
+val CoralMist = Color(0xFFFFDDD8)
+val DeepCoral = Color(0xFF5F0F08)
+
+// Neutrals: warm cream canvas, plum ink instead of pure black
+val Ink = Color(0xFF2B2541)
+val InkSoft = Color(0xFF5E5873)
+val Cream = Color(0xFFFFF8EC)
 val White = Color(0xFFFFFFFF)
-val PalePink = Color(0xFFFFDAD6)
-val DarkMaroon = Color(0xFF410002)
-val DeepCrimson = Color(0xFF8A0006)
-
-// Secondary: Pipe Green
-val PipeGreen = Color(0xFF006B1C)
-val MintGreen = Color(0xFF89FA95)
-val DarkForestGreen = Color(0xFF002105)
-
-// Error
-val CrimsonRose = Color(0xFFB41340)
-val ErrorPink = Color(0xFFFFDAD6)
-val ErrorMaroon = Color(0xFF410002)
-
-// Background & Surface: Sky Blue
-val SkyBlue = Color(0xFFADD8E6)
-val EarthyBrown = Color(0xFF422A00)
-
-// Surface variants: Warm Cream & Tan
-val WarmCream = Color(0xFFF5E6D0)
-val GoldenTan = Color(0xFFFFDFB9)
-
-// Outline: Wooden Brown & Gold
-val WoodenBrown = Color(0xFF6B3A2A)
-val HoneyGold = Color(0xFFD7A459)
-
-// Inverse
-val CharcoalBrown = Color(0xFF322A25)
-val RosyBeige = Color(0xFFF5E0D4)
-val SalmonPink = Color(0xFFFFB4AB)
-
-// Scrim
+val Oat = Color(0xFFFFF1DC)
+val Biscuit = Color(0xFFFCE6C6)
+val Sand = Color(0xFFEADFCB)
+val Pebble = Color(0xFF9E9073)
 val Black = Color(0xFF000000)
 
-// App Title Colors
-val BrainPurple = Color(0xFF9C27B0)
-val GatorPink = Color(0xFFEC407A)
+// Logo
+val LogoGrape = Color(0xFF7A52E8)
+val LogoBerry = Color(0xFFD9407E)
 
-val GatorGreen = Color(0xFF6F8F4E)
-val GatorPlum = Color(0xFF75577A)
-val MutedPurple = Color(0xFF7B1FA2)
+// Game accents: one identity color per game, used for its tile, top bar and highlights.
+// Kept clear of the feedback colors (error coral, success green, reward yellow).
+val GameGrape = Color(0xFF7A52E8)
+val GameOcean = Color(0xFF1770BF)
+val GameBerry = Color(0xFFCF296C)
+val GameTangerine = Color(0xFFB74F0C)
+val GameTeal = Color(0xFF0C7C75)
+val GameIndigo = Color(0xFF4C5FD7)
+val GamePlum = Color(0xFFA23CB4)
 
-// Gradient Background Colors
-val VeryLightYellow = Color(0xFFFFFDE7)
-val Cream = Color(0xFFFFF8E1)
-val VeryLightPink = Color(0xFFF8BBD0)
+/** Returns this color mixed with black; used for tactile "lips" and readable accent text. */
+fun Color.darken(fraction: Float): Color = lerp(this, Black, fraction)
+
+/** Returns this color mixed with white; used for soft tints and highlights. */
+fun Color.lighten(fraction: Float): Color = lerp(this, White, fraction)

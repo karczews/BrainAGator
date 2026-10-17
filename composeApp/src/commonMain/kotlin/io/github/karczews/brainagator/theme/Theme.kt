@@ -21,54 +21,73 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.unit.dp
 
-private val RetroMarioColorScheme =
+private val GatorJungleColorScheme =
     lightColorScheme(
-        primary = BrickRed,
+        primary = GatorGreen,
         onPrimary = White,
-        primaryContainer = PalePink,
-        onPrimaryContainer = DarkMaroon,
-        secondary = PipeGreen,
-        onSecondary = White,
-        secondaryContainer = MintGreen,
-        onSecondaryContainer = DarkForestGreen,
-        error = CrimsonRose,
+        primaryContainer = LeafMint,
+        onPrimaryContainer = DeepLeaf,
+        inversePrimary = LeafMint,
+        secondary = SunnyYellow,
+        onSecondary = HoneyBrown,
+        secondaryContainer = ButterCream,
+        onSecondaryContainer = HoneyBrown,
+        tertiary = SkyBlue,
+        onTertiary = White,
+        tertiaryContainer = SkyMist,
+        onTertiaryContainer = DeepSky,
+        error = CoralRed,
         onError = White,
-        errorContainer = ErrorPink,
-        onErrorContainer = ErrorMaroon,
-        background = SkyBlue,
-        onBackground = EarthyBrown,
-        surface = SkyBlue,
-        onSurface = EarthyBrown,
-        surfaceVariant = WarmCream,
-        onSurfaceVariant = EarthyBrown,
-        surfaceContainerLow = WarmCream,
-        surfaceContainerHigh = GoldenTan,
-        surfaceContainerHighest = WarmCream,
-        outline = WoodenBrown,
-        outlineVariant = HoneyGold,
-        inverseSurface = CharcoalBrown,
-        inverseOnSurface = RosyBeige,
-        inversePrimary = SalmonPink,
+        errorContainer = CoralMist,
+        onErrorContainer = DeepCoral,
+        background = Cream,
+        onBackground = Ink,
+        surface = White,
+        onSurface = Ink,
+        surfaceVariant = Oat,
+        onSurfaceVariant = InkSoft,
+        surfaceContainerLowest = White,
+        surfaceContainerLow = Cream,
+        surfaceContainer = Oat,
+        surfaceContainerHigh = Oat,
+        surfaceContainerHighest = Biscuit,
+        inverseSurface = Ink,
+        inverseOnSurface = Cream,
+        outline = Pebble,
+        outlineVariant = Sand,
         scrim = Black,
     )
 
+// Generous, friendly corners everywhere; pills and circles come from CircleShape.
 private val AppShapes =
     Shapes(
-        extraSmall = RoundedCornerShape(0.dp),
-        small = RoundedCornerShape(0.dp),
-        medium = RoundedCornerShape(0.dp),
-        large = RoundedCornerShape(0.dp),
-        extraLarge = RoundedCornerShape(0.dp),
+        extraSmall = RoundedCornerShape(8.dp),
+        small = RoundedCornerShape(12.dp),
+        medium = RoundedCornerShape(20.dp),
+        large = RoundedCornerShape(28.dp),
+        extraLarge = RoundedCornerShape(36.dp),
     )
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = RetroMarioColorScheme,
-        typography = getAppTypography(),
-        shapes = AppShapes,
-        content = content,
-    )
+    CompositionLocalProvider(LocalExtendedColors provides LightExtendedColors) {
+        MaterialTheme(
+            colorScheme = GatorJungleColorScheme,
+            typography = getAppTypography(),
+            shapes = AppShapes,
+            content = content,
+        )
+    }
+}
+
+/** Accessors for theme values that live outside [MaterialTheme]. */
+object AppTheme {
+    val extendedColors: ExtendedColors
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalExtendedColors.current
 }
