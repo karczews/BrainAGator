@@ -40,4 +40,32 @@ object Dimens {
 
     /** Size of icons inside buttons. */
     val buttonIcon = 28.dp
+
+    // Game tiles on the home screen
+    val gameTileMinWidth = 160.dp
+    val gameTileHeight = 184.dp
+    val gameTilePadding = 12.dp
+
+    // Answer tiles inside games
+    val answerTileGap = 12.dp
+    val answerTileMinHeight = 100.dp
+    val answerTileMaxSize = 76.dp
+
+    /** White circle holding a game's icon on its tile. */
+    val iconBadge = 56.dp
+    val iconBadgeIcon = 32.dp
+
+    /** Large accent circle holding a game's icon on its placeholder screen. */
+    val heroBadge = 120.dp
+    val heroBadgeIcon = 64.dp
+
+    // Mascot and illustrations
+    val headerMascot = 88.dp
+    val illustrationHeight = 110.dp
+    val illustrationMaxHeight = 128.dp
+    val rewardStar = 80.dp
+
+    // Width caps that keep content readable on wide screens
+    val contentMaxWidth = 480.dp
+    val buttonMaxWidth = 420.dp
 }

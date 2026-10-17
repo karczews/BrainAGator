@@ -48,7 +48,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
@@ -74,8 +73,6 @@ import org.jetbrains.compose.resources.stringResource
 
 private const val TILE_ASPECT_RATIO = 0.85f
 private const val MAX_TILE_WIDTH_RATIO = 1.5f
-private val TileSpacing = 12.dp
-private val MinTileHeight = 100.dp
 private const val SHAPE_FILL_FRACTION = 0.85f
 
 /**
@@ -200,7 +197,7 @@ fun ShapeMatchGameScreen(
 
 /**
  * Grid of shape tiles: two columns in portrait, two rows in landscape. Tiles are sized from both the
- * available width and height so every answer stays visible without scrolling (down to [MinTileHeight];
+ * available width and height so every answer stays visible without scrolling (down to [Dimens.answerTileMinHeight];
  * only below that does the grid scroll).
  */
 @Composable
@@ -214,17 +211,17 @@ private fun ShapeGrid(
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
         val columns = if (isLandscape) (shapeColorPairs.size + 1) / 2 else 2
         val rows = (shapeColorPairs.size + columns - 1) / columns
-        val cellWidth = (maxWidth - TileSpacing * (columns - 1)) / columns
-        val cellHeight = (maxHeight - TileSpacing * (rows - 1)) / rows
-        val tileHeight = minOf(cellHeight, cellWidth / TILE_ASPECT_RATIO).coerceAtLeast(MinTileHeight)
+        val cellWidth = (maxWidth - Dimens.answerTileGap * (columns - 1)) / columns
+        val cellHeight = (maxHeight - Dimens.answerTileGap * (rows - 1)) / rows
+        val tileHeight = minOf(cellHeight, cellWidth / TILE_ASPECT_RATIO).coerceAtLeast(Dimens.answerTileMinHeight)
         val tileWidth = minOf(cellWidth, tileHeight * MAX_TILE_WIDTH_RATIO)
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(TileSpacing),
+            verticalArrangement = Arrangement.spacedBy(Dimens.answerTileGap),
         ) {
             shapeColorPairs.chunked(columns).forEach { rowPairs ->
-                Row(horizontalArrangement = Arrangement.spacedBy(TileSpacing)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Dimens.answerTileGap)) {
                     rowPairs.forEach { pair ->
                         ColoredShapeButton(
                             shape = pair.first,
@@ -326,7 +323,7 @@ private fun ColoredShapeButton(
                         .weight(1f)
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
-                        .padding(6.dp),
+                        .padding(Dimens.spaceXs),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(

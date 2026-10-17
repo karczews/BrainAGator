@@ -44,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
@@ -70,8 +69,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-
-private val MaxNumberBoxSize = 76.dp
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -194,7 +191,7 @@ private fun NumberOrderBoard(
                 Modifier
                     .weight(1f, fill = false)
                     .padding(horizontal = Dimens.screenPadding)
-                    .heightIn(max = 128.dp),
+                    .heightIn(max = Dimens.illustrationMaxHeight),
             imageVector = vectorResource(Res.drawable.gator_long),
             contentDescription = null,
         )
@@ -235,7 +232,7 @@ private fun NumberBoxesRow(
         val count = gameNumbers.size.coerceAtLeast(1)
         val gapCount = (count - 1).coerceAtLeast(1)
         val gap = ((maxWidth - Dimens.touchTarget * count) / gapCount).coerceIn(Dimens.spaceXs, Dimens.spaceSm)
-        val boxSize = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, MaxNumberBoxSize)
+        val boxSize = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, Dimens.answerTileMaxSize)
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),

@@ -50,8 +50,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
@@ -59,15 +57,13 @@ import brainagator.composeapp.generated.resources.gator_win_1
 import brainagator.composeapp.generated.resources.star_1
 import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.ui.FireworksAnimation
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
 import io.github.karczews.brainagator.ui.elements.TactileButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
-private val ButtonMaxWidth = 420.dp
-private val TitleMinFontSize = 24.sp
 
 @Composable
 fun GameWonScreen(onBackToMainClick: () -> Unit) {
@@ -130,7 +126,7 @@ private fun WinMessage(
             // Shrinks in narrow columns instead of breaking the word.
             autoSize =
                 TextAutoSize.StepBased(
-                    minFontSize = TitleMinFontSize,
+                    minFontSize = AutoSizeMin.display,
                     maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
                 ),
         )
@@ -148,7 +144,7 @@ private fun WinMessage(
             modifier =
                 Modifier
                     .padding(top = Dimens.spaceSm)
-                    .widthIn(max = ButtonMaxWidth)
+                    .widthIn(max = Dimens.buttonMaxWidth)
                     .fillMaxWidth(),
         )
     }
@@ -191,7 +187,7 @@ private fun WinStars() {
             Image(
                 modifier =
                     Modifier
-                        .size(80.dp)
+                        .size(Dimens.rewardStar)
                         .padding(horizontal = Dimens.spaceXs)
                         .rotate(rotation),
                 painter = painterResource(Res.drawable.star_1),

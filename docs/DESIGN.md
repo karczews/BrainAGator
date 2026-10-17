@@ -60,7 +60,8 @@ body text starts at 16sp and headings are ExtraBold. Keep copy short: one instru
 
 ## 5. Sizing
 
-Tokens live in `theme/Dimens.kt`.
+Tokens live in `theme/Dimens.kt`: spacing, touch targets, and the sizes of game tiles, answer tiles, icon
+badges, illustrations and width caps. Screens use these tokens rather than raw `dp` values.
 
 - Minimum touch target: **64dp** (`Dimens.touchTarget`), larger than the 48dp adult guideline.
 - Round icon buttons: 64dp face plus lip.

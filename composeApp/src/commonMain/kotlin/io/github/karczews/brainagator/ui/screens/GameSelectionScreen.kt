@@ -60,8 +60,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
 import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
@@ -70,6 +68,7 @@ import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GatorGreen
 import io.github.karczews.brainagator.theme.LogoBerry
@@ -100,9 +99,6 @@ val games =
         SpotDifferenceGameInfo,
     )
 
-private val MinTileWidth = 160.dp
-private val TileHeight = 184.dp
-private val LogoMinFontSize = 24.sp
 private const val MIN_COLUMNS = 2
 private const val MAX_COLUMNS = 4
 private const val BUILD_INFO_ALPHA = 0.6f
@@ -143,7 +139,7 @@ fun GameSelectionScreen(
                 onGameSelected = onGameSelected,
             )
             Image(
-                modifier = Modifier.height(110.dp),
+                modifier = Modifier.height(Dimens.illustrationHeight),
                 painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
                 contentDescription = null,
             )
@@ -159,7 +155,7 @@ private fun SelectionHeader() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            modifier = Modifier.size(88.dp),
+            modifier = Modifier.size(Dimens.headerMascot),
             painter = painterResource(Res.drawable.gator_kid_in_suit_1),
             contentDescription = null,
         )
@@ -185,7 +181,7 @@ private fun SelectionHeader() {
                 maxLines = 1,
                 autoSize =
                     TextAutoSize.StepBased(
-                        minFontSize = LogoMinFontSize,
+                        minFontSize = AutoSizeMin.display,
                         maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
                     ),
             )
@@ -196,7 +192,7 @@ private fun SelectionHeader() {
                 modifier =
                     Modifier
                         .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
+                        .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs),
             )
         }
     }
@@ -210,8 +206,9 @@ private fun GameGrid(
     onGameSelected: (GameInfo) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        // Count the gaps too, so each tile really gets at least MinTileWidth.
-        val columns = ((maxWidth + Dimens.spaceMd) / (MinTileWidth + Dimens.spaceMd)).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
+        // Count the gaps too, so each tile really gets at least the minimum width.
+        val columns =
+            ((maxWidth + Dimens.spaceMd) / (Dimens.gameTileMinWidth + Dimens.spaceMd)).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
         val tileWidth = (maxWidth - Dimens.spaceMd * (columns - 1)) / columns
         Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
             games.chunked(columns).forEach { rowGames ->
@@ -243,7 +240,7 @@ private fun GameTile(
     onClick: () -> Unit,
 ) {
     TactileSurface(
-        modifier = modifier.height(TileHeight),
+        modifier = modifier.height(Dimens.gameTileHeight),
         colors = TactileDefaults.colors(game.accentColor),
         shape = MaterialTheme.shapes.extraLarge,
         onClick = onClick,
@@ -252,13 +249,13 @@ private fun GameTile(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(12.dp),
+                    .padding(Dimens.gameTilePadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             GameIcon(icon = game.icon, tint = game.accentColor)
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
             GameTitleText(
                 sharedTransitionScope = sharedTransitionScope,
@@ -285,7 +282,7 @@ private fun GameIcon(
     Box(
         modifier =
             Modifier
-                .size(56.dp)
+                .size(Dimens.iconBadge)
                 .background(MaterialTheme.colorScheme.surface, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
@@ -293,7 +290,7 @@ private fun GameIcon(
             imageVector = icon,
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(Dimens.iconBadgeIcon),
         )
     }
 }

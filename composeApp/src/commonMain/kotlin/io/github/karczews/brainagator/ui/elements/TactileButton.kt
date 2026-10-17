@@ -36,12 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameOcean
-
-private val LabelMinFontSize = 14.sp
 
 /** A pill-shaped [TactileSurface] with a label and an optional leading icon. */
 @Composable
@@ -74,7 +72,7 @@ fun TactileButton(
                 // Long labels (e.g. in Polish) shrink to stay on one line next to the icon.
                 autoSize =
                     TextAutoSize.StepBased(
-                        minFontSize = LabelMinFontSize,
+                        minFontSize = AutoSizeMin.label,
                         maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
                     ),
             )

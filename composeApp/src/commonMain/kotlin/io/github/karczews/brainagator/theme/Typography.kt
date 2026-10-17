@@ -44,6 +44,13 @@ fun getLexendFontFamily(): FontFamily =
         Font(Res.font.lexend, FontWeight.ExtraBold),
     )
 
+/** Smallest sizes that auto-sizing text may shrink to before giving up. */
+object AutoSizeMin {
+    val display = 24.sp
+    val title = 16.sp
+    val label = 14.sp
+}
+
 /**
  * Kid-sized type scale: everything a step larger than Material defaults, headings extra bold.
  * Lexend is a variable font, so every weight renders natively.

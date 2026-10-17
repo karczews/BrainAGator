@@ -39,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.test_trigger_win
@@ -51,8 +50,6 @@ import io.github.karczews.brainagator.ui.elements.TactileButton
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import org.jetbrains.compose.resources.stringResource
-
-private val ContentMaxWidth = 480.dp
 
 @Composable
 fun GamePlaceholder(
@@ -75,7 +72,7 @@ fun GamePlaceholder(
             Column(
                 modifier =
                     Modifier
-                        .widthIn(max = ContentMaxWidth)
+                        .widthIn(max = Dimens.contentMaxWidth)
                         .verticalScroll(rememberScrollState())
                         .heightIn(min = maxHeight)
                         .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
@@ -85,7 +82,7 @@ fun GamePlaceholder(
                 Box(
                     modifier =
                         Modifier
-                            .size(120.dp)
+                            .size(Dimens.heroBadge)
                             .background(gameInfo.accentColor, CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -93,7 +90,7 @@ fun GamePlaceholder(
                         imageVector = gameInfo.icon,
                         contentDescription = null,
                         tint = AppTheme.extendedColors.onAccent,
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(Dimens.heroBadgeIcon),
                     )
                 }
                 Text(

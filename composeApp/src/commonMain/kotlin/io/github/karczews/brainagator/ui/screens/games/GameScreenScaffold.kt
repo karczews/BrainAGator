@@ -44,12 +44,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.repeat_instruction
 import io.github.karczews.brainagator.LocalSharedTransitionContext
 import io.github.karczews.brainagator.Logger
+import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.darken
 import io.github.karczews.brainagator.tts.TextToSpeech
@@ -62,7 +62,6 @@ import kotlinx.coroutines.CancellationException
 import org.jetbrains.compose.resources.stringResource
 
 private const val TITLE_DARKEN_FRACTION = 0.2f
-private val TitleMinFontSize = 16.sp
 
 /**
  * Common frame for every game: the game's [PlayfulBackground], a top bar with back and
@@ -179,7 +178,7 @@ private fun GameTitle(
             // Long titles (e.g. in Polish) shrink to fit between the buttons instead of being cut off.
             autoSize =
                 TextAutoSize.StepBased(
-                    minFontSize = TitleMinFontSize,
+                    minFontSize = AutoSizeMin.title,
                     maxFontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 ),
         )
