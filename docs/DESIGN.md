@@ -21,7 +21,15 @@ Four rules drive every decision:
 
 Defined in `theme/Color.kt` and exposed through `MaterialTheme.colorScheme` plus
 `AppTheme.extendedColors` (see `theme/ExtendedColors.kt`). Screens must read colors from the theme; only
-`theme/Color.kt` may contain raw hex values.
+`theme/Color.kt` may contain raw hex values for UI colors.
+
+Two kinds of color are content rather than UI chrome, so they keep their own fixed palettes next to the code
+that uses them instead of theme tokens:
+
+- **Gameplay colors** (`ui/screens/games/shapematch/GameColor.kt`): the real-world colors children are asked
+  to name and find ("red", "blue"). They must look like their names, not follow the theme.
+- **Decorative effect palettes** (`ui/FireworksAnimation.kt`, `ui/screens/games/Brushes.kt`): celebration
+  particles and rainbow brushes, which carry no meaning and need no contrast.
 
 | Role | Token | Value | Use |
 |------|-------|-------|-----|
