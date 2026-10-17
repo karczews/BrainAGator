@@ -167,7 +167,10 @@ fun ShapeMatchGameScreen(
 
         // Keyed on the round too: consecutive rounds can produce the same instruction, which must still be spoken.
         LaunchedEffect(instructionText, correctCount) {
-            tts.speak(instructionText)
+            // The final correct answer opens the win screen; don't repeat the finished round's prompt over it.
+            if (correctCount < totalIterations) {
+                tts.speak(instructionText)
+            }
         }
 
         GameBoardLayout(
