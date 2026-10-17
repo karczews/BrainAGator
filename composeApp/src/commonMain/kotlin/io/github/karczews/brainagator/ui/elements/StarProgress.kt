@@ -20,10 +20,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -44,7 +46,8 @@ private const val EMPTY_STAR_SCALE = 0.8f
 
 /**
  * Progress shown as a row of stars that pop in as they are earned, so children who cannot
- * read numbers yet can still see how far they are.
+ * read numbers yet can still see how far they are. Earned stars are gold with a dark outline and
+ * empty ones are outlined only, so both stay visible on white (at least 3:1).
  */
 @Composable
 fun StarProgress(
@@ -52,8 +55,9 @@ fun StarProgress(
     total: Int,
     modifier: Modifier = Modifier,
 ) {
-    val earnedColor = AppTheme.extendedColors.reward
-    val emptyColor = MaterialTheme.colorScheme.outlineVariant
+    val earnedFill = AppTheme.extendedColors.reward
+    val earnedOutline = AppTheme.extendedColors.onReward
+    val emptyOutline = MaterialTheme.colorScheme.outline
     Row(
         modifier =
             modifier.semantics(mergeDescendants = true) {
@@ -74,16 +78,28 @@ fun StarProgress(
                 animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMediumLow),
                 label = "starScale",
             )
-            Icon(
-                imageVector = Icons.Rounded.Star,
-                contentDescription = null,
-                tint = if (isEarned) earnedColor else emptyColor,
+            Box(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
                         .size(StarSize)
                         .scale(scale),
-            )
+            ) {
+                if (isEarned) {
+                    Icon(
+                        imageVector = Icons.Rounded.Star,
+                        contentDescription = null,
+                        tint = earnedFill,
+                        modifier = Modifier.matchParentSize(),
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Rounded.StarBorder,
+                    contentDescription = null,
+                    tint = if (isEarned) earnedOutline else emptyOutline,
+                    modifier = Modifier.matchParentSize(),
+                )
+            }
         }
     }
 }

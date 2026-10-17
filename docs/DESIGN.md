@@ -25,21 +25,21 @@ Defined in `theme/Color.kt` and exposed through `MaterialTheme.colorScheme` plus
 
 | Role | Token | Value | Use |
 |------|-------|-------|-----|
-| Primary | `primary` | Gator Green `#23903F` | Main call to action, logo |
+| Primary | `primary` | Gator Green `#1F7E37` | Main call to action, logo |
 | Secondary | `secondary` | Sunny Yellow `#FFC233` | Rewards, stars, tagline pill (dark text only) |
-| Tertiary | `tertiary` | Sky Blue `#1A7FD8` | Supporting accents |
+| Tertiary | `tertiary` | Sky Blue `#1770BF` | Supporting accents |
 | Error | `error` / `errorContainer` | Coral `#E04A3C` / `#FFDDD8` | Wrong answers (soft, never scary) |
 | Background | `background` | Cream `#FFF8EC` | Screen canvas |
 | Surface | `surface` | White | Tiles, cards |
 | Text | `onBackground` / `onSurface` | Plum Ink `#2B2541` | All body text (softer than black) |
 | Success | `AppTheme.extendedColors.success` | Gator Green | Correct answers |
-| Reward | `AppTheme.extendedColors.reward` | Sunny Yellow | Earned stars, win screen |
+| Reward | `AppTheme.extendedColors.reward` / `onReward` | Sunny Yellow / Honey Brown | Earned stars (always outlined in `onReward`), win screen |
 
-**Game accents** (`GameInfo.accentColor`): Grape `#7A52E8`, Ocean `#1A7FD8`, Berry `#D9407E`, Tangerine
-`#E2620F`, Teal `#0E8F87`, Indigo `#4C5FD7`, Plum `#A23CB4`. Every accent has at least 3.5:1 contrast with
-white, so bold white labels on accent tiles stay readable. Pick new accents with the same constraint, and
-keep them clear of the feedback colors (coral, green, yellow) so right/wrong/reward cues never blend into a
-game's own color.
+**Game accents** (`GameInfo.accentColor`): Grape `#7A52E8`, Ocean `#1770BF`, Berry `#CF296C`, Tangerine
+`#B74F0C`, Teal `#0C7C75`, Indigo `#4C5FD7`, Plum `#A23CB4`. Every accent (and the primary green) has at least
+5:1 contrast with white, which keeps 4.5:1 under the tactile highlight, so white labels of any size stay
+readable. Pick new accents with the same constraint, and keep them clear of the feedback colors (coral, green,
+yellow) so right/wrong/reward cues never blend into a game's own color.
 
 Helpers: `Color.darken(fraction)` makes lips and readable accent-colored text; `Color.lighten(fraction)` makes tints.
 

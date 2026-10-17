@@ -20,9 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 
 // --- "Gator Jungle" palette: bright, friendly hues that keep white text readable ---
+// Colors carrying white text reach at least 5:1 on white (4.5:1 under the tactile highlight).
 
 // Primary: Gator Green (the mascot)
-val GatorGreen = Color(0xFF23903F)
+val GatorGreen = Color(0xFF1F7E37)
 val LeafMint = Color(0xFFD4F5D6)
 val DeepLeaf = Color(0xFF0B4F21)
 
@@ -32,7 +33,7 @@ val ButterCream = Color(0xFFFFEDB8)
 val HoneyBrown = Color(0xFF5C3D00)
 
 // Tertiary: Sky Blue
-val SkyBlue = Color(0xFF1A7FD8)
+val SkyBlue = Color(0xFF1770BF)
 val SkyMist = Color(0xFFD8ECFF)
 val DeepSky = Color(0xFF00325E)
 
@@ -49,7 +50,7 @@ val White = Color(0xFFFFFFFF)
 val Oat = Color(0xFFFFF1DC)
 val Biscuit = Color(0xFFFCE6C6)
 val Sand = Color(0xFFEADFCB)
-val Pebble = Color(0xFFB3A891)
+val Pebble = Color(0xFF9E9073)
 val Black = Color(0xFF000000)
 
 // Logo
@@ -59,10 +60,10 @@ val LogoBerry = Color(0xFFD9407E)
 // Game accents: one identity color per game, used for its tile, top bar and highlights.
 // Kept clear of the feedback colors (error coral, success green, reward yellow).
 val GameGrape = Color(0xFF7A52E8)
-val GameOcean = Color(0xFF1A7FD8)
-val GameBerry = Color(0xFFD9407E)
-val GameTangerine = Color(0xFFE2620F)
-val GameTeal = Color(0xFF0E8F87)
+val GameOcean = Color(0xFF1770BF)
+val GameBerry = Color(0xFFCF296C)
+val GameTangerine = Color(0xFFB74F0C)
+val GameTeal = Color(0xFF0C7C75)
 val GameIndigo = Color(0xFF4C5FD7)
 val GamePlum = Color(0xFFA23CB4)
 

@@ -46,7 +46,6 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -106,7 +105,6 @@ private val TileHeight = 184.dp
 private val LogoMinFontSize = 24.sp
 private const val MIN_COLUMNS = 2
 private const val MAX_COLUMNS = 4
-private const val SUBTITLE_ALPHA = 0.92f
 private const val BUILD_INFO_ALPHA = 0.6f
 
 @Composable
@@ -271,7 +269,6 @@ private fun GameTile(
             Text(
                 text = stringResource(game.subtitleRes),
                 style = MaterialTheme.typography.bodySmall,
-                color = LocalContentColor.current.copy(alpha = SUBTITLE_ALPHA),
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

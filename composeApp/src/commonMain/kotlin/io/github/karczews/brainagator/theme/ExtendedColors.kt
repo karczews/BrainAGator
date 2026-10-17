@@ -31,6 +31,8 @@ data class ExtendedColors(
     val success: Color,
     val onSuccess: Color,
     val reward: Color,
+    /** Outline around reward-colored shapes; yellow alone is too faint on white. */
+    val onReward: Color,
 )
 
 internal val LightExtendedColors =
@@ -39,6 +41,7 @@ internal val LightExtendedColors =
         success = GatorGreen,
         onSuccess = White,
         reward = SunnyYellow,
+        onReward = HoneyBrown,
     )
 
 internal val LocalExtendedColors = staticCompositionLocalOf { LightExtendedColors }
