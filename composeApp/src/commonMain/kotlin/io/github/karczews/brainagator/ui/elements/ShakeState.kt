@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 private const val SHAKE_STEP_MILLIS = 50
 private val ShakeKeyframes = listOf(-1f, 1f, -0.7f, 0.7f, -0.35f, 0f)
@@ -53,6 +55,10 @@ class ShakeState {
             ShakeKeyframes.forEach { target -> offset.animateTo(target, tween(SHAKE_STEP_MILLIS)) }
         } finally {
             activeShakes--
+            // Cancelled mid-wiggle with no newer shake taking over: settle back in place.
+            if (activeShakes == 0 && offset.value != 0f) {
+                withContext(NonCancellable) { offset.snapTo(0f) }
+            }
         }
     }
 }
