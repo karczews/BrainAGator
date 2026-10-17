@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,9 @@ import org.jetbrains.compose.resources.painterResource
 private const val ACCENT_TEXT_DARKEN_FRACTION = 0.2f
 private const val AVATAR_BACKDROP_ALPHA = 0.14f
 
+/** Below this card width the mascot is dropped: it would leave the text less than ~120dp. */
+private val MascotMinCardWidth = 200.dp
+
 /**
  * A flat, rounded card for content the child reads but does not tap (instructions, progress).
  * It deliberately has no lip, so it never looks like a button next to [TactileSurface]s.
@@ -67,7 +71,10 @@ fun PlayCard(
     )
 }
 
-/** A [PlayCard] in which the gator mascot "says" [text], with an optional small [label] above it. */
+/**
+ * A [PlayCard] in which the gator mascot "says" [text], with an optional small [label] above it.
+ * In narrow spaces the (decorative) mascot is left out so the text keeps room to stay readable.
+ */
 @Composable
 fun InstructionCard(
     text: String,
@@ -76,38 +83,57 @@ fun InstructionCard(
     accent: Color = MaterialTheme.colorScheme.primary,
 ) {
     PlayCard(modifier = modifier.fillMaxWidth()) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier =
-                    Modifier
-                        .size(64.dp)
-                        .background(accent.copy(alpha = AVATAR_BACKDROP_ALPHA), CircleShape),
-                contentAlignment = Alignment.Center,
+        BoxWithConstraints {
+            val showMascot = maxWidth >= MascotMinCardWidth
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(
-                    painter = painterResource(Res.drawable.gator_kid_in_suit_1),
-                    contentDescription = null,
-                    modifier = Modifier.size(52.dp),
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)) {
-                if (label != null) {
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = accent.darken(ACCENT_TEXT_DARKEN_FRACTION),
-                    )
+                if (showMascot) {
+                    InstructionMascot(accent = accent)
                 }
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+                InstructionText(text = text, label = label, accent = accent)
             }
         }
+    }
+}
+
+@Composable
+private fun InstructionMascot(accent: Color) {
+    Box(
+        modifier =
+            Modifier
+                .size(64.dp)
+                .background(accent.copy(alpha = AVATAR_BACKDROP_ALPHA), CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painter = painterResource(Res.drawable.gator_kid_in_suit_1),
+            contentDescription = null,
+            modifier = Modifier.size(52.dp),
+        )
+    }
+}
+
+@Composable
+private fun InstructionText(
+    text: String,
+    label: String?,
+    accent: Color,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)) {
+        if (label != null) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = accent.darken(ACCENT_TEXT_DARKEN_FRACTION),
+            )
+        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 

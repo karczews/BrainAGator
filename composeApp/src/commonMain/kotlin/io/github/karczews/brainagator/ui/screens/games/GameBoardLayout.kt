@@ -22,37 +22,46 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import io.github.karczews.brainagator.theme.Dimens
 
-private const val SIDE_PANEL_WEIGHT = 0.4f
+private const val SIDE_PANEL_FRACTION = 0.4f
 
 /**
  * Standard game layout: [instruction] on top, the [board] filling the middle and [progress] at the bottom.
- * In landscape the instruction and progress move to a side column so the board keeps the full (short) height.
  *
- * [board] receives whether the layout is landscape and the modifier that sizes it.
+ * In landscape the instruction and progress move to a side column so the board keeps the full (short) height.
+ * The column takes 40% of the width, narrowing further only as far as the board needs to keep [boardMinWidth]
+ * (the instruction card drops its mascot when narrow, so its text stays readable). If that would leave the
+ * column narrower than [Dimens.sidePanelMinWidth], everything stacks instead.
+ *
+ * [board] receives whether it sits beside the side column and the modifier that sizes it.
  */
 @Composable
 fun GameBoardLayout(
     instruction: @Composable () -> Unit,
     progress: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    boardMinWidth: Dp = Dimens.boardMinWidth,
     board: @Composable (isLandscape: Boolean, boardModifier: Modifier) -> Unit,
 ) {
     BoxWithConstraints(modifier = modifier) {
-        if (maxWidth > maxHeight) {
+        val sidePanelWidth = minOf(maxWidth * SIDE_PANEL_FRACTION, maxWidth - Dimens.spaceMd - boardMinWidth)
+        val useSidePanel = maxWidth > maxHeight && sidePanelWidth >= Dimens.sidePanelMinWidth
+        if (useSidePanel) {
             Row(horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
                 Column(
-                    modifier = Modifier.weight(SIDE_PANEL_WEIGHT).fillMaxHeight(),
+                    modifier = Modifier.width(sidePanelWidth).fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
                 ) {
                     instruction()
                     progress()
                 }
-                board(true, Modifier.weight(1f - SIDE_PANEL_WEIGHT).fillMaxHeight())
+                board(true, Modifier.weight(1f).fillMaxHeight())
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {

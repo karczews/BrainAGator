@@ -65,6 +65,12 @@ object Dimens {
     val illustrationMaxHeight = 128.dp
     val rewardStar = 80.dp
 
+    /** Narrowest landscape side column (instruction and progress) before a game board stacks instead. */
+    val sidePanelMinWidth = 120.dp
+
+    /** Narrowest board worth placing beside the side column: three 48dp tiles and their gaps. */
+    val boardMinWidth = 168.dp
+
     // Width caps that keep content readable on wide screens
     val contentMaxWidth = 480.dp
     val buttonMaxWidth = 420.dp
