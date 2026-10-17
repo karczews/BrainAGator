@@ -38,6 +38,11 @@
     <string name="congratulations">Gratulacje!</string>
     <string name="you_won">Wygrałeś grę!</string>
     <string name="back_to_main">Wróć do Ekranu Głównego</string>
+    <string name="play_again">Zagraj jeszcze raz</string>
+
+    <!-- Home tiles for games that are not built yet -->
+    <string name="coming_soon_badge">Wkrótce</string>
+    <string name="coming_soon_spoken">%1$s: już wkrótce!</string>
 
     <!-- Game Screen -->
     <string name="go_back">Wróć</string>

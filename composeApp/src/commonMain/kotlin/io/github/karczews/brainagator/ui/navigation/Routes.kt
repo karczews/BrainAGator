@@ -41,11 +41,19 @@ sealed interface Route {
     @Serializable
     data object GameSelection : Route
 
+    /**
+     * A game being played. [playId] makes every play its own back-stack entry, so "Play again"
+     * always starts from fresh state instead of reusing the finished round's.
+     */
     @Serializable
     data class Game(
         val gameType: GameType,
+        val playId: Int = 0,
     ) : Route
 
+    /** The win screen; remembers which game was won so it can offer to play it again. */
     @Serializable
-    data object GameWon : Route
+    data class GameWon(
+        val gameType: GameType,
+    ) : Route
 }

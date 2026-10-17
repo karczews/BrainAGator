@@ -42,14 +42,27 @@ object Dimens {
     val buttonIcon = 28.dp
 
     // Game tiles on the home screen
-    val gameTileMinWidth = 160.dp
+    val gameTileMinWidth = 140.dp
     val gameTileHeight = 184.dp
     val gameTilePadding = 12.dp
+
+    /** Shortest a home tile may get before the grid scrolls instead; keeps picture and title readable. */
+    val gameTileMinHeight = 104.dp
+    val gameTileGap = 12.dp
+
+    /** Corner sticker ("Soon") on games that are not built yet. */
+    val stickerIcon = 16.dp
+
+    /** Compact home-screen header, so every game tile fits below it. */
+    val headerMascotCompact = 64.dp
 
     // Answer tiles inside games
     val answerTileGap = 12.dp
     val answerTileMinHeight = 100.dp
     val answerTileMaxSize = 76.dp
+
+    /** Number tiles stand taller than they are wide, so the digit gets big even when five share a row. */
+    val numberTileMaxHeight = 112.dp
 
     /** White circle holding a game's icon on its tile. */
     val iconBadge = 56.dp

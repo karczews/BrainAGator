@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
-import brainagator.composeapp.generated.resources.gator_long
+import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
@@ -57,6 +57,8 @@ import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameOcean
 import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.ui.elements.PlayCard
+import io.github.karczews.brainagator.ui.elements.StarProgress
 import io.github.karczews.brainagator.ui.elements.TactileColors
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileSurface
@@ -67,10 +69,12 @@ import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import kotlin.random.Random
+
+private const val NUMBER_TILE_ASPECT = 1.4f
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -157,6 +161,7 @@ fun NumberOrderGameScreen(
         NumberOrderBoard(
             gameNumbers = gameNumbers,
             correctNextNumber = correctNextNumber,
+            placedCount = gameNumbers.count { it.matched },
             accentColor = gameInfo.accentColor,
             onNumberClick = onNumberClick,
             modifier =
@@ -169,13 +174,14 @@ fun NumberOrderGameScreen(
 
 /**
  * Layout of the Number Order game on the shared [GameBoardLayout]: the instruction, then the gator above the
- * row of number tiles. On short landscape screens the instruction moves beside the board (or everything
- * stacks), so the tiles always stay on screen.
+ * row of number tiles, and a star for every number put in place. On short landscape screens the instruction
+ * and stars move beside the board (or everything stacks), so the tiles always stay on screen.
  */
 @Composable
 private fun NumberOrderBoard(
     gameNumbers: List<GameNumber>,
     correctNextNumber: Int,
+    placedCount: Int,
     accentColor: Color,
     onNumberClick: (GameNumber) -> Unit,
     modifier: Modifier = Modifier,
@@ -191,20 +197,27 @@ private fun NumberOrderBoard(
                 modifier = Modifier.padding(horizontal = Dimens.spaceSm),
             )
         },
-        progress = {},
+        progress = {
+            PlayCard(modifier = Modifier.fillMaxWidth().padding(horizontal = Dimens.spaceSm)) {
+                StarProgress(current = placedCount, total = gameNumbers.size, modifier = Modifier.fillMaxWidth())
+            }
+        },
     ) { _, boardModifier ->
         Column(
             modifier = boardModifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
         ) {
+            // The pixel-art gator, in the same style as the mascot everywhere else.
             Image(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
+                        .fillMaxWidth()
                         .padding(horizontal = Dimens.spaceMd)
-                        .heightIn(max = Dimens.illustrationMaxHeight),
-                imageVector = vectorResource(Res.drawable.gator_long),
+                        // A fixed height scales the small bitmap up; the weight still shrinks it on short screens.
+                        .height(Dimens.illustrationMaxHeight),
+                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
                 contentDescription = null,
             )
 
@@ -221,7 +234,7 @@ private fun NumberOrderBoard(
 /**
  * Displays a horizontal row of number boxes for the Number Order game.
  *
- * Renders each number as a tactile tile of at least [Dimens.touchTarget], squeezing the gaps
+ * Renders each number as a tall tactile tile at least [Dimens.touchTarget] wide, squeezing the gaps
  * first so that all of them fit on screen (they do from 360dp up; narrower screens scroll).
  * The row uses animated placement so matched numbers slide into order. Incorrect selections wiggle.
  *
@@ -243,7 +256,9 @@ private fun NumberBoxesRow(
         val count = gameNumbers.size.coerceAtLeast(1)
         val gapCount = (count - 1).coerceAtLeast(1)
         val gap = ((maxWidth - Dimens.touchTarget * count) / gapCount).coerceIn(Dimens.spaceXs, Dimens.spaceSm)
-        val boxSize = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, Dimens.answerTileMaxSize)
+        val boxWidth = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, Dimens.answerTileMaxSize)
+        // Five tiles share the width, so they grow upwards instead: taller tiles, bigger digits.
+        val boxHeight = (boxWidth * NUMBER_TILE_ASPECT).coerceAtMost(Dimens.numberTileMaxHeight)
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
@@ -259,7 +274,7 @@ private fun NumberBoxesRow(
                     modifier =
                         Modifier
                             .animateItem()
-                            .size(boxSize)
+                            .size(width = boxWidth, height = boxHeight)
                             .shake(shakeState),
                     number = gameNumber.number,
                     colors =
@@ -307,7 +322,7 @@ private fun NumberBox(
     ) {
         Text(
             text = number.toString(),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.displaySmall,
         )
     }
 }

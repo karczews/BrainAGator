@@ -23,7 +23,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_odd_one_out
 import brainagator.composeapp.generated.resources.game_odd_one_out
 import brainagator.composeapp.generated.resources.subtitle_odd_one_out
-import io.github.karczews.brainagator.theme.GameIndigo
+import io.github.karczews.brainagator.theme.GameCocoa
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
@@ -34,8 +34,9 @@ val OddOneOutGameInfo =
         subtitleRes = Res.string.subtitle_odd_one_out,
         descriptionRes = Res.string.desc_odd_one_out,
         icon = Icons.AutoMirrored.Rounded.HelpOutline,
-        accentColor = GameIndigo,
+        accentColor = GameCocoa,
         gameType = GameType.OddOneOut,
+        isAvailable = false,
     )
 
 @Composable

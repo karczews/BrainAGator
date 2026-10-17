@@ -29,4 +29,6 @@ data class GameInfo(
     /** Identity color of the game: its tile, top bar, background tint and highlights. */
     val accentColor: Color,
     val gameType: GameType,
+    /** False for games that are not built yet: their home tile is flat and says "coming soon" instead of opening. */
+    val isAvailable: Boolean = true,
 )

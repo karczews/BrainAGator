@@ -24,46 +24,37 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.app_tagline
+import brainagator.composeapp.generated.resources.coming_soon_spoken
 import brainagator.composeapp.generated.resources.gator_kid_in_suit_1
-import brainagator.composeapp.generated.resources.gator_pose_1_4_crawl
 import brainagator.composeapp.generated.resources.welcome_message
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.isDebugBuild
@@ -75,8 +66,6 @@ import io.github.karczews.brainagator.theme.LogoBerry
 import io.github.karczews.brainagator.theme.LogoGrape
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
-import io.github.karczews.brainagator.ui.elements.TactileDefaults
-import io.github.karczews.brainagator.ui.elements.TactileSurface
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.oddoneout.OddOneOutGameInfo
@@ -84,7 +73,7 @@ import io.github.karczews.brainagator.ui.screens.games.pattern.PatternGameInfo
 import io.github.karczews.brainagator.ui.screens.games.shapematch.ShapeMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.sizeorder.SizeOrderGameInfo
 import io.github.karczews.brainagator.ui.screens.games.spotdifference.SpotDifferenceGameInfo
-import org.jetbrains.compose.resources.StringResource
+import io.github.karczews.brainagator.ui.screens.home.GameTile
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -103,6 +92,9 @@ private const val MIN_COLUMNS = 2
 private const val MAX_COLUMNS = 4
 private const val BUILD_INFO_ALPHA = 0.6f
 
+/** Widest a tile gets relative to its height, so landscape and tablet tiles stay tile-shaped. */
+private const val MAX_TILE_ASPECT = 1.6f
+
 @Composable
 fun GameSelectionScreen(
     sharedTransitionScope: SharedTransitionScope,
@@ -113,6 +105,10 @@ fun GameSelectionScreen(
 ) {
     val tts = rememberTextToSpeech()
     val welcomeText = stringResource(Res.string.welcome_message)
+    val comingSoonTexts =
+        games.filterNot { it.isAvailable }.associate { game ->
+            game.gameType to stringResource(Res.string.coming_soon_spoken, stringResource(game.titleRes))
+        }
 
     // Speak welcome message only once per app session
     LaunchedEffect(Unit) {
@@ -126,22 +122,26 @@ fun GameSelectionScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
                     .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
+                    .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceSm),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
         ) {
             SelectionHeader()
             GameGrid(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
                 sharedTransitionScope = sharedTransitionScope,
                 animatedContentScope = animatedContentScope,
-                onGameSelected = onGameSelected,
-            )
-            Image(
-                modifier = Modifier.height(Dimens.illustrationHeight),
-                painter = painterResource(Res.drawable.gator_pose_1_4_crawl),
-                contentDescription = null,
+                onGameSelected = { game ->
+                    // Unbuilt games say so instead of opening a dead end. Debug builds still open their
+                    // placeholder, which holds the "Test: Trigger Win" shortcut.
+                    val comingSoonText = comingSoonTexts[game.gameType]
+                    if (comingSoonText == null || isDebugBuild) {
+                        onGameSelected(game)
+                    } else {
+                        tts.speak(comingSoonText)
+                    }
+                },
             )
             BuildInfo(modifier = Modifier.align(Alignment.End))
         }
@@ -155,14 +155,11 @@ private fun SelectionHeader() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            modifier = Modifier.size(Dimens.headerMascot),
+            modifier = Modifier.size(Dimens.headerMascotCompact),
             painter = painterResource(Res.drawable.gator_kid_in_suit_1),
             contentDescription = null,
         )
-        Column(
-            modifier = Modifier.weight(1f, fill = false),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-        ) {
+        Column(modifier = Modifier.weight(1f, fill = false)) {
             // Shrinks on narrow phones rather than breaking the name across lines.
             BasicText(
                 text =
@@ -185,44 +182,49 @@ private fun SelectionHeader() {
                         maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
                     ),
             )
+            // Plain text, not a pill: in this app pill shapes are buttons.
             Text(
                 text = stringResource(Res.string.app_tagline),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier =
-                    Modifier
-                        .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
-                        .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
 
-/** Lays games out in as many columns as fit (2 to 4), centering a shorter last row. */
+/**
+ * All games at once, with tiles sized from the space left under the header (see [gridLayoutFor]), so a child
+ * never has to scroll to find a game. Scrolls only if even the smallest readable tiles do not fit.
+ */
 @Composable
 private fun GameGrid(
+    modifier: Modifier,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     onGameSelected: (GameInfo) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        // Count the gaps too, so each tile really gets at least the minimum width.
-        val columns =
-            ((maxWidth + Dimens.spaceMd) / (Dimens.gameTileMinWidth + Dimens.spaceMd)).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
-        val tileWidth = (maxWidth - Dimens.spaceMd * (columns - 1)) / columns
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
-            games.chunked(columns).forEach { rowGames ->
+    BoxWithConstraints(modifier = modifier) {
+        val grid = gridLayoutFor(maxWidth = maxWidth, maxHeight = maxHeight, count = games.size)
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .heightIn(min = maxHeight),
+            verticalArrangement = Arrangement.spacedBy(Dimens.gameTileGap, Alignment.CenterVertically),
+        ) {
+            games.chunked(grid.columns).forEach { rowGames ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.gameTileGap, Alignment.CenterHorizontally),
                 ) {
                     rowGames.forEach { game ->
                         GameTile(
-                            modifier = Modifier.width(tileWidth),
                             game = game,
                             sharedTransitionScope = sharedTransitionScope,
                             animatedContentScope = animatedContentScope,
                             onClick = { onGameSelected(game) },
+                            modifier = Modifier.size(width = grid.tileWidth, height = grid.tileHeight),
                         )
                     }
                 }
@@ -231,90 +233,36 @@ private fun GameGrid(
     }
 }
 
-@Composable
-private fun GameTile(
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    game: GameInfo,
-    onClick: () -> Unit,
-) {
-    TactileSurface(
-        modifier = modifier.height(Dimens.gameTileHeight),
-        colors = TactileDefaults.colors(game.accentColor),
-        shape = MaterialTheme.shapes.extraLarge,
-        onClick = onClick,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(Dimens.gameTilePadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            GameIcon(icon = game.icon, tint = game.accentColor)
+private data class GridLayout(
+    val columns: Int,
+    val tileWidth: Dp,
+    val tileHeight: Dp,
+)
 
-            Spacer(modifier = Modifier.height(Dimens.spaceSm))
-
-            GameTitleText(
-                sharedTransitionScope = sharedTransitionScope,
-                animatedContentScope = animatedContentScope,
-                titleRes = game.titleRes,
-            )
-
-            Text(
-                text = stringResource(game.subtitleRes),
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+/**
+ * Picks the column count (2 to 4) whose tiles come out largest while every game is on screen, preferring more
+ * columns on a tie. Tiles are never narrower than [Dimens.gameTileMinWidth] (unless even two columns are) nor
+ * shorter than [Dimens.gameTileMinHeight]; at that floor the grid scrolls.
+ */
+private fun gridLayoutFor(
+    maxWidth: Dp,
+    maxHeight: Dp,
+    count: Int,
+): GridLayout {
+    val gap = Dimens.gameTileGap
+    val options =
+        (MAX_COLUMNS downTo MIN_COLUMNS).map { columns ->
+            val rows = (count + columns - 1) / columns
+            val cellWidth = (maxWidth - gap * (columns - 1)) / columns
+            val tileHeight = minOf((maxHeight - gap * (rows - 1)) / rows, Dimens.gameTileHeight)
+            GridLayout(columns = columns, tileWidth = minOf(cellWidth, tileHeight * MAX_TILE_ASPECT), tileHeight = tileHeight)
         }
-    }
-}
-
-@Composable
-private fun GameIcon(
-    icon: ImageVector,
-    tint: Color,
-) {
-    Box(
-        modifier =
-            Modifier
-                .size(Dimens.iconBadge)
-                .background(MaterialTheme.colorScheme.surface, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(Dimens.iconBadgeIcon),
-        )
-    }
-}
-
-@Composable
-private fun GameTitleText(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    titleRes: StringResource,
-) {
-    with(sharedTransitionScope) {
-        Text(
-            modifier =
-                Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState(key = titleRes),
-                    animatedVisibilityScope = animatedContentScope,
-                ),
-            text = stringResource(titleRes),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
+    val best =
+        options
+            .filter { it.tileWidth >= Dimens.gameTileMinWidth }
+            .maxByOrNull { minOf(it.tileWidth, it.tileHeight) }
+            ?: options.last()
+    return best.copy(tileHeight = best.tileHeight.coerceAtLeast(Dimens.gameTileMinHeight))
 }
 
 @Composable

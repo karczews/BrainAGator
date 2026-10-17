@@ -123,6 +123,7 @@ class DesktopScreenshotTest {
     fun gameWon() {
         capture {
             GameWonScreen(
+                onPlayAgainClick = {},
                 onBackToMainClick = {},
                 showFireworks = false,
             )

@@ -37,6 +37,7 @@ val ColorMatchGameInfo =
         icon = Icons.Rounded.Palette,
         accentColor = GameBerry,
         gameType = GameType.ColorMatch,
+        isAvailable = false,
     )
 
 @Composable

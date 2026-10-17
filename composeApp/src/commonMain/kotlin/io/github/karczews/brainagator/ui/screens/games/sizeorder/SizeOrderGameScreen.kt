@@ -36,6 +36,7 @@ val SizeOrderGameInfo =
         icon = Icons.Rounded.SwapVert,
         accentColor = GameTangerine,
         gameType = GameType.SizeOrder,
+        isAvailable = false,
     )
 
 @Composable

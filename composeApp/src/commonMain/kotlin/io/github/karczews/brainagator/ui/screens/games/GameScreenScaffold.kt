@@ -30,7 +30,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.QuestionMark
+import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -135,9 +135,10 @@ private fun GameTopBar(
                     .weight(1f)
                     .padding(horizontal = Dimens.spaceSm),
         )
-        // The help button is the accent-colored one: replaying instructions matters most for non-readers.
+        // "Say it again" is the accent-colored button: replaying instructions matters most for non-readers.
+        // A speaker, not a "?", because it repeats the spoken instruction rather than opening help.
         TactileIconButton(
-            icon = Icons.Rounded.QuestionMark,
+            icon = Icons.AutoMirrored.Rounded.VolumeUp,
             contentDescription = stringResource(Res.string.repeat_instruction),
             onClick = onHelpClick,
             colors = TactileDefaults.colors(gameInfo.accentColor),

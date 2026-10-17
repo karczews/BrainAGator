@@ -33,14 +33,15 @@ internal data class GameColor(
     val nameRes: StringResource,
 )
 
+// Named so other gameplay pictures (e.g. the home-screen tiles) can use the same real-world colors.
+internal val PaintRed = GameColor(Color(0xFFE53935), Res.string.color_red)
+internal val PaintBlue = GameColor(Color(0xFF1E88E5), Res.string.color_blue)
+internal val PaintYellow = GameColor(Color(0xFFFDD835), Res.string.color_yellow)
+internal val PaintGreen = GameColor(Color(0xFF43A047), Res.string.color_green)
+internal val PaintOrange = GameColor(Color(0xFFFB8C00), Res.string.color_orange)
+internal val PaintPurple = GameColor(Color(0xFF8E24AA), Res.string.color_purple)
+internal val PaintPink = GameColor(Color(0xFFF06292), Res.string.color_pink)
+internal val PaintTurquoise = GameColor(Color(0xFF40E0D0), Res.string.color_turquoise)
+
 internal val gameColors =
-    listOf(
-        GameColor(Color(0xFFE53935), Res.string.color_red),
-        GameColor(Color(0xFF1E88E5), Res.string.color_blue),
-        GameColor(Color(0xFFFDD835), Res.string.color_yellow),
-        GameColor(Color(0xFF43A047), Res.string.color_green),
-        GameColor(Color(0xFFFB8C00), Res.string.color_orange),
-        GameColor(Color(0xFF8E24AA), Res.string.color_purple),
-        GameColor(Color(0xFFF06292), Res.string.color_pink),
-        GameColor(Color(0xFF40E0D0), Res.string.color_turquoise),
-    )
+    listOf(PaintRed, PaintBlue, PaintYellow, PaintGreen, PaintOrange, PaintPurple, PaintPink, PaintTurquoise)

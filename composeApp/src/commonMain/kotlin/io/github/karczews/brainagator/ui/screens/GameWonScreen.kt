@@ -40,6 +40,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Replay
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,6 +55,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
 import brainagator.composeapp.generated.resources.gator_win_1
+import brainagator.composeapp.generated.resources.play_again
 import brainagator.composeapp.generated.resources.star_1
 import brainagator.composeapp.generated.resources.you_won
 import io.github.karczews.brainagator.theme.AppTheme
@@ -62,11 +64,14 @@ import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.ui.FireworksAnimation
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
 import io.github.karczews.brainagator.ui.elements.TactileButton
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileIconButton
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameWonScreen(
+    onPlayAgainClick: () -> Unit,
     onBackToMainClick: () -> Unit,
     showFireworks: Boolean = true,
 ) {
@@ -95,7 +100,11 @@ fun GameWonScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick, modifier = Modifier.weight(1f))
+                    WinMessage(
+                        onPlayAgainClick = onPlayAgainClick,
+                        onBackToMainClick = onBackToMainClick,
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             } else {
                 Column(
@@ -105,16 +114,17 @@ fun GameWonScreen(
                 ) {
                     // Shrinks on short screens instead of pushing the button off-screen.
                     BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick)
+                    WinMessage(onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
                 }
             }
         }
     }
 }
 
-/** Title, stars and the way home; scrolls only if a screen is too short to show it all. */
+/** Title, stars and what to do next; scrolls only if a screen is too short to show it all. */
 @Composable
 private fun WinMessage(
+    onPlayAgainClick: () -> Unit,
     onBackToMainClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -143,15 +153,39 @@ private fun WinMessage(
             textAlign = TextAlign.Center,
         )
         WinStars()
-        TactileButton(
-            text = stringResource(Res.string.back_to_main),
-            onClick = onBackToMainClick,
+        WinActions(onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
+    }
+}
+
+/**
+ * "Play again" is the big button: replaying the game they just won is what children want most. Home is a
+ * round icon button beside it, recognisable without reading.
+ */
+@Composable
+private fun WinActions(
+    onPlayAgainClick: () -> Unit,
+    onBackToMainClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .padding(top = Dimens.spaceSm)
+                .widthIn(max = Dimens.buttonMaxWidth)
+                .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TactileIconButton(
             icon = Icons.Rounded.Home,
-            modifier =
-                Modifier
-                    .padding(top = Dimens.spaceSm)
-                    .widthIn(max = Dimens.buttonMaxWidth)
-                    .fillMaxWidth(),
+            contentDescription = stringResource(Res.string.back_to_main),
+            onClick = onBackToMainClick,
+            colors = TactileDefaults.surfaceColors(content = MaterialTheme.colorScheme.primary),
+        )
+        TactileButton(
+            text = stringResource(Res.string.play_again),
+            onClick = onPlayAgainClick,
+            icon = Icons.Rounded.Replay,
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -207,6 +241,6 @@ private fun WinStars() {
 @Composable
 private fun GameWonScreenPreview() {
     AppTheme {
-        GameWonScreen(onBackToMainClick = {})
+        GameWonScreen(onPlayAgainClick = {}, onBackToMainClick = {})
     }
 }

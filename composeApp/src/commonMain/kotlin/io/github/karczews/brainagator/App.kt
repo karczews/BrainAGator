@@ -28,6 +28,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
+import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
 import io.github.karczews.brainagator.ui.screens.GameWonScreen
 import io.github.karczews.brainagator.ui.screens.games
@@ -71,6 +73,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     // Track if a welcome message has been spoken - persists across navigation
     var hasSpokenWelcome by rememberSaveable { mutableStateOf(false) }
 
+    // Gives every play of a game its own route, so replaying never inherits the last round's state.
+    var playCount by rememberSaveable { mutableIntStateOf(0) }
+    val newPlay: (GameType) -> Route.Game = { gameType -> Route.Game(gameType, playId = ++playCount) }
+
     SharedTransitionLayout(modifier) {
         // Create a lookup map for GameInfo by GameType
         val gameInfoMap = remember { games.associateBy { it.gameType } }
@@ -97,7 +103,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedContentScope = LocalNavAnimatedContentScope.current,
                             onGameSelected = { game ->
-                                backStack.add(Route.Game(game.gameType))
+                                backStack.add(newPlay(game.gameType))
                             },
                             onWelcomeSpoken = {
                                 hasSpokenWelcome = true
@@ -110,25 +116,22 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                             gameInfoMap[route.gameType]
                                 ?: error("Unknown game type: ${route.gameType}")
                         val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
-                        val onGameWon: () -> Unit = { backStack.add(Route.GameWon) }
+                        val onGameWon: () -> Unit = { backStack.add(Route.GameWon(route.gameType)) }
 
                         CompositionLocalProvider(
                             LocalSharedTransitionContext provides
                                 SharedTransitionContext(this@SharedTransitionLayout, LocalNavAnimatedContentScope.current),
                         ) {
-                            when (route.gameType) {
-                                GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.ColorMatch -> ColorMatchGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.SizeOrder -> SizeOrderGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.Pattern -> PatternGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.OddOneOut -> OddOneOutGameScreen(gameInfo, onBackClick, onGameWon)
-                                GameType.SpotDifference -> SpotDifferenceGameScreen(gameInfo, onBackClick, onGameWon)
-                            }
+                            GameScreen(gameInfo = gameInfo, onBackClick = onBackClick, onGameWon = onGameWon)
                         }
                     }
-                    entry<Route.GameWon> {
+                    entry<Route.GameWon> { route ->
                         GameWonScreen(
+                            onPlayAgainClick = {
+                                backStack.clear()
+                                backStack.add(Route.GameSelection)
+                                backStack.add(newPlay(route.gameType))
+                            },
                             onBackToMainClick = {
                                 backStack.clear()
                                 backStack.add(Route.GameSelection)
@@ -137,6 +140,23 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                     }
                 },
         )
+    }
+}
+
+@Composable
+private fun GameScreen(
+    gameInfo: GameInfo,
+    onBackClick: () -> Unit,
+    onGameWon: () -> Unit,
+) {
+    when (gameInfo.gameType) {
+        GameType.ShapeMatch -> ShapeMatchGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.NumberOrder -> NumberOrderGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.ColorMatch -> ColorMatchGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.SizeOrder -> SizeOrderGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.Pattern -> PatternGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.OddOneOut -> OddOneOutGameScreen(gameInfo, onBackClick, onGameWon)
+        GameType.SpotDifference -> SpotDifferenceGameScreen(gameInfo, onBackClick, onGameWon)
     }
 }
 
