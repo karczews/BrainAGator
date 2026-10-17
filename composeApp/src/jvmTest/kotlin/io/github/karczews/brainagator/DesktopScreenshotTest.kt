@@ -20,10 +20,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.runDesktopComposeUiTest
+import androidx.compose.ui.unit.Density
 import com.dropbox.differ.SimpleImageComparator
 import com.github.takahirom.roborazzi.RoborazziOptions
 import io.github.karczews.brainagator.theme.AppTheme
@@ -52,11 +54,15 @@ class DesktopScreenshotTest {
                 ),
         )
 
-    // Portrait 400x860dp at density 2 (800x1720px window).
+    // Portrait 400x860dp: 800x1720px window at density 2. The runner defaults
+    // to 1x (800x1720dp), so the density override is what pins the viewport.
     private fun capture(content: @Composable () -> Unit) {
         runDesktopComposeUiTest(width = VIEWPORT_WIDTH_PX, height = VIEWPORT_HEIGHT_PX) {
             setContent {
-                CompositionLocalProvider(LocalInspectionMode provides true) {
+                CompositionLocalProvider(
+                    LocalInspectionMode provides true,
+                    LocalDensity provides Density(2f),
+                ) {
                     AppTheme {
                         content()
                     }
