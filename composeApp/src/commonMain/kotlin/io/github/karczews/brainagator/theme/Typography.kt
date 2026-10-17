@@ -49,6 +49,9 @@ object AutoSizeMin {
     val display = 24.sp
     val title = 16.sp
     val label = 14.sp
+
+    /** For secondary captions under a picture, which carries the meaning. */
+    val caption = 10.sp
 }
 
 /**

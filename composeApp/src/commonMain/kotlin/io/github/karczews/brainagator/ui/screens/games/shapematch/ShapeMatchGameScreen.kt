@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Category
@@ -55,6 +56,7 @@ import brainagator.composeapp.generated.resources.shape_match_current_goal
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameGrape
 import io.github.karczews.brainagator.ui.elements.InstructionCard
@@ -163,7 +165,8 @@ fun ShapeMatchGameScreen(
                 stringResource(targetShape.nameRes),
             )
 
-        LaunchedEffect(instructionText) {
+        // Keyed on the round too: consecutive rounds can produce the same instruction, which must still be spoken.
+        LaunchedEffect(instructionText, correctCount) {
             tts.speak(instructionText)
         }
 
@@ -340,6 +343,13 @@ private fun ColoredShapeButton(
                 text = shapeName,
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center,
+                maxLines = 1,
+                // Narrow tiles shrink the name rather than break it mid-word; the shape itself is the cue.
+                autoSize =
+                    TextAutoSize.StepBased(
+                        minFontSize = AutoSizeMin.caption,
+                        maxFontSize = MaterialTheme.typography.labelLarge.fontSize,
+                    ),
             )
         }
     }
