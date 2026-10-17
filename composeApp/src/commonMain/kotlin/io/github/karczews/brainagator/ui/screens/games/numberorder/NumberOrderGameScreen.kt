@@ -72,6 +72,7 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import kotlin.random.Random
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -100,9 +101,10 @@ fun NumberOrderGameScreen(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
     onGameWon: () -> Unit,
+    random: Random = Random.Default,
 ) {
     // Generates a list of 5 unique random numbers between 1 and 9.
-    fun generateNumbers(): List<Int> = (1..9).shuffled().take(5)
+    fun generateNumbers(): List<Int> = (1..9).shuffled(random).take(5)
 
     val generatedNumbers = remember { generateNumbers() }
 
@@ -132,10 +134,10 @@ fun NumberOrderGameScreen(
                 val position = gameNumbers.indexOfLast { it.matched } + 1
                 gameNumbers.add(position, gameNumber.copy(matched = true))
                 Logger.d { "New gameNumbers=$gameNumbers" }
-                feedbackMessage = positiveFeedbackMessages.random()
+                feedbackMessage = positiveFeedbackMessages.random(random)
                 feedbackEventId++
             } else {
-                feedbackMessage = negativeFeedbackMessages.random()
+                feedbackMessage = negativeFeedbackMessages.random(random)
                 feedbackEventId++
             }
 

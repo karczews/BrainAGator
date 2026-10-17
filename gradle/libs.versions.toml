@@ -2,6 +2,7 @@
 agp = "9.4.1"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.6"
+roborazzi = "1.76.0"
 android-compileSdk = "37"
 android-minSdk = "28"
 android-targetSdk = "36"
@@ -56,10 +57,12 @@ jetbrains-compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-t
 jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.11.0" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+roborazzi-compose-desktop = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop", version.ref = "roborazzi" }
 
 [plugins]
 #androidApplication = { id = "com.android.application", version.ref = "agp" }
 #androidLibrary = { id = "com.android.library", version.ref = "agp" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -67,7 +67,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun GameWonScreen(onBackToMainClick: () -> Unit) {
+fun GameWonScreen(
+    onBackToMainClick: () -> Unit,
+    showFireworks: Boolean = true,
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "trophy_animation")
 
     val scale by infiniteTransition.animateFloat(
@@ -112,11 +115,13 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
                 ),
     ) {
         // Fireworks animation overlay
-        FireworksAnimation(
-            modifier = Modifier.fillMaxSize(),
-            particleCount = 120,
-            explosionCount = 0,
-        )
+        if (showFireworks) {
+            FireworksAnimation(
+                modifier = Modifier.fillMaxSize(),
+                particleCount = 120,
+                explosionCount = 0,
+            )
+        }
 
         Column(
             modifier =

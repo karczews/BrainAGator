@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.roborazzi)
 }
 
 kotlin {
@@ -92,6 +93,8 @@ kotlin {
         }
         jvmTest.dependencies {
             implementation(libs.kotlinx.coroutinesTest)
+            implementation(libs.roborazzi.compose.desktop)
+            implementation(compose.desktop.uiTestJUnit4)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -134,4 +137,8 @@ compose.desktop {
             }
         }
     }
+}
+
+roborazzi {
+    outputDir.set(file("src/jvmTest/screenshots"))
 }
