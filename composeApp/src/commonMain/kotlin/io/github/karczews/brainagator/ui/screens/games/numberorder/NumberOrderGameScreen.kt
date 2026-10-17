@@ -16,27 +16,19 @@
 
 package io.github.karczews.brainagator.ui.screens.games.numberorder
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.rounded.Tag
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,16 +37,14 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
@@ -65,21 +55,31 @@ import brainagator.composeapp.generated.resources.number_order_instruction
 import brainagator.composeapp.generated.resources.subtitle_number_order
 import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.Dimens
+import io.github.karczews.brainagator.theme.GameOcean
+import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.ui.elements.TactileColors
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileSurface
+import io.github.karczews.brainagator.ui.elements.rememberShakeState
+import io.github.karczews.brainagator.ui.elements.shake
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+
+private val MaxNumberBoxSize = 76.dp
 
 val NumberOrderGameInfo =
     GameInfo(
         titleRes = Res.string.game_number_order,
         subtitleRes = Res.string.subtitle_number_order,
         descriptionRes = Res.string.desc_number_order,
-        icon = Icons.Default.Tag,
-        gradientColors = listOf(Color(0xFF4FACFE), Color(0xFF00F2FE)),
+        icon = Icons.Rounded.Tag,
+        accentColor = GameOcean,
         gameType = GameType.NumberOrder,
     )
 
@@ -154,164 +154,143 @@ fun NumberOrderGameScreen(
                 }
             }
         }
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = stringResource(Res.string.number_order_instruction),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                )
+        NumberOrderBoard(
+            gameNumbers = gameNumbers,
+            correctNextNumber = correctNextNumber,
+            accentColor = gameInfo.accentColor,
+            onNumberClick = onNumberClick,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        )
+    }
+}
 
-                Spacer(modifier = Modifier.height(28.dp))
+/**
+ * Layout of the Number Order game: the instruction, the gator and the row of number tiles.
+ */
+@Composable
+private fun NumberOrderBoard(
+    gameNumbers: List<GameNumber>,
+    correctNextNumber: Int,
+    accentColor: Color,
+    onNumberClick: (GameNumber) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
+    ) {
+        InstructionCard(
+            text = stringResource(Res.string.number_order_instruction),
+            accent = accentColor,
+        )
 
-                Image(
-                    modifier =
-                        Modifier
-                            .heightIn(max = 128.dp),
-                    imageVector = vectorResource(Res.drawable.gator_long),
-                    contentDescription = null,
-                )
+        Image(
+            modifier =
+                Modifier
+                    .weight(1f, fill = false)
+                    .heightIn(max = 128.dp),
+            imageVector = vectorResource(Res.drawable.gator_long),
+            contentDescription = null,
+        )
 
-                NumberBoxesRow(
-                    gameNumbers = gameNumbers,
-                    correctNextNumber = correctNextNumber,
-                    onNumberClick = onNumberClick,
-                )
-            }
-        }
+        NumberBoxesRow(
+            gameNumbers = gameNumbers,
+            correctNextNumber = correctNextNumber,
+            accentColor = accentColor,
+            onNumberClick = onNumberClick,
+        )
     }
 }
 
 /**
  * Displays a horizontal row of number boxes for the Number Order game.
  *
- * Renders each number as an interactive box that can be tapped. The row is
- * horizontally scrollable and uses animated placement. Incorrect selections
- * trigger a visual shake effect.
+ * Renders each number as a tactile tile sized so that all of them fit on screen. The row uses
+ * animated placement so matched numbers slide into order. Incorrect selections wiggle.
  *
  * @param gameNumbers List of game numbers to display with their matched state
  * @param correctNextNumber The next number that should be tapped in sequence
+ * @param accentColor Color of the numbers that are still to be tapped
  * @param onNumberClick Callback invoked when a number box is tapped
  */
 @Composable
 private fun NumberBoxesRow(
     gameNumbers: List<GameNumber>,
     correctNextNumber: Int,
+    accentColor: Color,
     onNumberClick: (GameNumber) -> Unit,
 ) {
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        items(
-            items = gameNumbers,
-            key = { it.number },
-        ) { gameNumber ->
-            var isIncorrectSelection by remember { mutableStateOf(false) }
-            LaunchedEffect(isIncorrectSelection) {
-                if (isIncorrectSelection) {
-                    delay(300)
-                    isIncorrectSelection = false
-                }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val count = gameNumbers.size.coerceAtLeast(1)
+        val boxSize = ((maxWidth - Dimens.spaceSm * (count - 1)) / count).coerceAtMost(MaxNumberBoxSize)
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(
+                items = gameNumbers,
+                key = { it.number },
+            ) { gameNumber ->
+                val shakeState = rememberShakeState()
+                val scope = rememberCoroutineScope()
+                NumberBox(
+                    modifier =
+                        Modifier
+                            .animateItem()
+                            .size(boxSize)
+                            .shake(shakeState),
+                    number = gameNumber.number,
+                    colors =
+                        when {
+                            gameNumber.matched -> TactileDefaults.successColors()
+                            shakeState.isShaking -> TactileDefaults.wrongColors()
+                            else -> TactileDefaults.surfaceColors(content = accentColor)
+                        },
+                    enabled = !gameNumber.matched,
+                    onClick = {
+                        if (gameNumber.number != correctNextNumber) {
+                            scope.launch { shakeState.shake() }
+                        }
+                        onNumberClick(gameNumber)
+                    },
+                )
             }
-            NumberBox(
-                modifier = Modifier.animateItem(),
-                number = gameNumber.number,
-                isGreen = gameNumber.matched,
-                isIncorrectSelection = isIncorrectSelection,
-                onClick = {
-                    if (gameNumber.number != correctNextNumber) {
-                        isIncorrectSelection = true
-                    }
-                    onNumberClick(gameNumber)
-                },
-            )
         }
     }
 }
 
 /**
- * A single number box in the Number Order game.
- *
- * Displays a number inside a rounded box that responds to taps. The box changes color
- * based on [isGreen] (matched/correct) and shows a red border when [isIncorrectSelection]
- * is true. A shake animation plays when an incorrect selection is made.
+ * A single number tile in the Number Order game.
  *
  * @param modifier Modifier for layout and styling
  * @param number The number to display in the box
- * @param isGreen Whether this number has been correctly matched (shown in green)
- * @param isIncorrectSelection Whether this was an incorrect tap (triggers shake)
+ * @param colors Tile colors reflecting its state (to tap, matched, wrong)
+ * @param enabled Whether the tile can still be tapped
  * @param onClick Callback invoked when the box is tapped
  */
 @Composable
 private fun NumberBox(
     modifier: Modifier,
     number: Int,
-    isGreen: Boolean,
-    isIncorrectSelection: Boolean,
+    colors: TactileColors,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val shakeOffset = remember { Animatable(0f) }
-
-    LaunchedEffect(isIncorrectSelection) {
-        if (isIncorrectSelection) {
-            shakeOffset.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(50),
-            )
-            shakeOffset.animateTo(
-                targetValue = -1f,
-                animationSpec = tween(50),
-            )
-            shakeOffset.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(50),
-            )
-        }
-    }
-
-    val backgroundColor = if (isGreen) Color(0xFF4CAF50) else MaterialTheme.colorScheme.surface
-    val borderColor =
-        if (isGreen) {
-            Color(0xFF2E7D32)
-        } else if (isIncorrectSelection) {
-            Color.Red
-        } else {
-            MaterialTheme.colorScheme.outline
-        }
-
-    Box(
-        modifier =
-            modifier
-                .size(64.dp)
-                .scale(1f + shakeOffset.value * 0.1f)
-                .background(backgroundColor, RoundedCornerShape(12.dp))
-                .border(
-                    width = if (isIncorrectSelection) 4.dp else 2.dp,
-                    color = borderColor,
-                    shape = RoundedCornerShape(12.dp),
-                ).clickable(
-                    enabled = !isGreen,
-                    onClick = onClick,
-                ),
-        contentAlignment = Alignment.Center,
+    TactileSurface(
+        modifier = modifier,
+        colors = colors,
+        shape = MaterialTheme.shapes.medium,
+        onClick = onClick,
+        enabled = enabled,
     ) {
         Text(
             text = number.toString(),
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = if (isGreen) Color.White else MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineMedium,
         )
     }
 }

@@ -26,6 +26,7 @@ data class GameInfo(
     val subtitleRes: StringResource,
     val descriptionRes: StringResource,
     val icon: ImageVector,
-    val gradientColors: List<Color>,
+    /** Identity color of the game: its tile, top bar, background tint and highlights. */
+    val accentColor: Color,
     val gameType: GameType,
 )

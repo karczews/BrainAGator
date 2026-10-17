@@ -16,47 +16,56 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.QuestionMark
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
-import brainagator.composeapp.generated.resources.ic_help_center_24dp_e3e3e3_fill0_wght400_grad0_opsz24
 import brainagator.composeapp.generated.resources.repeat_instruction
 import io.github.karczews.brainagator.LocalSharedTransitionContext
 import io.github.karczews.brainagator.Logger
+import io.github.karczews.brainagator.theme.Dimens
+import io.github.karczews.brainagator.theme.darken
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
+import io.github.karczews.brainagator.ui.elements.PlayfulBackground
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileIconButton
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import kotlinx.coroutines.CancellationException
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
+private const val TITLE_DARKEN_FRACTION = 0.2f
+
+/**
+ * Common frame for every game: the game's [PlayfulBackground], a top bar with back and
+ * "repeat instructions" buttons, and spoken instructions when the screen opens.
+ */
 @Composable
 fun GameScreenScaffold(
     gameInfo: GameInfo,
@@ -65,10 +74,7 @@ fun GameScreenScaffold(
     content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
     val tts = rememberTextToSpeech()
-    val scope = rememberCoroutineScope()
     val description = stringResource(gameInfo.descriptionRes)
-
-    val sharedTransitionContext = LocalSharedTransitionContext.current
 
     // Speak game description when screen opens
     var speakRequest: String? by remember { mutableStateOf(description) }
@@ -85,77 +91,90 @@ fun GameScreenScaffold(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    val modifier =
-                        if (sharedTransitionContext != null) {
-                            with(sharedTransitionContext.sharedTransitionScope) {
-                                Modifier.sharedBounds(
-                                    sharedContentState = rememberSharedContentState(gameInfo.titleRes),
-                                    animatedVisibilityScope = sharedTransitionContext.animatedContentScope,
-                                )
-                            }
-                        } else {
-                            Modifier
-                        }
-                    Text(
-                        text = stringResource(gameInfo.titleRes),
-                        modifier = modifier,
-                        color = MaterialTheme.colorScheme.primary,
-                        style =
-                            MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(Res.string.go_back),
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            // Reset to null first to force a state change so LaunchedEffect relaunches
-                            speakRequest = null
-                            speakRequest = description
-                        },
-                        modifier = Modifier.size(60.dp),
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(40.dp),
-                            painter = painterResource(Res.drawable.ic_help_center_24dp_e3e3e3_fill0_wght400_grad0_opsz24),
-                            contentDescription = stringResource(Res.string.repeat_instruction),
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-            )
-        },
-        bottomBar = bottomBar,
-    ) { innerPadding ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = gameInfo.gradientColors.map { it.copy(alpha = 0.15f) } + Color.White,
-                        ),
-                    ),
-        ) {
+    PlayfulBackground(modifier = Modifier.fillMaxSize(), accent = gameInfo.accentColor) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                GameTopBar(
+                    gameInfo = gameInfo,
+                    onBackClick = onBackClick,
+                    onHelpClick = {
+                        // Reset to null first to force a state change so LaunchedEffect relaunches
+                        speakRequest = null
+                        speakRequest = description
+                    },
+                )
+            },
+            bottomBar = bottomBar,
+        ) { innerPadding ->
             content(innerPadding, tts)
         }
+    }
+}
+
+@Composable
+private fun GameTopBar(
+    gameInfo: GameInfo,
+    onBackClick: () -> Unit,
+    onHelpClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TactileIconButton(
+            icon = Icons.AutoMirrored.Rounded.ArrowBack,
+            contentDescription = stringResource(Res.string.go_back),
+            onClick = onBackClick,
+            colors = TactileDefaults.surfaceColors(content = gameInfo.accentColor),
+        )
+        GameTitle(
+            gameInfo = gameInfo,
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(horizontal = Dimens.spaceSm),
+        )
+        // The help button is the accent-colored one: replaying instructions matters most for non-readers.
+        TactileIconButton(
+            icon = Icons.Rounded.QuestionMark,
+            contentDescription = stringResource(Res.string.repeat_instruction),
+            onClick = onHelpClick,
+            colors = TactileDefaults.colors(gameInfo.accentColor),
+        )
+    }
+}
+
+@Composable
+private fun GameTitle(
+    gameInfo: GameInfo,
+    modifier: Modifier = Modifier,
+) {
+    val sharedTransitionContext = LocalSharedTransitionContext.current
+    val sharedModifier =
+        if (sharedTransitionContext != null) {
+            with(sharedTransitionContext.sharedTransitionScope) {
+                Modifier.sharedBounds(
+                    sharedContentState = rememberSharedContentState(gameInfo.titleRes),
+                    animatedVisibilityScope = sharedTransitionContext.animatedContentScope,
+                )
+            }
+        } else {
+            Modifier
+        }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Text(
+            text = stringResource(gameInfo.titleRes),
+            modifier = sharedModifier,
+            color = gameInfo.accentColor.darken(TITLE_DARKEN_FRACTION),
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }

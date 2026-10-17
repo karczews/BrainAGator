@@ -17,13 +17,13 @@
 package io.github.karczews.brainagator.ui.screens.games.sizeorder
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_size_order
 import brainagator.composeapp.generated.resources.game_size_order
 import brainagator.composeapp.generated.resources.subtitle_size_order
+import io.github.karczews.brainagator.theme.GameTangerine
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
@@ -33,8 +33,8 @@ val SizeOrderGameInfo =
         titleRes = Res.string.game_size_order,
         subtitleRes = Res.string.subtitle_size_order,
         descriptionRes = Res.string.desc_size_order,
-        icon = Icons.Default.SwapVert,
-        gradientColors = listOf(Color(0xFFF093FB), Color(0xFFF5576C)),
+        icon = Icons.Rounded.SwapVert,
+        accentColor = GameTangerine,
         gameType = GameType.SizeOrder,
     )
 

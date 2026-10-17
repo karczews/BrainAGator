@@ -16,35 +16,43 @@
 
 package io.github.karczews.brainagator.ui.screens.games
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.test_trigger_win
 import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.Dimens
+import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.ui.elements.TactileButton
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import org.jetbrains.compose.resources.stringResource
+
+private val ContentMaxWidth = 480.dp
 
 @Composable
 fun GamePlaceholder(
@@ -52,77 +60,61 @@ fun GamePlaceholder(
     onBackClick: () -> Unit,
     onGameWon: (() -> Unit)? = null,
 ) {
-    val title = stringResource(gameInfo.titleRes)
-    val subtitle = stringResource(gameInfo.subtitleRes)
-
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
     ) { innerPadding, _ ->
-        Box(
+        BoxWithConstraints(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.TopCenter,
         ) {
+            // Centered when it fits, scrollable when it doesn't (e.g. landscape phones).
             Column(
+                modifier =
+                    Modifier
+                        .widthIn(max = ContentMaxWidth)
+                        .verticalScroll(rememberScrollState())
+                        .heightIn(min = maxHeight)
+                        .padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
             ) {
-                Text(
-                    text = "🎮",
-                    style = MaterialTheme.typography.displayLarge,
-                )
-                Text(
-                    text = title,
-                    style =
-                        MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                Card(
-                    modifier = Modifier.padding(horizontal = 32.dp),
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
+                Box(
+                    modifier =
+                        Modifier
+                            .size(120.dp)
+                            .background(gameInfo.accentColor, CircleShape),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = stringResource(Res.string.game_coming_soon),
-                        modifier = Modifier.padding(24.dp),
-                        style = MaterialTheme.typography.bodyLarge,
+                    Icon(
+                        imageVector = gameInfo.icon,
+                        contentDescription = null,
+                        tint = AppTheme.extendedColors.onAccent,
+                        modifier = Modifier.size(64.dp),
                     )
                 }
+                Text(
+                    text = stringResource(gameInfo.subtitleRes),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center,
+                )
+                InstructionCard(
+                    text = stringResource(Res.string.game_coming_soon),
+                    accent = gameInfo.accentColor,
+                )
 
                 if (isDebugBuild && onGameWon != null) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Button(
+                    TactileButton(
+                        text = stringResource(Res.string.test_trigger_win),
                         onClick = onGameWon,
-                        modifier = Modifier.fillMaxWidth(0.7f).height(56.dp),
-                        shape = RoundedCornerShape(28.dp),
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.EmojiEvents,
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = stringResource(Res.string.test_trigger_win),
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
+                        icon = Icons.Rounded.EmojiEvents,
+                        colors = TactileDefaults.colors(gameInfo.accentColor),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
