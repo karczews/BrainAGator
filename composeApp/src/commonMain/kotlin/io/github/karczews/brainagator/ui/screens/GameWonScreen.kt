@@ -66,13 +66,19 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun GameWonScreen(onBackToMainClick: () -> Unit) {
+fun GameWonScreen(
+    onBackToMainClick: () -> Unit,
+    showFireworks: Boolean = true,
+) {
     PlayfulBackground(modifier = Modifier.fillMaxSize(), accent = AppTheme.extendedColors.reward) {
-        FireworksAnimation(
-            modifier = Modifier.fillMaxSize(),
-            particleCount = 120,
-            explosionCount = 0,
-        )
+        // Screenshot tests turn the fireworks off: their particles are random.
+        if (showFireworks) {
+            FireworksAnimation(
+                modifier = Modifier.fillMaxSize(),
+                particleCount = 120,
+                explosionCount = 0,
+            )
+        }
 
         BoxWithConstraints(
             modifier =

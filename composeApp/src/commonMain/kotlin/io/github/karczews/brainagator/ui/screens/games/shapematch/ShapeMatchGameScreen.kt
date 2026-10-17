@@ -70,6 +70,7 @@ import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import kotlin.random.Random
 
 private const val TILE_ASPECT_RATIO = 0.85f
 private const val MAX_TILE_WIDTH_RATIO = 1.5f
@@ -107,6 +108,7 @@ fun ShapeMatchGameScreen(
     maxShapes: Int = 5,
     maxColors: Int = 5,
     numbersOfItemsToSelect: Int = 6,
+    random: Random = Random.Default,
 ) {
     // Validate input parameter
     require(numbersOfItemsToSelect >= 1) {
@@ -115,8 +117,8 @@ fun ShapeMatchGameScreen(
 
     // Function to generate random shape-color pairs
     fun generateShapeColorPairs(): List<Pair<GameShape, GameColor>> {
-        val shapes = gameShapes.shuffled().take(maxShapes.coerceIn(1, gameShapes.size))
-        val colors = gameColors.shuffled().take(maxColors.coerceIn(1, gameColors.size))
+        val shapes = gameShapes.shuffled(random).take(maxShapes.coerceIn(1, gameShapes.size))
+        val colors = gameColors.shuffled(random).take(maxColors.coerceIn(1, gameColors.size))
 
         // Calculate maximum unique combinations possible
         val maxUnique = shapes.size * colors.size
@@ -124,7 +126,7 @@ fun ShapeMatchGameScreen(
 
         // Build all possible pairs, shuffle, and take desired count
         val allPairs = shapes.flatMap { shape -> colors.map { color -> shape to color } }
-        return allPairs.shuffled().take(desiredCount)
+        return allPairs.shuffled(random).take(desiredCount)
     }
 
     var shapeColorPairs by remember { mutableStateOf(generateShapeColorPairs()) }
@@ -133,7 +135,7 @@ fun ShapeMatchGameScreen(
 
     val currentTarget =
         remember(shapeColorPairs) {
-            shapeColorPairs.randomOrNull()
+            shapeColorPairs.randomOrNull(random)
                 ?: throw IllegalStateException(
                     "shapeColorPairs is empty - this should not happen when numbersOfItemsToSelect >= 1",
                 )

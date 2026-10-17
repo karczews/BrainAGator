@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Determine next version
         id: version
-        uses: tomtom-international/commisery-action/bump@v5
+        uses: tomtom-international/commisery-action/bump@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           create-release: false
@@ -31,7 +31,7 @@ jobs:
 
       - name: Set up JDK 21
         if: steps.version.outputs.next-version != ''
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: '21.0.12+101.0.LTS'
           distribution: 'temurin'
@@ -87,7 +87,7 @@ jobs:
 
       - name: Create release
         if: steps.version.outputs.next-version != ''
-        uses: tomtom-international/commisery-action/bump@v5
+        uses: tomtom-international/commisery-action/bump@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           create-release: true
