@@ -212,7 +212,8 @@ private fun GameGrid(
     onGameSelected: (GameInfo) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val columns = (maxWidth / MinTileWidth).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
+        // Count the gaps too, so each tile really gets at least MinTileWidth.
+        val columns = ((maxWidth + Dimens.spaceMd) / (MinTileWidth + Dimens.spaceMd)).toInt().coerceIn(MIN_COLUMNS, MAX_COLUMNS)
         val tileWidth = (maxWidth - Dimens.spaceMd * (columns - 1)) / columns
         Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
             games.chunked(columns).forEach { rowGames ->
