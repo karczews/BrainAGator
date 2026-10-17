@@ -46,6 +46,9 @@ sealed interface Route {
         val gameType: GameType,
     ) : Route
 
+    /** Win screen for [gameType], so "play again" knows which game to restart. */
     @Serializable
-    data object GameWon : Route
+    data class GameWon(
+        val gameType: GameType,
+    ) : Route
 }

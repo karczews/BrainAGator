@@ -52,14 +52,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
-import brainagator.composeapp.generated.resources.shape_match_current_goal
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameGrape
-import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.tts.speakNow
+import io.github.karczews.brainagator.ui.elements.GatorSpeech
 import io.github.karczews.brainagator.ui.elements.PlayCard
 import io.github.karczews.brainagator.ui.elements.StarProgress
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
@@ -180,9 +180,9 @@ fun ShapeMatchGameScreen(
                     .padding(innerPadding)
                     .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
             instruction = {
-                InstructionCard(
+                GatorSpeech(
                     text = instructionText,
-                    label = stringResource(Res.string.shape_match_current_goal),
+                    onGatorClick = { tts.speakNow(instructionText) },
                     accent = gameInfo.accentColor,
                 )
             },

@@ -36,6 +36,7 @@ val OddOneOutGameInfo =
         icon = Icons.AutoMirrored.Rounded.HelpOutline,
         accentColor = GameIndigo,
         gameType = GameType.OddOneOut,
+        isPlayable = false,
     )
 
 @Composable

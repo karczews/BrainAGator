@@ -6,6 +6,12 @@
 
     <!-- Game Selection Screen -->
     <string name="welcome_message">Witaj w Brainagator! Wybierz grę do zagrania.</string>
+    <!-- Mówione przez aligatora, gdy pokazuje się strona gry: tytuł gry, potem podtytuł -->
+    <string name="game_intro_speech">%1$s! %2$s</string>
+    <string name="coming_soon_speech">Ta gra pojawi się już wkrótce!</string>
+    <string name="coming_soon_sticker">Wkrótce</string>
+    <string name="previous_game">Poprzednia gra</string>
+    <string name="next_game">Następna gra</string>
 
     <!-- Game Titles -->
     <string name="game_shape_match">Znajdź Kształt</string>
@@ -38,6 +44,8 @@
     <string name="congratulations">Gratulacje!</string>
     <string name="you_won">Wygrałeś grę!</string>
     <string name="back_to_main">Wróć do Ekranu Głównego</string>
+    <string name="win_speech">Hura! Udało ci się!</string>
+    <string name="play_again">Zagraj jeszcze raz</string>
 
     <!-- Game Screen -->
     <string name="go_back">Wróć</string>

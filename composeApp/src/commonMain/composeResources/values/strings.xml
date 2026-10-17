@@ -6,6 +6,12 @@
 
     <!-- Game Selection Screen -->
     <string name="welcome_message">Welcome to Brainagator! Select a game to play.</string>
+    <!-- Spoken by the gator when a game's page is shown: game title, then its subtitle -->
+    <string name="game_intro_speech">%1$s! %2$s</string>
+    <string name="coming_soon_speech">This one is coming soon!</string>
+    <string name="coming_soon_sticker">Soon</string>
+    <string name="previous_game">Previous game</string>
+    <string name="next_game">Next game</string>
 
     <!-- Game Titles -->
     <string name="game_shape_match">Find the Shape</string>
@@ -38,6 +44,8 @@
     <string name="congratulations">Congratulations!</string>
     <string name="you_won">You won the game!</string>
     <string name="back_to_main">Back to Main Screen</string>
+    <string name="win_speech">Hooray! You did it!</string>
+    <string name="play_again">Play again</string>
 
     <!-- Game Screen -->
     <string name="go_back">Go back</string>
