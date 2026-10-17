@@ -68,9 +68,11 @@ class DesktopScreenshotTest {
     // to 1x (800x1720dp), so the density override is what pins the viewport.
     private fun capture(
         roborazziOptions: RoborazziOptions = defaultRoborazziOptions,
+        widthPx: Int = VIEWPORT_WIDTH_PX,
+        heightPx: Int = VIEWPORT_HEIGHT_PX,
         content: @Composable () -> Unit,
     ) {
-        runDesktopComposeUiTest(width = VIEWPORT_WIDTH_PX, height = VIEWPORT_HEIGHT_PX) {
+        runDesktopComposeUiTest(width = widthPx, height = heightPx) {
             setContent {
                 CompositionLocalProvider(
                     LocalInspectionMode provides true,
@@ -92,14 +94,27 @@ class DesktopScreenshotTest {
     @Test
     fun gameSelection() {
         capture {
-            SharedTransitionLayout {
-                AnimatedContent(targetState = "preview") {
-                    GameSelectionScreen(
-                        sharedTransitionScope = this@SharedTransitionLayout,
-                        animatedContentScope = this@AnimatedContent,
-                        shouldSpeakWelcome = false,
-                    )
-                }
+            GameSelectionContent()
+        }
+    }
+
+    // Small phone (360x640dp): the size at which every game must still be reachable at a glance.
+    @Test
+    fun gameSelectionSmallPhone() {
+        capture(widthPx = SMALL_PHONE_WIDTH_PX, heightPx = SMALL_PHONE_HEIGHT_PX) {
+            GameSelectionContent()
+        }
+    }
+
+    @Composable
+    private fun GameSelectionContent() {
+        SharedTransitionLayout {
+            AnimatedContent(targetState = "preview") {
+                GameSelectionScreen(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this@AnimatedContent,
+                    shouldSpeakWelcome = false,
+                )
             }
         }
     }
@@ -133,7 +148,8 @@ class DesktopScreenshotTest {
                 gameInfo = NumberOrderGameInfo,
                 onBackClick = {},
                 onGameWon = {},
-                random = Random(0),
+                // Random(0) happens to deal 2, 5, 6, 7, 8, which looks already solved.
+                random = Random(1),
             )
         }
     }
@@ -152,5 +168,7 @@ class DesktopScreenshotTest {
     private companion object {
         const val VIEWPORT_WIDTH_PX = 800
         const val VIEWPORT_HEIGHT_PX = 1720
+        const val SMALL_PHONE_WIDTH_PX = 720
+        const val SMALL_PHONE_HEIGHT_PX = 1280
     }
 }
