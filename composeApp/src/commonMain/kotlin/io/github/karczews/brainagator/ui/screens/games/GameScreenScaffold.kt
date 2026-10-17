@@ -37,7 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -77,18 +77,17 @@ fun GameScreenScaffold(
     val tts = rememberTextToSpeech()
     val description = stringResource(gameInfo.descriptionRes)
 
-    // Speak game description when screen opens
-    var speakRequest: String? by remember { mutableStateOf(description) }
-    LaunchedEffect(speakRequest) {
-        speakRequest?.let {
-            val job = tts.speak(it)
-            try {
-                job.join()
-                speakRequest = null
-            } catch (_: CancellationException) {
-                Logger.d { "Cancelled text-to-speech job for game: ${gameInfo.titleRes}" }
-                job.cancel()
-            }
+    // Speak the game description when the screen opens and again on every help tap. A counter keys the
+    // effect (not the text), so a tap restarts the description even while it is still playing.
+    var speakCount by remember { mutableIntStateOf(0) }
+    LaunchedEffect(speakCount) {
+        val job = tts.speak(description)
+        try {
+            job.join()
+        } catch (e: CancellationException) {
+            Logger.d { "Cancelled text-to-speech job for game: ${gameInfo.titleRes}" }
+            job.cancel()
+            throw e
         }
     }
 
@@ -99,11 +98,7 @@ fun GameScreenScaffold(
                 GameTopBar(
                     gameInfo = gameInfo,
                     onBackClick = onBackClick,
-                    onHelpClick = {
-                        // Reset to null first to force a state change so LaunchedEffect relaunches
-                        speakRequest = null
-                        speakRequest = description
-                    },
+                    onHelpClick = { speakCount++ },
                 )
             },
             bottomBar = bottomBar,
