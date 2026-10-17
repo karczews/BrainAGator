@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.QuestionMark
@@ -35,9 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameOcean
+
+private val LabelMinFontSize = 14.sp
 
 /** A pill-shaped [TactileSurface] with a label and an optional leading icon. */
 @Composable
@@ -62,7 +66,18 @@ fun TactileButton(
             if (icon != null) {
                 Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(Dimens.buttonIcon))
             }
-            Text(text = text, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                // Long labels (e.g. in Polish) shrink to stay on one line next to the icon.
+                autoSize =
+                    TextAutoSize.StepBased(
+                        minFontSize = LabelMinFontSize,
+                        maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    ),
+            )
         }
     }
 }

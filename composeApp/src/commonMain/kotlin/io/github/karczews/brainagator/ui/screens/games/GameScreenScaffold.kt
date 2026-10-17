@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.QuestionMark
@@ -43,7 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.go_back
 import brainagator.composeapp.generated.resources.repeat_instruction
@@ -61,6 +62,7 @@ import kotlinx.coroutines.CancellationException
 import org.jetbrains.compose.resources.stringResource
 
 private const val TITLE_DARKEN_FRACTION = 0.2f
+private val TitleMinFontSize = 16.sp
 
 /**
  * Common frame for every game: the game's [PlayfulBackground], a top bar with back and
@@ -174,7 +176,12 @@ private fun GameTitle(
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            // Long titles (e.g. in Polish) shrink to fit between the buttons instead of being cut off.
+            autoSize =
+                TextAutoSize.StepBased(
+                    minFontSize = TitleMinFontSize,
+                    maxFontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                ),
         )
     }
 }
