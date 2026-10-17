@@ -179,19 +179,21 @@ private fun NumberOrderBoard(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(horizontal = Dimens.screenPadding, vertical = Dimens.spaceMd),
+        modifier = modifier.padding(vertical = Dimens.spaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
     ) {
         InstructionCard(
             text = stringResource(Res.string.number_order_instruction),
             accent = accentColor,
+            modifier = Modifier.padding(horizontal = Dimens.screenPadding),
         )
 
         Image(
             modifier =
                 Modifier
                     .weight(1f, fill = false)
+                    .padding(horizontal = Dimens.screenPadding)
                     .heightIn(max = 128.dp),
             imageVector = vectorResource(Res.drawable.gator_long),
             contentDescription = null,
@@ -202,6 +204,8 @@ private fun NumberOrderBoard(
             correctNextNumber = correctNextNumber,
             accentColor = accentColor,
             onNumberClick = onNumberClick,
+            // Narrower side margin than the rest of the screen so five 64dp tiles fit on 360dp phones.
+            modifier = Modifier.padding(horizontal = Dimens.spaceSm),
         )
     }
 }
@@ -209,13 +213,15 @@ private fun NumberOrderBoard(
 /**
  * Displays a horizontal row of number boxes for the Number Order game.
  *
- * Renders each number as a tactile tile sized so that all of them fit on screen. The row uses
- * animated placement so matched numbers slide into order. Incorrect selections wiggle.
+ * Renders each number as a tactile tile of at least [Dimens.touchTarget], squeezing the gaps
+ * first so that all of them fit on screen (they do from 360dp up; narrower screens scroll).
+ * The row uses animated placement so matched numbers slide into order. Incorrect selections wiggle.
  *
  * @param gameNumbers List of game numbers to display with their matched state
  * @param correctNextNumber The next number that should be tapped in sequence
  * @param accentColor Color of the numbers that are still to be tapped
  * @param onNumberClick Callback invoked when a number box is tapped
+ * @param modifier Modifier for the row
  */
 @Composable
 private fun NumberBoxesRow(
@@ -223,13 +229,16 @@ private fun NumberBoxesRow(
     correctNextNumber: Int,
     accentColor: Color,
     onNumberClick: (GameNumber) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val count = gameNumbers.size.coerceAtLeast(1)
-        val boxSize = ((maxWidth - Dimens.spaceSm * (count - 1)) / count).coerceAtMost(MaxNumberBoxSize)
+        val gapCount = (count - 1).coerceAtLeast(1)
+        val gap = ((maxWidth - Dimens.touchTarget * count) / gapCount).coerceIn(Dimens.spaceXs, Dimens.spaceSm)
+        val boxSize = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, MaxNumberBoxSize)
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items(

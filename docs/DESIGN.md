@@ -63,7 +63,7 @@ body text starts at 16sp and headings are ExtraBold. Keep copy short: one instru
 Tokens live in `theme/Dimens.kt`.
 
 - Minimum touch target: **64dp** (`Dimens.touchTarget`), larger than the 48dp adult guideline.
-- Round icon buttons: 56dp face plus lip.
+- Round icon buttons: 64dp face plus lip.
 - Spacing scale: 4 / 8 / 16 / 24 / 32dp; screen edge padding 20dp.
 - Game boards must fit on screen without scrolling where possible: children do not know to scroll to
   find a hidden answer. Size tiles from the available space (see `ShapeGrid` and `NumberBoxesRow`).

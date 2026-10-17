@@ -35,8 +35,8 @@ object Dimens {
     /** Minimum size of anything a child should tap; larger than the 48dp adult guideline. */
     val touchTarget = 64.dp
 
-    /** Size of round icon buttons (back, help). */
-    val iconButton = 56.dp
+    /** Size of round icon buttons (back, help); at least [touchTarget]. */
+    val iconButton = 64.dp
 
     /** Size of icons inside buttons. */
     val buttonIcon = 28.dp
