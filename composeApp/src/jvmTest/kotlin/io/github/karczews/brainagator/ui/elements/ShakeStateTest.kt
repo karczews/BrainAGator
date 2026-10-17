@@ -20,7 +20,9 @@ import androidx.compose.runtime.MonotonicFrameClock
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.test.Test
@@ -28,28 +30,28 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class ShakeStateTest {
-    /** Advances 16ms of animation time per frame, one frame per millisecond of real time. */
-    private val frameClock =
+    /** A frame clock on the test scheduler's virtual time: one 16ms frame per `delay`, no real waiting. */
+    private fun TestScope.frameClock(): MonotonicFrameClock =
         object : MonotonicFrameClock {
-            private var frameTimeNanos = 0L
-
             override suspend fun <R> withFrameNanos(onFrame: (frameTimeNanos: Long) -> R): R {
-                delay(1)
-                frameTimeNanos += FRAME_NANOS
-                return onFrame(frameTimeNanos)
+                delay(FRAME_MILLIS)
+                return onFrame(testScheduler.currentTime * NANOS_PER_MILLI)
             }
         }
 
     @Test
     fun cancelledShakeSettlesBackInPlace() =
-        runBlocking {
-            withContext(frameClock) {
+        runTest {
+            withContext(StandardTestDispatcher(testScheduler) + frameClock()) {
+                // given
                 val state = ShakeState()
                 val shake = launch { state.shake() }
                 awaitMidWiggle(state)
 
+                // when
                 shake.cancelAndJoin()
 
+                // then
                 assertEquals(0f, state.displacement)
                 assertFalse(state.isShaking)
             }
@@ -57,15 +59,18 @@ class ShakeStateTest {
 
     @Test
     fun newerShakeIsNotInterruptedByTheOneItReplaces() =
-        runBlocking {
-            withContext(frameClock) {
+        runTest {
+            withContext(StandardTestDispatcher(testScheduler) + frameClock()) {
+                // given
                 val state = ShakeState()
                 launch { state.shake() }
                 awaitMidWiggle(state)
 
+                // when
                 val newer = launch { state.shake() }
                 newer.join()
 
+                // then
                 assertFalse(newer.isCancelled, "the replaced shake's cleanup must not cancel the newer one")
                 assertEquals(0f, state.displacement)
                 assertFalse(state.isShaking)
@@ -74,11 +79,12 @@ class ShakeStateTest {
 
     private suspend fun awaitMidWiggle(state: ShakeState) =
         withTimeout(TIMEOUT_MILLIS) {
-            while (state.displacement == 0f) delay(1)
+            while (state.displacement == 0f) delay(FRAME_MILLIS)
         }
 
     private companion object {
-        const val FRAME_NANOS = 16_000_000L
+        const val FRAME_MILLIS = 16L
+        const val NANOS_PER_MILLI = 1_000_000L
         const val TIMEOUT_MILLIS = 5_000L
     }
 }
