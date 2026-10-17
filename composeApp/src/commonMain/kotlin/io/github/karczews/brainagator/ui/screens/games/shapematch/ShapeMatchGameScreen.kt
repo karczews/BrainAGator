@@ -17,57 +17,66 @@
 package io.github.karczews.brainagator.ui.screens.games.shapematch
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.rounded.Category
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_shape_match
 import brainagator.composeapp.generated.resources.game_shape_match
 import brainagator.composeapp.generated.resources.shape_match_current_goal
-import brainagator.composeapp.generated.resources.shape_match_progress_label
 import brainagator.composeapp.generated.resources.shape_match_select_instruction
 import brainagator.composeapp.generated.resources.subtitle_shape_match
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.theme.AutoSizeMin
+import io.github.karczews.brainagator.theme.Dimens
+import io.github.karczews.brainagator.theme.GameGrape
+import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.ui.elements.PlayCard
+import io.github.karczews.brainagator.ui.elements.StarProgress
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileSurface
+import io.github.karczews.brainagator.ui.elements.rememberShakeState
+import io.github.karczews.brainagator.ui.elements.shake
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
+
+private const val TILE_ASPECT_RATIO = 0.85f
+private const val MAX_TILE_WIDTH_RATIO = 1.5f
+private const val SHAPE_FILL_FRACTION = 0.85f
 
 /**
  * Game information for the Shape Match game.
@@ -77,8 +86,8 @@ val ShapeMatchGameInfo =
         titleRes = Res.string.game_shape_match,
         subtitleRes = Res.string.subtitle_shape_match,
         descriptionRes = Res.string.desc_shape_match,
-        icon = Icons.Default.Category,
-        gradientColors = listOf(Color(0xFFB06AB3), Color(0xFF4568DC)),
+        icon = Icons.Rounded.Category,
+        accentColor = GameGrape,
         gameType = GameType.ShapeMatch,
     )
 
@@ -124,7 +133,6 @@ fun ShapeMatchGameScreen(
 
     var shapeColorPairs by remember { mutableStateOf(generateShapeColorPairs()) }
     var correctCount by remember { mutableIntStateOf(0) }
-    var isIncorrectSelection by remember { mutableStateOf(false) }
     val totalIterations = 5
 
     val currentTarget =
@@ -135,151 +143,101 @@ fun ShapeMatchGameScreen(
                 )
         }
 
-    // Flash color for incorrect selection
-    val flashBorderColor = if (isIncorrectSelection) MaterialTheme.colorScheme.error else Color.Transparent
-
-    // Reset incorrect selection after animation
-    LaunchedEffect(isIncorrectSelection) {
-        if (isIncorrectSelection) {
-            kotlinx.coroutines.delay(300)
-            isIncorrectSelection = false
-        }
-    }
-
-    fun handleShapeClick(
-        clickedShape: GameShape,
-        clickedColor: GameColor,
-    ) {
-        if (clickedShape to clickedColor == currentTarget) {
-            // Correct - increment count and regenerate
-            correctCount++
-            if (correctCount >= totalIterations) {
-                onGameWon()
-            } else {
-                // Regenerate shapes and colors
-                shapeColorPairs = generateShapeColorPairs()
-            }
+    fun handleCorrectSelection() {
+        correctCount++
+        if (correctCount >= totalIterations) {
+            onGameWon()
         } else {
-            // Incorrect - trigger flash effect
-            isIncorrectSelection = true
+            // Regenerate shapes and colors
+            shapeColorPairs = generateShapeColorPairs()
         }
     }
 
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
-        bottomBar = {
-            GameProgress(correctCount, totalIterations)
-        },
     ) { innerPadding, tts ->
-        Column(
+        val (targetShape, targetColor) = currentTarget
+        val instructionText =
+            stringResource(
+                Res.string.shape_match_select_instruction,
+                stringResource(targetColor.nameRes),
+                stringResource(targetShape.nameRes),
+            )
+
+        // Keyed on the round too: consecutive rounds can produce the same instruction, which must still be spoken.
+        LaunchedEffect(instructionText, correctCount) {
+            // The final correct answer opens the win screen; don't repeat the finished round's prompt over it.
+            if (correctCount < totalIterations) {
+                tts.speak(instructionText)
+            }
+        }
+
+        GameBoardLayout(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
+            instruction = {
+                InstructionCard(
+                    text = instructionText,
+                    label = stringResource(Res.string.shape_match_current_goal),
+                    accent = gameInfo.accentColor,
+                )
+            },
+            progress = { GameProgress(correctCount, totalIterations) },
+        ) { isLandscape, boardModifier ->
+            // Each round starts with fresh tiles, so a wiggle or coral tint from a wrong answer
+            // never carries over to the next round's answers.
+            key(correctCount) {
+                ShapeGrid(
+                    shapeColorPairs = shapeColorPairs,
+                    currentTarget = currentTarget,
+                    isLandscape = isLandscape,
+                    onCorrectClick = ::handleCorrectSelection,
+                    modifier = boardModifier,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Grid of shape tiles: two columns in portrait, two rows in landscape. Tiles are sized from both the
+ * available width and height so every answer stays visible without scrolling (down to [Dimens.answerTileMinHeight];
+ * only below that does the grid scroll).
+ */
+@Composable
+private fun ShapeGrid(
+    shapeColorPairs: List<Pair<GameShape, GameColor>>,
+    currentTarget: Pair<GameShape, GameColor>,
+    isLandscape: Boolean,
+    onCorrectClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
+        val columns = if (isLandscape) (shapeColorPairs.size + 1) / 2 else 2
+        val rows = (shapeColorPairs.size + columns - 1) / columns
+        val cellWidth = (maxWidth - Dimens.answerTileGap * (columns - 1)) / columns
+        val cellHeight = (maxHeight - Dimens.answerTileGap * (rows - 1)) / rows
+        val tileHeight = minOf(cellHeight, cellWidth / TILE_ASPECT_RATIO).coerceAtLeast(Dimens.answerTileMinHeight)
+        val tileWidth = minOf(cellWidth, tileHeight * MAX_TILE_WIDTH_RATIO)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Dimens.answerTileGap),
         ) {
-            // Instruction Sign
-            val (targetShape, targetColor) = currentTarget
-            val instructionText =
-                stringResource(
-                    Res.string.shape_match_select_instruction,
-                    stringResource(targetColor.nameRes),
-                    stringResource(targetShape.nameRes),
-                )
-            val targetShapeName = stringResource(targetShape.nameRes)
-
-            LaunchedEffect(instructionText) {
-                tts.speak(instructionText)
-            }
-
-            // Sign board with wooden post
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .border(4.dp, MaterialTheme.colorScheme.outline)
-                            .padding(16.dp),
-                ) {
-                    Column {
-                        Text(
-                            text = stringResource(Res.string.shape_match_current_goal),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
+            shapeColorPairs.chunked(columns).forEach { rowPairs ->
+                Row(horizontalArrangement = Arrangement.spacedBy(Dimens.answerTileGap)) {
+                    rowPairs.forEach { pair ->
+                        ColoredShapeButton(
+                            shape = pair.first,
+                            color = pair.second,
+                            isCorrect = pair == currentTarget,
+                            onCorrectClick = onCorrectClick,
+                            modifier = Modifier.size(width = tileWidth, height = tileHeight),
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = instructionText,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
-                // Wooden post under the sign
-                Box(
-                    modifier =
-                        Modifier
-                            .width(20.dp)
-                            .height(44.dp)
-                            .background(MaterialTheme.colorScheme.outline),
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Flash bar for incorrect selection
-            if (isIncorrectSelection) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .background(flashBorderColor),
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-
-            // Display colored shapes in a grid - adapts to orientation
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-            ) {
-                val isLandscape = maxWidth > maxHeight
-
-                if (isLandscape) {
-                    LazyHorizontalGrid(
-                        rows = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                    ) {
-                        items(shapeColorPairs) { (shape, color) ->
-                            ColoredShapeButton(
-                                shape = shape,
-                                color = color,
-                                onClick = { handleShapeClick(shape, color) },
-                            )
-                        }
-                    }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                    ) {
-                        items(shapeColorPairs) { (shape, color) ->
-                            ColoredShapeButton(
-                                shape = shape,
-                                color = color,
-                                onClick = { handleShapeClick(shape, color) },
-                            )
-                        }
                     }
                 }
             }
@@ -288,7 +246,7 @@ fun ShapeMatchGameScreen(
 }
 
 /**
- * Displays the game progress indicator showing current progress out of total iterations.
+ * Displays the game progress as stars earned out of total iterations.
  *
  * @param correctCount Number of correct selections made by the user
  * @param totalCount Total number of iterations required to complete the game
@@ -298,49 +256,12 @@ private fun GameProgress(
     correctCount: Int,
     totalCount: Int,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .border(4.dp, MaterialTheme.colorScheme.outline)
-                .padding(16.dp),
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(Res.string.shape_match_progress_label),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .height(24.dp)
-                            .background(MaterialTheme.colorScheme.outline),
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth(fraction = if (totalCount > 0) correctCount.toFloat() / totalCount else 0f)
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.primary),
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "$correctCount / $totalCount",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        }
+    PlayCard(modifier = Modifier.fillMaxWidth()) {
+        StarProgress(
+            current = correctCount,
+            total = totalCount,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -356,62 +277,97 @@ private fun GameProgressPreview() {
 }
 
 /**
- * A colored shape button that displays a shape filled with a specific color.
- * The shape is drawn large within the card to be clearly visible.
+ * A tactile tile that displays a shape filled with a specific color.
+ * Tapping the wrong tile makes it wiggle; tapping the right one reports success.
  *
  * @param shape The shape to display
  * @param color The color to fill the shape with
- * @param onClick Callback invoked when the shape is clicked
+ * @param isCorrect Whether this tile is the current goal
+ * @param onCorrectClick Callback invoked when the correct tile is tapped
+ * @param modifier Sizing provided by the grid
  */
 @Composable
 private fun ColoredShapeButton(
     shape: GameShape,
     color: GameColor,
-    onClick: () -> Unit,
+    isCorrect: Boolean,
+    onCorrectClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val shapeName = stringResource(shape.nameRes).uppercase()
     val colorName = stringResource(color.nameRes)
     val buttonDescription = "$colorName $shapeName"
+    val shakeState = rememberShakeState()
+    val scope = rememberCoroutineScope()
 
-    Column(
+    TactileSurface(
         modifier =
-            Modifier
-                .aspectRatio(0.85f)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .border(4.dp, MaterialTheme.colorScheme.outline)
-                .clickable(onClick = onClick)
+            modifier
+                .shake(shakeState)
                 .semantics {
                     contentDescription = buttonDescription
-                }.padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+                },
+        colors = if (shakeState.isShaking) TactileDefaults.wrongColors() else TactileDefaults.surfaceColors(),
+        onClick = {
+            if (isCorrect) {
+                onCorrectClick()
+            } else {
+                scope.launch { shakeState.shake() }
+            }
+        },
     ) {
-        // White inner box with shape drawn large
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(Dimens.spaceSm),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+        ) {
+            ShapeWell(
+                shape = shape,
+                color = color,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+            )
+            Text(
+                text = shapeName,
+                style = MaterialTheme.typography.labelLarge,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                // Narrow tiles shrink the name rather than break it mid-word; the shape itself is the cue.
+                autoSize =
+                    TextAutoSize.StepBased(
+                        minFontSize = AutoSizeMin.caption,
+                        maxFontSize = MaterialTheme.typography.labelLarge.fontSize,
+                    ),
+            )
+        }
+    }
+}
+
+/** Soft inner well with the shape drawn as large as the well allows. */
+@Composable
+private fun ShapeWell(
+    shape: GameShape,
+    color: GameColor,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
+                .padding(Dimens.spaceXs),
+        contentAlignment = Alignment.Center,
+    ) {
         Box(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(2.dp, MaterialTheme.colorScheme.outline)
-                    .padding(12.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize(0.7f)
-                        .aspectRatio(1f)
-                        .clip(shape.shape)
-                        .background(color.color),
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = shapeName,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
+                    .size(minOf(maxWidth, maxHeight) * SHAPE_FILL_FRACTION)
+                    .clip(shape.shape)
+                    .background(color.color),
         )
     }
 }

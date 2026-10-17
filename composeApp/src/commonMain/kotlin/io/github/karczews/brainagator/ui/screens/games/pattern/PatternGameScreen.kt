@@ -17,13 +17,13 @@
 package io.github.karczews.brainagator.ui.screens.games.pattern
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_pattern
 import brainagator.composeapp.generated.resources.game_pattern
 import brainagator.composeapp.generated.resources.subtitle_pattern
+import io.github.karczews.brainagator.theme.GameTeal
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
@@ -33,8 +33,8 @@ val PatternGameInfo =
         titleRes = Res.string.game_pattern,
         subtitleRes = Res.string.subtitle_pattern,
         descriptionRes = Res.string.desc_pattern,
-        icon = Icons.Default.GridView,
-        gradientColors = listOf(Color(0xFF667EEA), Color(0xFF764BA2)),
+        icon = Icons.Rounded.GridView,
+        accentColor = GameTeal,
         gameType = GameType.Pattern,
     )
 
