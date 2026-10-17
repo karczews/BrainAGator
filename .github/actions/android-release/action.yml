@@ -14,6 +14,11 @@ inputs:
   key-password:
     description: Key password
     required: true
+  play-credentials:
+    description: >-
+      Google Play service account JSON. Required because Gradle Play Publisher's
+      AUTO version code resolution queries Play during assemble/bundle.
+    required: true
 
 outputs:
   apk-path:
@@ -38,6 +43,7 @@ runs:
         KEYSTORE_PASSWORD: ${{ inputs.keystore-password }}
         KEY_ALIAS: ${{ inputs.key-alias }}
         KEY_PASSWORD: ${{ inputs.key-password }}
+        ANDROID_PUBLISHER_CREDENTIALS: ${{ inputs.play-credentials }}
       run: ./gradlew :androidApp:assembleRelease :androidApp:bundleRelease
 
     - name: Cleanup keystore

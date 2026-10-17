@@ -42,6 +42,7 @@ jobs:
           keystore-password: ${{ secrets.KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.KEY_ALIAS }}
           key-password: ${{ secrets.KEY_PASSWORD }}
+          play-credentials: ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
