@@ -20,8 +20,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -53,6 +55,7 @@ import io.github.karczews.brainagator.theme.darken
 import io.github.karczews.brainagator.theme.lighten
 
 private const val HIGHLIGHT_FRACTION = 0.12f
+private val FocusRingWidth = 3.dp
 
 /** Colors of a [TactileSurface]: the top [face], the [content] drawn on it and the darker [lip] beneath. */
 @Immutable
@@ -117,6 +120,7 @@ fun TactileSurface(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    val isFocused by interactionSource.collectIsFocusedAsState()
     val pressDepth by animateDpAsState(
         targetValue = if (isPressed) Dimens.lipHeight else 0.dp,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessHigh),
@@ -149,7 +153,10 @@ fun TactileSurface(
                     .offset { IntOffset(0, pressDepth.roundToPx()) }
                     .clip(shape)
                     // A slightly lighter top edge gives the face a soft, candy-like sheen.
-                    .background(Brush.verticalGradient(listOf(colors.face.lighten(HIGHLIGHT_FRACTION), colors.face))),
+                    .background(Brush.verticalGradient(listOf(colors.face.lighten(HIGHLIGHT_FRACTION), colors.face)))
+                    // The press animation replaces the ripple, so keyboard focus needs its own cue: a ring in the
+                    // content color, which is chosen to contrast with the face.
+                    .then(if (isFocused) Modifier.border(FocusRingWidth, colors.content, shape) else Modifier),
             contentAlignment = Alignment.Center,
         ) {
             CompositionLocalProvider(LocalContentColor provides colors.content) {
