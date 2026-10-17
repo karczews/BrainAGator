@@ -58,6 +58,7 @@ jobs:
           keystore-password: ${{ secrets.KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.KEY_ALIAS }}
           key-password: ${{ secrets.KEY_PASSWORD }}
+          play-credentials: ${{ secrets.ANDROID_PUBLISHER_CREDENTIALS }}
 
       - name: Build WASM bundle
         if: steps.version.outputs.next-version != ''
