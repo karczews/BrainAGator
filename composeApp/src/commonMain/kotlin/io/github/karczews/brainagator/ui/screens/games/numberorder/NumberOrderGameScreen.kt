@@ -64,6 +64,7 @@ import io.github.karczews.brainagator.ui.elements.rememberShakeState
 import io.github.karczews.brainagator.ui.elements.shake
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
+import io.github.karczews.brainagator.ui.screens.games.GameBoardLayout
 import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringArrayResource
@@ -167,7 +168,9 @@ fun NumberOrderGameScreen(
 }
 
 /**
- * Layout of the Number Order game: the instruction, the gator and the row of number tiles.
+ * Layout of the Number Order game on the shared [GameBoardLayout]: the instruction, then the gator above the
+ * row of number tiles. On short landscape screens the instruction moves beside the board (or everything
+ * stacks), so the tiles always stay on screen.
  */
 @Composable
 private fun NumberOrderBoard(
@@ -177,35 +180,41 @@ private fun NumberOrderBoard(
     onNumberClick: (GameNumber) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.padding(vertical = Dimens.spaceMd),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
-    ) {
-        InstructionCard(
-            text = stringResource(Res.string.number_order_instruction),
-            accent = accentColor,
-            modifier = Modifier.padding(horizontal = Dimens.screenPadding),
-        )
+    GameBoardLayout(
+        // Narrow outer margin so five 64dp tiles fit on 360dp phones; the instruction adds its own inset.
+        modifier = modifier.padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceMd),
+        boardMinWidth = Dimens.touchTarget * gameNumbers.size + Dimens.spaceXs * (gameNumbers.size - 1).coerceAtLeast(0),
+        instruction = {
+            InstructionCard(
+                text = stringResource(Res.string.number_order_instruction),
+                accent = accentColor,
+                modifier = Modifier.padding(horizontal = Dimens.spaceSm),
+            )
+        },
+        progress = {},
+    ) { _, boardModifier ->
+        Column(
+            modifier = boardModifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
+        ) {
+            Image(
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .padding(horizontal = Dimens.spaceMd)
+                        .heightIn(max = Dimens.illustrationMaxHeight),
+                imageVector = vectorResource(Res.drawable.gator_long),
+                contentDescription = null,
+            )
 
-        Image(
-            modifier =
-                Modifier
-                    .weight(1f, fill = false)
-                    .padding(horizontal = Dimens.screenPadding)
-                    .heightIn(max = Dimens.illustrationMaxHeight),
-            imageVector = vectorResource(Res.drawable.gator_long),
-            contentDescription = null,
-        )
-
-        NumberBoxesRow(
-            gameNumbers = gameNumbers,
-            correctNextNumber = correctNextNumber,
-            accentColor = accentColor,
-            onNumberClick = onNumberClick,
-            // Narrower side margin than the rest of the screen so five 64dp tiles fit on 360dp phones.
-            modifier = Modifier.padding(horizontal = Dimens.spaceSm),
-        )
+            NumberBoxesRow(
+                gameNumbers = gameNumbers,
+                correctNextNumber = correctNextNumber,
+                accentColor = accentColor,
+                onNumberClick = onNumberClick,
+            )
+        }
     }
 }
 
