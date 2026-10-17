@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.runDesktopComposeUiTest
+import com.dropbox.differ.SimpleImageComparator
 import com.github.takahirom.roborazzi.RoborazziOptions
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
@@ -42,7 +43,13 @@ import kotlin.test.Test
 class DesktopScreenshotTest {
     private val roborazziOptions =
         RoborazziOptions(
-            compareOptions = RoborazziOptions.CompareOptions(changeThreshold = 0.01F),
+            // Tolerates OS rasterization noise (gradient dithering, font/emoji
+            // substitution between macOS-recorded goldens and Linux CI).
+            compareOptions =
+                RoborazziOptions.CompareOptions(
+                    changeThreshold = 0.025F,
+                    imageComparator = SimpleImageComparator(maxDistance = 0.01F),
+                ),
         )
 
     // Portrait 400x860dp at density 2 (800x1720px window).
