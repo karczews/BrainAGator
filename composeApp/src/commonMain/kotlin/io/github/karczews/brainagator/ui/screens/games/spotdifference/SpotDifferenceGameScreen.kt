@@ -23,7 +23,7 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_spot_difference
 import brainagator.composeapp.generated.resources.game_spot_difference
 import brainagator.composeapp.generated.resources.subtitle_spot_difference
-import io.github.karczews.brainagator.theme.GameCoral
+import io.github.karczews.brainagator.theme.GamePlum
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.screens.GameInfo
 import io.github.karczews.brainagator.ui.screens.games.GamePlaceholder
@@ -34,7 +34,7 @@ val SpotDifferenceGameInfo =
         subtitleRes = Res.string.subtitle_spot_difference,
         descriptionRes = Res.string.desc_spot_difference,
         icon = Icons.Rounded.Search,
-        accentColor = GameCoral,
+        accentColor = GamePlum,
         gameType = GameType.SpotDifference,
     )
 

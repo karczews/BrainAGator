@@ -36,8 +36,10 @@ Defined in `theme/Color.kt` and exposed through `MaterialTheme.colorScheme` plus
 | Reward | `AppTheme.extendedColors.reward` | Sunny Yellow | Earned stars, win screen |
 
 **Game accents** (`GameInfo.accentColor`): Grape `#7A52E8`, Ocean `#1A7FD8`, Berry `#D9407E`, Tangerine
-`#E2620F`, Teal `#0E8F87`, Indigo `#4C5FD7`, Coral `#E04A3C`. Every accent has at least 3.5:1 contrast with
-white, so bold white labels on accent tiles stay readable. Pick new accents with the same constraint.
+`#E2620F`, Teal `#0E8F87`, Indigo `#4C5FD7`, Plum `#A23CB4`. Every accent has at least 3.5:1 contrast with
+white, so bold white labels on accent tiles stay readable. Pick new accents with the same constraint, and
+keep them clear of the feedback colors (coral, green, yellow) so right/wrong/reward cues never blend into a
+game's own color.
 
 Helpers: `Color.darken(fraction)` makes lips and readable accent-colored text; `Color.lighten(fraction)` makes tints.
 

@@ -56,14 +56,15 @@ val Black = Color(0xFF000000)
 val LogoGrape = Color(0xFF7A52E8)
 val LogoBerry = Color(0xFFD9407E)
 
-// Game accents: one identity color per game, used for its tile, top bar and highlights
+// Game accents: one identity color per game, used for its tile, top bar and highlights.
+// Kept clear of the feedback colors (error coral, success green, reward yellow).
 val GameGrape = Color(0xFF7A52E8)
 val GameOcean = Color(0xFF1A7FD8)
 val GameBerry = Color(0xFFD9407E)
 val GameTangerine = Color(0xFFE2620F)
 val GameTeal = Color(0xFF0E8F87)
 val GameIndigo = Color(0xFF4C5FD7)
-val GameCoral = Color(0xFFE04A3C)
+val GamePlum = Color(0xFFA23CB4)
 
 /** Returns this color mixed with black; used for tactile "lips" and readable accent text. */
 fun Color.darken(fraction: Float): Color = lerp(this, Black, fraction)
