@@ -24,6 +24,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -34,6 +35,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +51,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
 import brainagator.composeapp.generated.resources.congratulations
@@ -62,6 +67,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 private val ButtonMaxWidth = 420.dp
+private val TitleMinFontSize = 24.sp
 
 @Composable
 fun GameWonScreen(onBackToMainClick: () -> Unit) {
@@ -72,41 +78,79 @@ fun GameWonScreen(onBackToMainClick: () -> Unit) {
             explosionCount = 0,
         )
 
-        Column(
+        BoxWithConstraints(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.safeDrawing)
                     .padding(Dimens.screenPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
         ) {
-            // Shrinks on short (landscape) screens instead of pushing the button off-screen.
-            BouncingGator(modifier = Modifier.weight(1f, fill = false))
-            Text(
-                text = stringResource(Res.string.congratulations),
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = stringResource(Res.string.you_won),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-            )
-            WinStars()
-            TactileButton(
-                text = stringResource(Res.string.back_to_main),
-                onClick = onBackToMainClick,
-                icon = Icons.Rounded.Home,
-                modifier =
-                    Modifier
-                        .padding(top = Dimens.spaceSm)
-                        .widthIn(max = ButtonMaxWidth)
-                        .fillMaxWidth(),
-            )
+            if (maxWidth > maxHeight) {
+                // Landscape: gator beside the message, so short screens keep both large and the button visible.
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BouncingGator(modifier = Modifier.weight(1f, fill = false))
+                    WinMessage(onBackToMainClick = onBackToMainClick, modifier = Modifier.weight(1f))
+                }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
+                ) {
+                    // Shrinks on short screens instead of pushing the button off-screen.
+                    BouncingGator(modifier = Modifier.weight(1f, fill = false))
+                    WinMessage(onBackToMainClick = onBackToMainClick)
+                }
+            }
         }
+    }
+}
+
+/** Title, stars and the way home; scrolls only if a screen is too short to show it all. */
+@Composable
+private fun WinMessage(
+    onBackToMainClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+    ) {
+        Text(
+            text = stringResource(Res.string.congratulations),
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            // Shrinks in narrow columns instead of breaking the word.
+            autoSize =
+                TextAutoSize.StepBased(
+                    minFontSize = TitleMinFontSize,
+                    maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
+                ),
+        )
+        Text(
+            text = stringResource(Res.string.you_won),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+        WinStars()
+        TactileButton(
+            text = stringResource(Res.string.back_to_main),
+            onClick = onBackToMainClick,
+            icon = Icons.Rounded.Home,
+            modifier =
+                Modifier
+                    .padding(top = Dimens.spaceSm)
+                    .widthIn(max = ButtonMaxWidth)
+                    .fillMaxWidth(),
+        )
     }
 }
 
