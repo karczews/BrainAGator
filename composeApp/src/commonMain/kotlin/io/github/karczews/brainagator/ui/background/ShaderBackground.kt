@@ -1,0 +1,33 @@
+/*
+ * Copyright 2026 Krzysztof Karczewski
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.karczews.brainagator.ui.background
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+/**
+ * A composable that renders an animated shader background.
+ * Uses AGSL on Android and Skiko on other platforms.
+ *
+ * @param modifier The modifier to apply to this composable
+ * @param time The animation time value that drives the shader animation
+ */
+@Composable
+expect fun ShaderBackground(
+    modifier: Modifier = Modifier,
+    time: Float = 0f,
+)
