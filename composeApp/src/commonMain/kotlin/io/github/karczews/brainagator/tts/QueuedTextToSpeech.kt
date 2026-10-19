@@ -18,6 +18,8 @@ package io.github.karczews.brainagator.tts
 
 import io.github.karczews.brainagator.Logger
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
@@ -51,6 +53,8 @@ abstract class QueuedTextToSpeech(
     private var queueProcessor: Job? = null
 
     private val currentJob = atomic<Job?>(null)
+    private val stopGeneration = atomic(0)
+    private val lock = SynchronizedObject()
 
     init {
         startQueueProcessor()
@@ -72,46 +76,60 @@ abstract class QueuedTextToSpeech(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun speak(text: String): Job {
-        val job =
-            scope.launch(start = CoroutineStart.LAZY) {
-                try {
-                    if (isActive) {
-                        performSpeak(text)
+    override fun speak(text: String): Job =
+        synchronized(lock) {
+            val generation = stopGeneration.value
+            val job =
+                scope.launch(start = CoroutineStart.LAZY) {
+                    try {
+                        if (isActive) {
+                            performSpeak(text)
+                        }
+                    } catch (e: CancellationException) {
+                        stopIfNotSuperseded(generation)
+                        throw e
+                    } catch (e: Exception) {
+                        Logger.e(e) { "TTS Error speaking: $text" }
                     }
-                } catch (e: CancellationException) {
-                    // Stop speech when job is cancelled
-                    performStop()
-                    throw e
-                } catch (e: Exception) {
-                    Logger.e(e) { "TTS Error speaking: $text" }
                 }
-            }
 
-        val result = queue.trySend(job)
-        if (result.isFailure) {
-            Logger.w { "TTS queue closed, cannot enqueue: $text" }
-            job.cancel()
+            val result = queue.trySend(job)
+            if (result.isFailure) {
+                Logger.w { "TTS queue closed, cannot enqueue: $text" }
+                job.cancel()
+            }
+            job
         }
-        return job
+
+    private fun stopIfNotSuperseded(generation: Int) {
+        synchronized(lock) {
+            // stop() already stopped older utterances; late cleanup must not stop their replacements.
+            if (stopGeneration.value == generation) {
+                performStop()
+            }
+        }
     }
 
     override fun stop() {
-        // Cancel all pending jobs in the queue
-        var result = queue.tryReceive()
-        while (result.isSuccess) {
-            result.getOrNull()?.cancel()
-            result = queue.tryReceive()
+        synchronized(lock) {
+            stopGeneration.incrementAndGet()
+
+            // Cancel all pending jobs in the queue
+            var result = queue.tryReceive()
+            while (result.isSuccess) {
+                result.getOrNull()?.cancel()
+                result = queue.tryReceive()
+            }
+
+            // Cancel the currently executing job
+            currentJob.value?.cancel()
+
+            performStop()
+
+            // Restart queue processor to ensure future speak() calls work correctly
+            // The processor may have exited if the queue was empty
+            startQueueProcessor()
         }
-
-        // Cancel the currently executing job
-        currentJob.value?.cancel()
-
-        performStop()
-
-        // Restart queue processor to ensure future speak() calls work correctly
-        // The processor may have exited if the queue was empty
-        startQueueProcessor()
     }
 
     override fun shutdown() {

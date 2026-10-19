@@ -181,6 +181,25 @@ class QueuedTextToSpeechTest {
     // ------------------------------------------------------------------
 
     @Test
+    fun cancellingIndividualJobAfterStopStillStopsSpeech() =
+        runTest {
+            // given
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+            tts.stop()
+            val job = tts.speak("A")
+            delay(50)
+
+            // when
+            job.cancel()
+            job.join()
+
+            // then
+            assertTrue(job.isCancelled)
+            assertEquals(2, tts.stopCount)
+            tts.shutdown()
+        }
+
+    @Test
     fun cancellingReturnedJobStopsCurrentSpeech() =
         runTest {
             // given — inside performSpeak now
@@ -352,6 +371,28 @@ class QueuedTextToSpeechTest {
             assertTrue(job3.isCancelled)
             assertTrue(job4.isCancelled)
             assertEquals(emptyList<String>(), tts.spokenTexts)
+            tts.shutdown()
+        }
+
+    @Test
+    fun stopThenSpeakDoesNotStopReplacementUtterance() =
+        runTest {
+            // given
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+            tts.speak("old")
+            delay(50)
+
+            // when — enqueue the replacement before cancellation cleanup runs
+            tts.stop()
+            val replacement = tts.speak("new")
+            delay(50)
+
+            // then
+            assertTrue(replacement.isActive)
+            assertEquals(1, tts.stopCount)
+            tts.releaseSpeak()
+            replacement.join()
+            assertEquals(listOf("new"), tts.spokenTexts)
             tts.shutdown()
         }
 
