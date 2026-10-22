@@ -55,7 +55,7 @@ import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameOcean
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.speakNow
-import io.github.karczews.brainagator.ui.elements.GatorSpeech
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.TactileColors
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileSurface
@@ -187,7 +187,7 @@ private fun NumberOrderBoard(
         modifier = modifier.padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
         boardMinWidth = Dimens.touchTarget * NUMBER_TILES_PER_ROW + Dimens.answerTileGap * (NUMBER_TILES_PER_ROW - 1),
         instruction = {
-            GatorSpeech(
+            InstructionHeader(
                 text = instructionText,
                 onGatorClick = { tts.speakNow(instructionText) },
                 accent = accentColor,

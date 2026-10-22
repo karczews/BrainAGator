@@ -72,7 +72,7 @@ import io.github.karczews.brainagator.theme.LogoGrape
 import io.github.karczews.brainagator.tts.TextToSpeech
 import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.tts.speakNow
-import io.github.karczews.brainagator.ui.elements.GatorSpeech
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
 import io.github.karczews.brainagator.ui.screens.games.colormatch.ColorMatchGameInfo
 import io.github.karczews.brainagator.ui.screens.games.numberorder.NumberOrderGameInfo
@@ -143,7 +143,7 @@ fun GameSelectionScreen(
         PlayfulBackground(modifier = Modifier.fillMaxSize(), accent = accent) {
             HomeLayout(
                 speech = {
-                    GatorSpeech(
+                    InstructionHeader(
                         text = stringResource(if (game.isPlayable) game.subtitleRes else Res.string.coming_soon_speech),
                         onGatorClick = { tts.speakNow(intros[pagerState.currentPage]) },
                         accent = game.accentColor,

@@ -43,7 +43,7 @@ import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.tts.speakNow
-import io.github.karczews.brainagator.ui.elements.GatorSpeech
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.TactileButton
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.screens.GameInfo
@@ -92,7 +92,7 @@ fun GamePlaceholder(
                         modifier = Modifier.size(Dimens.heroBadgeIcon),
                     )
                 }
-                GatorSpeech(
+                InstructionHeader(
                     text = comingSoon,
                     onGatorClick = { tts.speakNow(comingSoon) },
                     accent = gameInfo.accentColor,

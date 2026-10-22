@@ -49,7 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Common frame for every game: the game's [PlayfulBackground], a back button and the game description
  * spoken when the screen opens. There is no title and no help button: each game's speaking gator
- * ([io.github.karczews.brainagator.ui.elements.GatorSpeech]) shows the instruction and says it again when pressed.
+ * ([io.github.karczews.brainagator.ui.elements.InstructionHeader]) shows the instruction and says it again when pressed.
  */
 @Composable
 fun GameScreenScaffold(

@@ -53,12 +53,12 @@ private val BadgeBorder = 2.dp
 private const val SHARED_GATOR_KEY = "speaking-gator"
 
 /**
- * The gator "talking": a round, pressable gator next to a [SpeechBubble] with [text].
+ * The instruction header: a round, pressable gator next to a [SpeechBubble] with [text].
  * Pressing the gator makes it say the text again, so this replaces both the instruction card
  * and the old "?" help button. A small speaker badge hints that the gator makes sound.
  */
 @Composable
-fun GatorSpeech(
+fun InstructionHeader(
     text: String,
     onGatorClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -150,9 +150,9 @@ private fun Modifier.sharedGator(): Modifier {
 
 @Preview
 @Composable
-private fun GatorSpeechPreview() {
+private fun InstructionHeaderPreview() {
     AppTheme {
-        GatorSpeech(
+        InstructionHeader(
             text = "Select a Yellow Diamond",
             onGatorClick = {},
             accent = GameOcean,

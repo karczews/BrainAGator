@@ -59,7 +59,7 @@ import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameGrape
 import io.github.karczews.brainagator.tts.speakNow
-import io.github.karczews.brainagator.ui.elements.GatorSpeech
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.PlayCard
 import io.github.karczews.brainagator.ui.elements.StarProgress
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
@@ -180,7 +180,7 @@ fun ShapeMatchGameScreen(
                     .padding(innerPadding)
                     .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
             instruction = {
-                GatorSpeech(
+                InstructionHeader(
                     text = instructionText,
                     onGatorClick = { tts.speakNow(instructionText) },
                     accent = gameInfo.accentColor,
