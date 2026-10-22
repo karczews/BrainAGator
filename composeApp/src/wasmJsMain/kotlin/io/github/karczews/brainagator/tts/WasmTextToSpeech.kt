@@ -67,9 +67,9 @@ class WasmTextToSpeech : QueuedTextToSpeech() {
             onError = { completable.completeExceptionally(Exception("TTS Error")) },
         )
 
-        // Last check before the engine speaks: a stop() may have landed while setting up above.
-        checkSpeakNotSuperseded()
-        synthesis.speak(utterance)
+        // The engine start shares the stop lock: a stop() cannot land between the freshness
+        // check and the engine starting.
+        withSpeakStartLock { synthesis.speak(utterance) }
 
         completable.await()
     }

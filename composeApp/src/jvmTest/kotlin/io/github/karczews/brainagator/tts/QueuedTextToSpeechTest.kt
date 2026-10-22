@@ -504,21 +504,26 @@ class QueuedTextToSpeechTest {
             // given — utterance is held open in its pre-start window (past the shared guard,
             // before the engine speaks), modelling platform setup that cannot be cancelled
             val tts = PreStartWindowFake(Dispatchers.Default)
-            val job = tts.speak("old")
-            assertTrue(
-                tts.enteredWindow.await(5, TimeUnit.SECONDS),
-                "Utterance should reach the pre-start window",
-            )
+            try {
+                val job = tts.speak("old")
+                assertTrue(
+                    tts.enteredWindow.await(5, TimeUnit.SECONDS),
+                    "Utterance should reach the pre-start window",
+                )
 
-            // when — stop() lands inside the window, then the utterance proceeds
-            tts.stop()
-            tts.releaseStart.value = true
-            job.join()
+                // when — stop() lands inside the window, then the utterance proceeds
+                tts.stop()
+                tts.releaseStart.value = true
+                job.join()
 
-            // then — the platform-positioned guard refuses the stale start
-            assertEquals(0, tts.engineStarts.value, "Audio started after stop() must be refused")
-            assertEquals(1, tts.stopCount)
-            tts.shutdown()
+                // then — the platform-positioned guard refuses the stale start
+                assertEquals(0, tts.engineStarts.value, "Audio started after stop() must be refused")
+                assertEquals(1, tts.stopCount)
+            } finally {
+                // Never leave the spinner busy-looping on a worker if an assertion above fails.
+                tts.releaseStart.value = true
+                tts.shutdown()
+            }
         }
     }
 }
@@ -526,8 +531,8 @@ class QueuedTextToSpeechTest {
 /**
  * Models platform speech with a controllable pre-start window: [performSpeak] signals
  * [enteredWindow], spins without suspending (so cancellation cannot be delivered, like platform
- * setup code), then runs the platform-positioned [QueuedTextToSpeech.checkSpeakNotSuperseded]
- * guard right before recording the engine start.
+ * setup code), then runs the platform-positioned [QueuedTextToSpeech.withSpeakStartLock] guard
+ * around recording the engine start.
  */
 private class PreStartWindowFake(
     dispatcher: CoroutineDispatcher,
@@ -542,8 +547,7 @@ private class PreStartWindowFake(
         while (!releaseStart.value) {
             Thread.yield()
         }
-        checkSpeakNotSuperseded()
-        engineStarts.incrementAndGet()
+        withSpeakStartLock { engineStarts.incrementAndGet() }
         awaitCancellation()
     }
 

@@ -299,14 +299,21 @@ private fun PageDots(
             val selected = index == currentPage
             val width by animateDpAsState(if (selected) Dimens.pageDotSelected else Dimens.pageDot, label = "pageDotWidth")
             val label = stringResource(game.titleRes)
+            // Hit area is taller than the visible dot; the width stays visual so the row math holds.
             Box(
                 modifier =
                     Modifier
-                        .size(width = width, height = Dimens.pageDot)
-                        .background(if (selected) game.accentColor else game.accentColor.lighten(IDLE_DOT_LIGHTEN), CircleShape)
+                        .size(width = width, height = Dimens.pageDotHitHeight)
                         .semantics { contentDescription = label }
                         .clickable(role = Role.Button, onClickLabel = goToGame) { onDotClick(index) },
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                Box(
+                    Modifier
+                        .size(width = width, height = Dimens.pageDot)
+                        .background(if (selected) game.accentColor else game.accentColor.lighten(IDLE_DOT_LIGHTEN), CircleShape),
+                )
+            }
         }
     }
 }

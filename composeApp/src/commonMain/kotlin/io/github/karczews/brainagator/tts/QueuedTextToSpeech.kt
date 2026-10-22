@@ -126,8 +126,8 @@ abstract class QueuedTextToSpeech(
 
     /**
      * Throws [CancellationException] unless this utterance is still live and no [stop] ran since it
-     * was enqueued. Called before [performSpeak] here, and every [performSpeak] implementation must
-     * also call it immediately before its engine speak call.
+     * was enqueued. This is the early guard, called before [performSpeak]; every [performSpeak]
+     * implementation must additionally wrap its engine speak call in [withSpeakStartLock].
      *
      * Both guards are needed because cancellation is cooperative: a [stop] landing after the first
      * check but before the engine call would otherwise start audio that the late cleanup in
@@ -140,6 +140,24 @@ abstract class QueuedTextToSpeech(
             if (context[UtteranceGeneration]?.generation != stopGeneration.value) {
                 throw CancellationException("TTS utterance superseded by stop()")
             }
+        }
+    }
+
+    /**
+     * Runs the single engine speak call while holding the stop lock, so a [stop] cannot land
+     * between the freshness check and the engine starting.
+     *
+     * [block] must not suspend: the stop lock is held for its whole duration and [stop] blocks
+     * on it. Keep the block to the engine speak call itself.
+     */
+    protected suspend fun <T> withSpeakStartLock(block: () -> T): T {
+        val context = currentCoroutineContext()
+        context.ensureActive()
+        return synchronized(lock) {
+            if (context[UtteranceGeneration]?.generation != stopGeneration.value) {
+                throw CancellationException("TTS utterance superseded by stop()")
+            }
+            block()
         }
     }
 

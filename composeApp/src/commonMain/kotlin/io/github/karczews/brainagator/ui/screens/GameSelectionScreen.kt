@@ -38,8 +38,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -181,6 +183,7 @@ private fun HomeLayout(
                         Modifier
                             .weight(LANDSCAPE_SIDE_WEIGHT)
                             .fillMaxHeight()
+                            .verticalScroll(rememberScrollState())
                             .padding(start = Dimens.screenPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),

@@ -91,6 +91,12 @@ object Dimens {
     val pageDot = 12.dp
     val pageDotSelected = 32.dp
 
+    /**
+     * Tappable height of a page dot. A full 64dp target per dot cannot fit a row of seven on a
+     * phone, so dots stay visually small with a taller hit area; arrows and swipe stay primary.
+     */
+    val pageDotHitHeight = 32.dp
+
     // Win screen: icon-only round actions
     val winAction = 96.dp
     val winActionIcon = 48.dp

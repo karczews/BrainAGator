@@ -99,9 +99,11 @@ class AndroidTextToSpeech(
         )
 
         val utteranceId = UUID.randomUUID().toString()
-        // Last check before the engine speaks: a stop() may have landed while setting up above.
-        checkSpeakNotSuperseded()
-        tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
+        // The engine start shares the stop lock: a stop() cannot land between the freshness
+        // check and the engine starting.
+        withSpeakStartLock {
+            tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
+        }
         completable.await()
     }
 
