@@ -234,8 +234,10 @@ private fun NumberTilesGrid(
             columns = GridCells.Fixed(NUMBER_TILES_PER_ROW * 2),
             modifier = Modifier.width(tileSize * NUMBER_TILES_PER_ROW + gap * (NUMBER_TILES_PER_ROW - 1)),
             horizontalArrangement = Arrangement.spacedBy(gap),
-            verticalArrangement = Arrangement.spacedBy(gap),
-            userScrollEnabled = false,
+            verticalArrangement = Arrangement.spacedBy(gap, Alignment.CenterVertically),
+            // The tiles are floored at touchTarget, so on short stacked layouts the rows can be
+            // taller than the board: let them scroll rather than stranding rows out of reach.
+            userScrollEnabled = true,
         ) {
             gameNumbers.forEachIndexed { index, gameNumber ->
                 if (index == lastRowStart && lastRowCount < NUMBER_TILES_PER_ROW) {

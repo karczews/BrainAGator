@@ -34,7 +34,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Replay
@@ -124,6 +126,7 @@ private fun WinLayout(
     ) {
         if (maxWidth > maxHeight) {
             // Landscape: gator beside the bubble and buttons, so short screens keep the buttons visible.
+            // Scrollable as a fallback: on very short phones the column can still exceed the height.
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterHorizontally),
@@ -131,11 +134,14 @@ private fun WinLayout(
             ) {
                 BouncingGator(modifier = Modifier.weight(1f, fill = false))
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
                 ) {
-                    WinBubble(text = winSpeech)
+                    WinBubble(text = winSpeech, tail = BubbleTail.Start)
                     WinStars()
                     WinActions(onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
                 }
@@ -157,10 +163,13 @@ private fun WinLayout(
 }
 
 @Composable
-private fun WinBubble(text: String) {
+private fun WinBubble(
+    text: String,
+    tail: BubbleTail = BubbleTail.Bottom,
+) {
     SpeechBubble(
         text = text,
-        tail = BubbleTail.Bottom,
+        tail = tail,
         textStyle = MaterialTheme.typography.headlineMedium,
         singleLine = true,
         modifier = Modifier.widthIn(max = Dimens.buttonMaxWidth),

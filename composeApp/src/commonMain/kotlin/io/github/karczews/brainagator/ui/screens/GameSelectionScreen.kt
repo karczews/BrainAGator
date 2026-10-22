@@ -59,10 +59,10 @@ import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.coming_soon_speech
 import brainagator.composeapp.generated.resources.game_intro_speech
 import brainagator.composeapp.generated.resources.welcome_message
+import io.github.karczews.brainagator.LocalIsDebugBuild
 import io.github.karczews.brainagator.LocalSharedTransitionContext
 import io.github.karczews.brainagator.Platform
 import io.github.karczews.brainagator.SharedTransitionContext
-import io.github.karczews.brainagator.isDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
@@ -128,11 +128,14 @@ fun GameSelectionScreen(
     val game = games[pagerState.currentPage]
     val accent by animateColorAsState(game.accentColor, label = "homeAccent")
     val comingSoon = stringResource(Res.string.coming_soon_speech)
+    val isDebug = LocalIsDebugBuild.current
     val onCardClick: (Int) -> Unit = { page ->
         val pressed = games[page]
         when {
+            // A peeking playable card starts its game on the first tap; only coming-soon
+            // cards off-center scroll into view (a second tap then says they are coming soon).
+            pressed.isPlayable || isDebug -> onGameSelected(pressed)
             page != pagerState.currentPage -> scope.launch { pagerState.animateScrollToPage(page) }
-            pressed.isPlayable || isDebugBuild -> onGameSelected(pressed)
             else -> tts.speakNow(comingSoon)
         }
     }
@@ -185,6 +188,7 @@ private fun HomeLayout(
                     Logo()
                     speech()
                     controls()
+                    BuildInfo(modifier = Modifier.align(Alignment.End).padding(horizontal = Dimens.screenPadding))
                 }
                 pager(Modifier.weight(LANDSCAPE_PAGER_WEIGHT).fillMaxHeight())
             }
@@ -222,10 +226,13 @@ private fun SpeakPageIntros(
         snapshotFlow { pagerState.settledPage }.collect { page ->
             if (!isFirstPage) {
                 tts.speakNow(currentIntros[page])
-            } else if (speakWelcome) {
-                tts.speak(welcomeText)
+            } else {
+                // Always introduce the first page: returning home skips only the welcome itself.
+                if (speakWelcome) {
+                    tts.speak(welcomeText)
+                    welcomeSpoken()
+                }
                 tts.speak(currentIntros[page])
-                welcomeSpoken()
             }
             isFirstPage = false
         }
@@ -241,6 +248,7 @@ private fun HomePagerControls(pagerState: PagerState) {
         currentPage = pagerState.currentPage,
         onPrevious = { scope.launch { pagerState.animateScrollToPage((pagerState.currentPage - 1 + games.size) % games.size) } },
         onNext = { scope.launch { pagerState.animateScrollToPage((pagerState.currentPage + 1) % games.size) } },
+        onDotClick = { scope.launch { pagerState.animateScrollToPage(it) } },
     )
 }
 
@@ -282,7 +290,7 @@ private fun Logo(modifier: Modifier = Modifier) {
 @Composable
 private fun BuildInfo(modifier: Modifier = Modifier) {
     val platform = Platform()
-    val buildType = if (isDebugBuild) "debug" else "release"
+    val buildType = if (LocalIsDebugBuild.current) "debug" else "release"
     Text(
         text = "${platform.name} • $buildType",
         style = MaterialTheme.typography.labelSmall,

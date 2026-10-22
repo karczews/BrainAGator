@@ -18,6 +18,7 @@ package io.github.karczews.brainagator.ui.screens
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -45,10 +46,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.coming_soon_sticker
+import brainagator.composeapp.generated.resources.go_to_game
 import brainagator.composeapp.generated.resources.next_game
 import brainagator.composeapp.generated.resources.previous_game
 import io.github.karczews.brainagator.theme.AppTheme
@@ -56,6 +62,7 @@ import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.darken
 import io.github.karczews.brainagator.theme.lighten
+import io.github.karczews.brainagator.ui.elements.TactileColors
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileIconButton
 import io.github.karczews.brainagator.ui.elements.TactileSurface
@@ -194,42 +201,96 @@ private fun ComingSoonSticker(modifier: Modifier = Modifier) {
     }
 }
 
-/** Previous / next arrows around a row of page dots, each dot in its game's color. */
+/**
+ * Previous / next arrows around a row of page dots, each dot in its game's color and tappable
+ * to jump to that game. In narrow columns (landscape phones) the dots move to their own line so
+ * the arrows keep their full touch targets.
+ */
 @Composable
 internal fun PagerControls(
     games: List<GameInfo>,
     currentPage: Int,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onDotClick: (page: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val accent = games[currentPage].accentColor
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        TactileIconButton(
-            icon = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = stringResource(Res.string.previous_game),
-            onClick = onPrevious,
-            colors = TactileDefaults.surfaceColors(content = accent),
-        )
-        PageDots(games = games, currentPage = currentPage)
-        TactileIconButton(
-            icon = Icons.AutoMirrored.Rounded.ArrowForward,
-            contentDescription = stringResource(Res.string.next_game),
-            onClick = onNext,
-            colors = TactileDefaults.colors(accent),
-        )
+    BoxWithConstraints(modifier = modifier) {
+        if (maxWidth >= pagerSingleRowMinWidth(games.size)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PagerArrow(
+                    icon = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(Res.string.previous_game),
+                    onClick = onPrevious,
+                    colors = TactileDefaults.surfaceColors(content = accent),
+                )
+                PageDots(games = games, currentPage = currentPage, onDotClick = onDotClick)
+                PagerArrow(
+                    icon = Icons.AutoMirrored.Rounded.ArrowForward,
+                    contentDescription = stringResource(Res.string.next_game),
+                    onClick = onNext,
+                    colors = TactileDefaults.colors(accent),
+                )
+            }
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm, Alignment.CenterVertically),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PagerArrow(
+                        icon = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(Res.string.previous_game),
+                        onClick = onPrevious,
+                        colors = TactileDefaults.surfaceColors(content = accent),
+                    )
+                    PagerArrow(
+                        icon = Icons.AutoMirrored.Rounded.ArrowForward,
+                        contentDescription = stringResource(Res.string.next_game),
+                        onClick = onNext,
+                        colors = TactileDefaults.colors(accent),
+                    )
+                }
+                PageDots(games = games, currentPage = currentPage, onDotClick = onDotClick)
+            }
+        }
     }
+}
+
+/** Two arrows plus dots and their gaps: the narrowest width the single-row controls fit in. */
+private fun pagerSingleRowMinWidth(dotCount: Int): Dp =
+    Dimens.iconButton * 2 + Dimens.spaceMd * 2 +
+        Dimens.pageDotSelected + Dimens.pageDot * (dotCount - 1) + Dimens.spaceXs * (dotCount - 1)
+
+@Composable
+private fun PagerArrow(
+    icon: ImageVector,
+    contentDescription: String?,
+    onClick: () -> Unit,
+    colors: TactileColors,
+) {
+    TactileIconButton(
+        icon = icon,
+        contentDescription = contentDescription,
+        onClick = onClick,
+        colors = colors,
+    )
 }
 
 @Composable
 private fun PageDots(
     games: List<GameInfo>,
     currentPage: Int,
+    onDotClick: (page: Int) -> Unit,
 ) {
+    val goToGame = stringResource(Res.string.go_to_game)
     Row(
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
         verticalAlignment = Alignment.CenterVertically,
@@ -237,11 +298,14 @@ private fun PageDots(
         games.forEachIndexed { index, game ->
             val selected = index == currentPage
             val width by animateDpAsState(if (selected) Dimens.pageDotSelected else Dimens.pageDot, label = "pageDotWidth")
+            val label = stringResource(game.titleRes)
             Box(
                 modifier =
                     Modifier
                         .size(width = width, height = Dimens.pageDot)
-                        .background(if (selected) game.accentColor else game.accentColor.lighten(IDLE_DOT_LIGHTEN), CircleShape),
+                        .background(if (selected) game.accentColor else game.accentColor.lighten(IDLE_DOT_LIGHTEN), CircleShape)
+                        .semantics { contentDescription = label }
+                        .clickable(role = Role.Button, onClickLabel = goToGame) { onDotClick(index) },
             )
         }
     }

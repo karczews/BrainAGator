@@ -70,6 +70,8 @@ class JsTextToSpeech : QueuedTextToSpeech() {
             completable.completeExceptionally(Exception("TTS Error"))
         }
 
+        // Last check before the engine speaks: a stop() may have landed while setting up above.
+        checkSpeakNotSuperseded()
         synthesis.speak(utterance)
 
         completable.await()

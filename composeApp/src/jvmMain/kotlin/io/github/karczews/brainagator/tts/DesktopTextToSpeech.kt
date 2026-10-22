@@ -121,6 +121,8 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 val command = buildCommand(text)
                 Logger.d { "TTS executing: $command" }
 
+                // Last check before the engine speaks: a stop() may have landed while building above.
+                checkSpeakNotSuperseded()
                 val process = ProcessBuilder(command).start()
                 currentProcess.value = process
 

@@ -31,9 +31,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Abstract base class for TextToSpeech implementations that provides
@@ -55,6 +57,19 @@ abstract class QueuedTextToSpeech(
     private val currentJob = atomic<Job?>(null)
     private val stopGeneration = atomic(0)
     private val lock = SynchronizedObject()
+
+    /**
+     * Carries the [stopGeneration] an utterance was created in, so platform [performSpeak]
+     * implementations can refuse a stale start right before touching the speech engine
+     * (see [checkSpeakNotSuperseded]).
+     */
+    private data class UtteranceGeneration(
+        val generation: Int,
+    ) : CoroutineContext.Element {
+        companion object Key : CoroutineContext.Key<UtteranceGeneration>
+
+        override val key: CoroutineContext.Key<*> get() = Key
+    }
 
     init {
         startQueueProcessor()
@@ -80,11 +95,10 @@ abstract class QueuedTextToSpeech(
         synchronized(lock) {
             val generation = stopGeneration.value
             val job =
-                scope.launch(start = CoroutineStart.LAZY) {
+                scope.launch(UtteranceGeneration(generation), start = CoroutineStart.LAZY) {
                     try {
-                        if (isActive) {
-                            performSpeak(text)
-                        }
+                        checkSpeakNotSuperseded()
+                        performSpeak(text)
                     } catch (e: CancellationException) {
                         stopIfNotSuperseded(generation)
                         throw e
@@ -106,6 +120,25 @@ abstract class QueuedTextToSpeech(
             // stop() already stopped older utterances; late cleanup must not stop their replacements.
             if (stopGeneration.value == generation) {
                 performStop()
+            }
+        }
+    }
+
+    /**
+     * Throws [CancellationException] unless this utterance is still live and no [stop] ran since it
+     * was enqueued. Called before [performSpeak] here, and every [performSpeak] implementation must
+     * also call it immediately before its engine speak call.
+     *
+     * Both guards are needed because cancellation is cooperative: a [stop] landing after the first
+     * check but before the engine call would otherwise start audio that the late cleanup in
+     * [stopIfNotSuperseded] treats as already stopped, leaving it playing with no one to stop it.
+     */
+    protected suspend fun checkSpeakNotSuperseded() {
+        val context = currentCoroutineContext()
+        context.ensureActive()
+        synchronized(lock) {
+            if (context[UtteranceGeneration]?.generation != stopGeneration.value) {
+                throw CancellationException("TTS utterance superseded by stop()")
             }
         }
     }

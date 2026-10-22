@@ -91,7 +91,7 @@ Build screens from these instead of styling Material components by hand.
 | `TactileButton` | Pill button with an optional leading icon. Use for main actions. |
 | `TactileIconButton` | Round icon button (back, help). |
 | `PlayCard` | Flat, non-interactive card. |
-| `InstructionCard` | `PlayCard` in which the gator "says" the instruction, with an optional label. |
+| `InstructionHeader` | Round pressable gator avatar beside a `SpeechBubble`; tap replays the instruction. |
 | `StarProgress` | Progress as stars that pop in when earned. |
 | `PlayfulBackground` | Accent-tinted background with bubbles; every screen uses it. |
 | `ShakeState` / `Modifier.shake` | Shared wrong-answer wiggle; pair with `TactileDefaults.wrongColors()` while `isShaking`. |
@@ -108,7 +108,7 @@ Game-level scaffolding lives in `ui/screens/games/`:
 
 1. Add a `GameInfo` with a new accent color from `theme/Color.kt` and a `Icons.Rounded.*` icon.
 2. Wrap the screen in `GameScreenScaffold`.
-3. Use `GameBoardLayout` with an `InstructionCard`, your board and `StarProgress` in a `PlayCard`.
+3. Use `GameBoardLayout` with an `InstructionHeader`, your board and `StarProgress` in a `PlayCard`.
 4. Make answers `TactileSurface`s: `surfaceColors(content = accent)` while open, `successColors()` when
    right, and a `ShakeState` + `wrongColors()` when wrong.
 

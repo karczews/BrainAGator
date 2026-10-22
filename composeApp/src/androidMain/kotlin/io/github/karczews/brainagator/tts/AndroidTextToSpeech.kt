@@ -99,6 +99,8 @@ class AndroidTextToSpeech(
         )
 
         val utteranceId = UUID.randomUUID().toString()
+        // Last check before the engine speaks: a stop() may have landed while setting up above.
+        checkSpeakNotSuperseded()
         tts?.speak(text, AndroidTextToSpeechAPI.QUEUE_FLUSH, null, utteranceId)
         completable.await()
     }

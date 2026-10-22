@@ -50,15 +50,19 @@ import org.jetbrains.compose.resources.stringResource
  * Common frame for every game: the game's [PlayfulBackground], a back button and the game description
  * spoken when the screen opens. There is no title and no help button: each game's speaking gator
  * ([io.github.karczews.brainagator.ui.elements.InstructionHeader]) shows the instruction and says it again when pressed.
+ *
+ * @param entrySpeech Spoken when the screen opens instead of the game description, e.g. the
+ * coming-soon message for placeholders whose description would contradict the screen.
  */
 @Composable
 fun GameScreenScaffold(
     gameInfo: GameInfo,
     onBackClick: () -> Unit,
+    entrySpeech: String? = null,
     content: @Composable (PaddingValues, TextToSpeech) -> Unit,
 ) {
     val tts = rememberTextToSpeech()
-    val description = stringResource(gameInfo.descriptionRes)
+    val description = entrySpeech ?: stringResource(gameInfo.descriptionRes)
 
     LaunchedEffect(Unit) {
         val job = tts.speak(description)

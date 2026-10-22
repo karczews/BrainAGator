@@ -39,7 +39,7 @@ import androidx.compose.ui.Modifier
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.test_trigger_win
-import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.LocalIsDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.tts.speakNow
@@ -55,11 +55,12 @@ fun GamePlaceholder(
     onBackClick: () -> Unit,
     onGameWon: (() -> Unit)? = null,
 ) {
+    val comingSoon = stringResource(Res.string.game_coming_soon)
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
+        entrySpeech = comingSoon,
     ) { innerPadding, tts ->
-        val comingSoon = stringResource(Res.string.game_coming_soon)
         BoxWithConstraints(
             modifier =
                 Modifier
@@ -98,7 +99,7 @@ fun GamePlaceholder(
                     accent = gameInfo.accentColor,
                 )
 
-                if (isDebugBuild && onGameWon != null) {
+                if (LocalIsDebugBuild.current && onGameWon != null) {
                     TactileButton(
                         text = stringResource(Res.string.test_trigger_win),
                         onClick = onGameWon,

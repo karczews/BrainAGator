@@ -52,6 +52,8 @@ class IosTextToSpeech : QueuedTextToSpeech() {
         utterance.setPitchMultiplier(currentPitch)
         utterance.setVolume(1.0f)
 
+        // Last check before the engine speaks: a stop() may have landed while setting up above.
+        checkSpeakNotSuperseded()
         synthesizer.speakUtterance(utterance)
 
         // Wait for the synthesizer to actually start speaking

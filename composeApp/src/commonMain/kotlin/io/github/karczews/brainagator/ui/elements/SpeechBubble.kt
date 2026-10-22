@@ -119,7 +119,7 @@ private class SpeechBubbleShape(
                 val rtl = layoutDirection == LayoutDirection.Rtl
                 val bodyLeft = if (rtl) 0f else tailLength
                 val bodyRight = if (rtl) size.width - tailLength else size.width
-                val edge = if (rtl) bodyRight + 1f else bodyLeft - 1f
+                val edge = if (rtl) bodyRight - 1f else bodyLeft + 1f
                 val tip = if (rtl) size.width else 0f
                 val centerY = size.height / 2
                 body.addRoundRect(RoundRect(bodyLeft, 0f, bodyRight, size.height, CornerRadius(radius)))
