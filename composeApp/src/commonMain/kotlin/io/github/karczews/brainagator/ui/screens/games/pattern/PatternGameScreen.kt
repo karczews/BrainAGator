@@ -36,6 +36,7 @@ val PatternGameInfo =
         icon = Icons.Rounded.GridView,
         accentColor = GameTeal,
         gameType = GameType.Pattern,
+        isPlayable = false,
     )
 
 @Composable

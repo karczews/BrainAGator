@@ -2,10 +2,16 @@
 <resources>
     <!-- App -->
     <string name="app_name">Brainagator</string>
-    <string name="app_tagline">Let's Learn &amp; Play!</string>
 
     <!-- Game Selection Screen -->
     <string name="welcome_message">Welcome to Brainagator! Select a game to play.</string>
+    <!-- Spoken by the gator when a game's page is shown: game title, then its subtitle -->
+    <string name="game_intro_speech">%1$s! %2$s</string>
+    <string name="coming_soon_speech">This one is coming soon!</string>
+    <string name="coming_soon_sticker">Soon</string>
+    <string name="previous_game">Previous game</string>
+    <string name="next_game">Next game</string>
+    <string name="go_to_game">Go to game</string>
 
     <!-- Game Titles -->
     <string name="game_shape_match">Find the Shape</string>
@@ -35,9 +41,9 @@
     <string name="desc_spot_difference">In this game, you need to find what is different between two pictures. Look carefully at both pictures to spot the differences!</string>
 
     <!-- Game Won Screen -->
-    <string name="congratulations">Congratulations!</string>
-    <string name="you_won">You won the game!</string>
     <string name="back_to_main">Back to Main Screen</string>
+    <string name="win_speech">Hooray! You did it!</string>
+    <string name="play_again">Play again</string>
 
     <!-- Game Screen -->
     <string name="go_back">Go back</string>
@@ -65,13 +71,7 @@
     <string name="shape_pentagon">Pentagon</string>
 
     <!-- Shape Match Game -->
-    <string name="shape_match_current_goal">CURRENT GOAL</string>
-    <string name="shape_match_progress_label">PROGRESS</string>
     <string name="shape_match_select_instruction">Select a %1$s %2$s</string>
-    <string name="shape_match_keep_going">Great! Keep going!</string>
-    <string name="shape_match_select_shape">Select a shape</string>
-    <string name="shape_match_select_color">Select a color</string>
-    <string name="shape_match_progress">%1$d / %2$d completed</string>
 
     <!-- Number Order Game -->
     <string name="number_order_instruction">Click the numbers in order from smallest to largest!</string>

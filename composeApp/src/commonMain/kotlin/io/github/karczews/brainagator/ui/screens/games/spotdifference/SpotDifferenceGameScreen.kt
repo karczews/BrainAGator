@@ -36,6 +36,7 @@ val SpotDifferenceGameInfo =
         icon = Icons.Rounded.Search,
         accentColor = GamePlum,
         gameType = GameType.SpotDifference,
+        isPlayable = false,
     )
 
 @Composable

@@ -18,6 +18,8 @@ package io.github.karczews.brainagator.tts
 
 import io.github.karczews.brainagator.Logger
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
@@ -29,9 +31,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Abstract base class for TextToSpeech implementations that provides
@@ -51,6 +55,21 @@ abstract class QueuedTextToSpeech(
     private var queueProcessor: Job? = null
 
     private val currentJob = atomic<Job?>(null)
+    private val stopGeneration = atomic(0)
+    private val lock = SynchronizedObject()
+
+    /**
+     * Carries the [stopGeneration] an utterance was created in, so platform [performSpeak]
+     * implementations can refuse a stale start right before touching the speech engine
+     * (see [checkSpeakNotSuperseded]).
+     */
+    private data class UtteranceGeneration(
+        val generation: Int,
+    ) : CoroutineContext.Element {
+        companion object Key : CoroutineContext.Key<UtteranceGeneration>
+
+        override val key: CoroutineContext.Key<*> get() = Key
+    }
 
     init {
         startQueueProcessor()
@@ -72,46 +91,96 @@ abstract class QueuedTextToSpeech(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun speak(text: String): Job {
-        val job =
-            scope.launch(start = CoroutineStart.LAZY) {
-                try {
-                    if (isActive) {
+    override fun speak(text: String): Job =
+        synchronized(lock) {
+            val generation = stopGeneration.value
+            val job =
+                scope.launch(UtteranceGeneration(generation), start = CoroutineStart.LAZY) {
+                    try {
+                        checkSpeakNotSuperseded()
                         performSpeak(text)
+                    } catch (e: CancellationException) {
+                        stopIfNotSuperseded(generation)
+                        throw e
+                    } catch (e: Exception) {
+                        Logger.e(e) { "TTS Error speaking: $text" }
                     }
-                } catch (e: CancellationException) {
-                    // Stop speech when job is cancelled
-                    performStop()
-                    throw e
-                } catch (e: Exception) {
-                    Logger.e(e) { "TTS Error speaking: $text" }
                 }
-            }
 
-        val result = queue.trySend(job)
-        if (result.isFailure) {
-            Logger.w { "TTS queue closed, cannot enqueue: $text" }
-            job.cancel()
+            val result = queue.trySend(job)
+            if (result.isFailure) {
+                Logger.w { "TTS queue closed, cannot enqueue: $text" }
+                job.cancel()
+            }
+            job
         }
-        return job
+
+    private fun stopIfNotSuperseded(generation: Int) {
+        synchronized(lock) {
+            // stop() already stopped older utterances; late cleanup must not stop their replacements.
+            if (stopGeneration.value == generation) {
+                performStop()
+            }
+        }
+    }
+
+    /**
+     * Throws [CancellationException] unless this utterance is still live and no [stop] ran since it
+     * was enqueued. This is the early guard, called before [performSpeak]; every [performSpeak]
+     * implementation must additionally wrap its engine speak call in [withSpeakStartLock].
+     *
+     * Both guards are needed because cancellation is cooperative: a [stop] landing after the first
+     * check but before the engine call would otherwise start audio that the late cleanup in
+     * [stopIfNotSuperseded] treats as already stopped, leaving it playing with no one to stop it.
+     */
+    protected suspend fun checkSpeakNotSuperseded() {
+        val context = currentCoroutineContext()
+        context.ensureActive()
+        synchronized(lock) {
+            if (context[UtteranceGeneration]?.generation != stopGeneration.value) {
+                throw CancellationException("TTS utterance superseded by stop()")
+            }
+        }
+    }
+
+    /**
+     * Runs the single engine speak call while holding the stop lock, so a [stop] cannot land
+     * between the freshness check and the engine starting.
+     *
+     * [block] must not suspend: the stop lock is held for its whole duration and [stop] blocks
+     * on it. Keep the block to the engine speak call itself.
+     */
+    protected suspend fun <T> withSpeakStartLock(block: () -> T): T {
+        val context = currentCoroutineContext()
+        context.ensureActive()
+        return synchronized(lock) {
+            if (context[UtteranceGeneration]?.generation != stopGeneration.value) {
+                throw CancellationException("TTS utterance superseded by stop()")
+            }
+            block()
+        }
     }
 
     override fun stop() {
-        // Cancel all pending jobs in the queue
-        var result = queue.tryReceive()
-        while (result.isSuccess) {
-            result.getOrNull()?.cancel()
-            result = queue.tryReceive()
+        synchronized(lock) {
+            stopGeneration.incrementAndGet()
+
+            // Cancel all pending jobs in the queue
+            var result = queue.tryReceive()
+            while (result.isSuccess) {
+                result.getOrNull()?.cancel()
+                result = queue.tryReceive()
+            }
+
+            // Cancel the currently executing job
+            currentJob.value?.cancel()
+
+            performStop()
+
+            // Restart queue processor to ensure future speak() calls work correctly
+            // The processor may have exited if the queue was empty
+            startQueueProcessor()
         }
-
-        // Cancel the currently executing job
-        currentJob.value?.cancel()
-
-        performStop()
-
-        // Restart queue processor to ensure future speak() calls work correctly
-        // The processor may have exited if the queue was empty
-        startQueueProcessor()
     }
 
     override fun shutdown() {

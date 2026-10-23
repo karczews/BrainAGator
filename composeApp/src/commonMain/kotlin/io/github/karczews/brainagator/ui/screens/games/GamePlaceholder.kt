@@ -33,19 +33,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.game_coming_soon
 import brainagator.composeapp.generated.resources.test_trigger_win
-import io.github.karczews.brainagator.isDebugBuild
+import io.github.karczews.brainagator.LocalIsDebugBuild
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
-import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.tts.speakNow
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.TactileButton
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.screens.GameInfo
@@ -57,10 +55,12 @@ fun GamePlaceholder(
     onBackClick: () -> Unit,
     onGameWon: (() -> Unit)? = null,
 ) {
+    val comingSoon = stringResource(Res.string.game_coming_soon)
     GameScreenScaffold(
         gameInfo = gameInfo,
         onBackClick = onBackClick,
-    ) { innerPadding, _ ->
+        entrySpeech = comingSoon,
+    ) { innerPadding, tts ->
         BoxWithConstraints(
             modifier =
                 Modifier
@@ -93,18 +93,13 @@ fun GamePlaceholder(
                         modifier = Modifier.size(Dimens.heroBadgeIcon),
                     )
                 }
-                Text(
-                    text = stringResource(gameInfo.subtitleRes),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                )
-                InstructionCard(
-                    text = stringResource(Res.string.game_coming_soon),
+                InstructionHeader(
+                    text = comingSoon,
+                    onGatorClick = { tts.speakNow(comingSoon) },
                     accent = gameInfo.accentColor,
                 )
 
-                if (isDebugBuild && onGameWon != null) {
+                if (LocalIsDebugBuild.current && onGameWon != null) {
                     TactileButton(
                         text = stringResource(Res.string.test_trigger_win),
                         onClick = onGameWon,

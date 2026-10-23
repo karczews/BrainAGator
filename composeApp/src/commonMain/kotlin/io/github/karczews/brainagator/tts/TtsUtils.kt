@@ -17,6 +17,7 @@
 package io.github.karczews.brainagator.tts
 
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.Job
 
 /**
  * Creates a TextToSpeech instance that is remembered across recompositions.
@@ -47,3 +48,12 @@ import androidx.compose.runtime.Composable
  */
 @Composable
 expect fun rememberTextToSpeech(): TextToSpeech
+
+/**
+ * Drops whatever is queued or playing and says [text] straight away, so a child pressing
+ * "say it again" hears it now rather than after the rest of the queue.
+ */
+fun TextToSpeech.speakNow(text: String): Job {
+    stop()
+    return speak(text)
+}

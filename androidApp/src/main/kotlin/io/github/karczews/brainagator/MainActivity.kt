@@ -20,6 +20,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.CompositionLocalProvider
+import io.github.karczews.brainagator.app.BuildConfig
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +32,10 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            App()
+            // KMP library modules have no build variants: the app module provides the real build type.
+            CompositionLocalProvider(LocalIsDebugBuild provides BuildConfig.DEBUG) {
+                App()
+            }
         }
     }
 }

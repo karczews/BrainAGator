@@ -65,8 +65,8 @@ object Dimens {
     val illustrationMaxHeight = 128.dp
     val rewardStar = 80.dp
 
-    /** Narrowest landscape side column (instruction and progress) before a game board stacks instead. */
-    val sidePanelMinWidth = 120.dp
+    /** Narrowest landscape side column (speaking gator and progress) before a game board stacks instead. */
+    val sidePanelMinWidth = 240.dp
 
     /** Narrowest board worth placing beside the side column: three 48dp tiles and their gaps. */
     val boardMinWidth = 168.dp
@@ -74,4 +74,33 @@ object Dimens {
     // Width caps that keep content readable on wide screens
     val contentMaxWidth = 480.dp
     val buttonMaxWidth = 420.dp
+
+    // Speaking gator: a round tactile avatar (tap = say it again) beside a speech bubble
+    val gatorAvatar = 72.dp
+    val gatorAvatarImage = 56.dp
+    val speakerBadge = 28.dp
+    val speakerBadgeIcon = 18.dp
+    val bubbleTailWidth = 20.dp
+    val bubbleTailHeight = 20.dp
+
+    // Home pager: one giant game card at a time, neighbours peeking in at the sides
+    val pagerPeek = 36.dp
+    val heroCardMaxWidth = 440.dp
+    val heroCardMaxHeight = 520.dp
+    val heroCardIconMax = 180.dp
+    val pageDot = 12.dp
+    val pageDotSelected = 32.dp
+
+    /**
+     * Tappable height of a page dot. A full 64dp target per dot cannot fit a row of seven on a
+     * phone, so dots stay visually small with a taller hit area; arrows and swipe stay primary.
+     */
+    val pageDotHitHeight = 32.dp
+
+    // Win screen: icon-only round actions
+    val winAction = 96.dp
+    val winActionIcon = 48.dp
+
+    /** Largest Number Order tile; three per row, so they stay big on phones. */
+    val numberTileMaxSize = 128.dp
 }

@@ -16,9 +16,16 @@
 
 package io.github.karczews.brainagator.tts
 
+import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -179,6 +186,25 @@ class QueuedTextToSpeechTest {
     // ------------------------------------------------------------------
     // stop() — cancelling individual job returned by speak()
     // ------------------------------------------------------------------
+
+    @Test
+    fun cancellingIndividualJobAfterStopStillStopsSpeech() =
+        runTest {
+            // given
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+            tts.stop()
+            val job = tts.speak("A")
+            delay(50)
+
+            // when
+            job.cancel()
+            job.join()
+
+            // then
+            assertTrue(job.isCancelled)
+            assertEquals(2, tts.stopCount)
+            tts.shutdown()
+        }
 
     @Test
     fun cancellingReturnedJobStopsCurrentSpeech() =
@@ -356,6 +382,28 @@ class QueuedTextToSpeechTest {
         }
 
     @Test
+    fun stopThenSpeakDoesNotStopReplacementUtterance() =
+        runTest {
+            // given
+            val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
+            tts.speak("old")
+            delay(50)
+
+            // when — enqueue the replacement before cancellation cleanup runs
+            tts.stop()
+            val replacement = tts.speak("new")
+            delay(50)
+
+            // then
+            assertTrue(replacement.isActive)
+            assertEquals(1, tts.stopCount)
+            tts.releaseSpeak()
+            replacement.join()
+            assertEquals(listOf("new"), tts.spokenTexts)
+            tts.shutdown()
+        }
+
+    @Test
     fun speakAfterStopResumesQueueProcessing() =
         runTest {
             val tts = FakeQueuedTextToSpeech(StandardTestDispatcher(testScheduler))
@@ -443,4 +491,71 @@ class QueuedTextToSpeechTest {
             assertTrue(job.isCancelled || job.isCompleted)
             assertTrue(tts.spokenTexts.isEmpty())
         }
+
+    // ------------------------------------------------------------------
+    // stop() — landing inside the pre-start window
+    // ------------------------------------------------------------------
+
+    @Test
+    fun stopInsidePreStartWindowLeavesNoStrayAudio() {
+        // Real threads: only true preemption can land stop() between the shared pre-start
+        // guard and the engine speak call, so virtual time cannot reproduce this.
+        runBlocking {
+            // given — utterance is held open in its pre-start window (past the shared guard,
+            // before the engine speaks), modelling platform setup that cannot be cancelled
+            val tts = PreStartWindowFake(Dispatchers.Default)
+            try {
+                val job = tts.speak("old")
+                assertTrue(
+                    tts.enteredWindow.await(5, TimeUnit.SECONDS),
+                    "Utterance should reach the pre-start window",
+                )
+
+                // when — stop() lands inside the window, then the utterance proceeds
+                tts.stop()
+                tts.releaseStart.value = true
+                job.join()
+
+                // then — the platform-positioned guard refuses the stale start
+                assertEquals(0, tts.engineStarts.value, "Audio started after stop() must be refused")
+                assertEquals(1, tts.stopCount)
+            } finally {
+                // Never leave the spinner busy-looping on a worker if an assertion above fails.
+                tts.releaseStart.value = true
+                tts.shutdown()
+            }
+        }
+    }
+}
+
+/**
+ * Models platform speech with a controllable pre-start window: [performSpeak] signals
+ * [enteredWindow], spins without suspending (so cancellation cannot be delivered, like platform
+ * setup code), then runs the platform-positioned [QueuedTextToSpeech.withSpeakStartLock] guard
+ * around recording the engine start.
+ */
+private class PreStartWindowFake(
+    dispatcher: CoroutineDispatcher,
+) : QueuedTextToSpeech(dispatcher) {
+    val engineStarts = atomic(0)
+    val enteredWindow = CountDownLatch(1)
+    val releaseStart = atomic(false)
+    var stopCount = 0
+
+    override suspend fun performSpeak(text: String) {
+        enteredWindow.countDown()
+        while (!releaseStart.value) {
+            Thread.yield()
+        }
+        withSpeakStartLock { engineStarts.incrementAndGet() }
+        awaitCancellation()
+    }
+
+    override fun performStop() {
+        stopCount++
+    }
+
+    override fun setSpeechRate(rate: Float) = Unit
+
+    override fun setPitch(pitch: Float) = Unit
 }

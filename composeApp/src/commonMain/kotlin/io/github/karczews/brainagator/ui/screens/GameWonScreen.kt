@@ -29,47 +29,74 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Replay
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.back_to_main
-import brainagator.composeapp.generated.resources.congratulations
 import brainagator.composeapp.generated.resources.gator_win_1
+import brainagator.composeapp.generated.resources.play_again
 import brainagator.composeapp.generated.resources.star_1
-import brainagator.composeapp.generated.resources.you_won
+import brainagator.composeapp.generated.resources.win_speech
+import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.theme.AppTheme
-import io.github.karczews.brainagator.theme.AutoSizeMin
 import io.github.karczews.brainagator.theme.Dimens
+import io.github.karczews.brainagator.tts.rememberTextToSpeech
 import io.github.karczews.brainagator.ui.FireworksAnimation
+import io.github.karczews.brainagator.ui.elements.BubbleTail
 import io.github.karczews.brainagator.ui.elements.PlayfulBackground
-import io.github.karczews.brainagator.ui.elements.TactileButton
+import io.github.karczews.brainagator.ui.elements.SpeechBubble
+import io.github.karczews.brainagator.ui.elements.TactileColors
+import io.github.karczews.brainagator.ui.elements.TactileDefaults
+import io.github.karczews.brainagator.ui.elements.TactileSurface
+import kotlinx.coroutines.CancellationException
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The gator celebrates and says so out loud. Nothing to read: the two ways on are icon-only round buttons,
+ * play again (the main one) and home.
+ */
 @Composable
 fun GameWonScreen(
+    onPlayAgainClick: () -> Unit,
     onBackToMainClick: () -> Unit,
     showFireworks: Boolean = true,
 ) {
+    val tts = rememberTextToSpeech()
+    val winSpeech = stringResource(Res.string.win_speech)
+    LaunchedEffect(Unit) {
+        val job = tts.speak(winSpeech)
+        try {
+            job.join()
+        } catch (e: CancellationException) {
+            Logger.d { "Cancelled win speech" }
+            job.cancel()
+            throw e
+        }
+    }
+
     PlayfulBackground(modifier = Modifier.fillMaxSize(), accent = AppTheme.extendedColors.reward) {
         // Screenshot tests turn the fireworks off: their particles are random.
         if (showFireworks) {
@@ -80,79 +107,117 @@ fun GameWonScreen(
             )
         }
 
-        BoxWithConstraints(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .padding(Dimens.screenPadding),
-        ) {
-            if (maxWidth > maxHeight) {
-                // Landscape: gator beside the message, so short screens keep both large and the button visible.
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick, modifier = Modifier.weight(1f))
-                }
-            } else {
+        WinLayout(winSpeech = winSpeech, onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
+    }
+}
+
+@Composable
+private fun WinLayout(
+    winSpeech: String,
+    onPlayAgainClick: () -> Unit,
+    onBackToMainClick: () -> Unit,
+) {
+    BoxWithConstraints(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(Dimens.screenPadding),
+    ) {
+        if (maxWidth > maxHeight) {
+            // Landscape: gator beside the bubble and buttons, so short screens keep the buttons visible.
+            // Scrollable as a fallback: on very short phones the column can still exceed the height.
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BouncingGator(modifier = Modifier.weight(1f, fill = false))
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
                 ) {
-                    // Shrinks on short screens instead of pushing the button off-screen.
-                    BouncingGator(modifier = Modifier.weight(1f, fill = false))
-                    WinMessage(onBackToMainClick = onBackToMainClick)
+                    WinBubble(text = winSpeech, tail = BubbleTail.Start)
+                    WinStars()
+                    WinActions(onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd, Alignment.CenterVertically),
+            ) {
+                WinBubble(text = winSpeech)
+                // Shrinks on short screens instead of pushing the buttons off-screen.
+                BouncingGator(modifier = Modifier.weight(1f, fill = false))
+                WinStars()
+                WinActions(onPlayAgainClick = onPlayAgainClick, onBackToMainClick = onBackToMainClick)
             }
         }
     }
 }
 
-/** Title, stars and the way home; scrolls only if a screen is too short to show it all. */
 @Composable
-private fun WinMessage(
-    onBackToMainClick: () -> Unit,
-    modifier: Modifier = Modifier,
+private fun WinBubble(
+    text: String,
+    tail: BubbleTail = BubbleTail.Bottom,
 ) {
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+    SpeechBubble(
+        text = text,
+        tail = tail,
+        textStyle = MaterialTheme.typography.headlineMedium,
+        singleLine = true,
+        modifier = Modifier.widthIn(max = Dimens.buttonMaxWidth),
+    )
+}
+
+@Composable
+private fun WinActions(
+    onPlayAgainClick: () -> Unit,
+    onBackToMainClick: () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXl),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = stringResource(Res.string.congratulations),
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            // Shrinks in narrow columns instead of breaking the word.
-            autoSize =
-                TextAutoSize.StepBased(
-                    minFontSize = AutoSizeMin.display,
-                    maxFontSize = MaterialTheme.typography.displaySmall.fontSize,
-                ),
-        )
-        Text(
-            text = stringResource(Res.string.you_won),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center,
-        )
-        WinStars()
-        TactileButton(
-            text = stringResource(Res.string.back_to_main),
-            onClick = onBackToMainClick,
+        WinActionButton(
             icon = Icons.Rounded.Home,
-            modifier =
-                Modifier
-                    .padding(top = Dimens.spaceSm)
-                    .widthIn(max = Dimens.buttonMaxWidth)
-                    .fillMaxWidth(),
+            contentDescription = stringResource(Res.string.back_to_main),
+            colors = TactileDefaults.surfaceColors(content = MaterialTheme.colorScheme.primary),
+            onClick = onBackToMainClick,
         )
+        WinActionButton(
+            icon = Icons.Rounded.Replay,
+            contentDescription = stringResource(Res.string.play_again),
+            colors = TactileDefaults.primaryColors(),
+            onClick = onPlayAgainClick,
+        )
+    }
+}
+
+/** A large round tactile button with a single icon; bigger than [io.github.karczews.brainagator.ui.elements.TactileIconButton]. */
+@Composable
+private fun WinActionButton(
+    icon: ImageVector,
+    contentDescription: String,
+    colors: TactileColors,
+    onClick: () -> Unit,
+) {
+    TactileSurface(
+        modifier =
+            Modifier
+                .size(width = Dimens.winAction, height = Dimens.winAction + Dimens.lipHeight)
+                .semantics { this.contentDescription = contentDescription },
+        colors = colors,
+        shape = CircleShape,
+        onClick = onClick,
+    ) {
+        Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(Dimens.winActionIcon))
     }
 }
 
@@ -207,6 +272,6 @@ private fun WinStars() {
 @Composable
 private fun GameWonScreenPreview() {
     AppTheme {
-        GameWonScreen(onBackToMainClick = {})
+        GameWonScreen(onPlayAgainClick = {}, onBackToMainClick = {})
     }
 }

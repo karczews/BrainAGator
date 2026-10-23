@@ -32,12 +32,13 @@ import io.github.karczews.brainagator.theme.Dimens
 private const val SIDE_PANEL_FRACTION = 0.4f
 
 /**
- * Standard game layout: [instruction] on top, the [board] filling the middle and [progress] at the bottom.
+ * Standard game layout: the [board] on top, then [progress], then the [instruction] (the speaking gator) at the
+ * bottom, like a game character talking from the corner of the screen.
  *
  * In landscape the instruction and progress move to a side column so the board keeps the full (short) height.
- * The column takes 40% of the width, narrowing further only as far as the board needs to keep [boardMinWidth]
- * (the instruction card drops its mascot when narrow, so its text stays readable). If that would leave the
- * column narrower than [Dimens.sidePanelMinWidth], everything stacks instead.
+ * The column takes 40% of the width, narrowing further only as far as the board needs to keep [boardMinWidth].
+ * If that would leave the column narrower than [Dimens.sidePanelMinWidth] (too narrow for the gator and its
+ * speech bubble side by side), everything stacks instead.
  *
  * [board] receives whether it sits beside the side column and the modifier that sizes it.
  */
@@ -65,9 +66,9 @@ fun GameBoardLayout(
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
-                instruction()
                 board(false, Modifier.weight(1f).fillMaxWidth())
                 progress()
+                instruction()
             }
         }
     }

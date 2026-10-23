@@ -24,10 +24,7 @@ actual class Platform actual constructor() {
 }
 
 /**
- * For JVM/Desktop, debug builds are determined by the "debug" system property.
- * Set -Ddebug=true for debug builds, or omit for release builds.
+ * Desktop runs are the dev loop, so this stays true (system properties do not propagate from the IDE).
+ * Packaged native distributions inherit this value.
  */
-actual val isDebugBuild: Boolean =
-    // hardcode to true as passing property does not work from ide
-    true
-// System.getProperty("debug", "false").toBoolean()
+actual val isDebugBuild: Boolean = true

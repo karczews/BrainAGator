@@ -16,17 +16,15 @@
 
 package io.github.karczews.brainagator.ui.screens.games.numberorder
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Tag
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import brainagator.composeapp.generated.resources.Res
 import brainagator.composeapp.generated.resources.desc_number_order
 import brainagator.composeapp.generated.resources.game_number_order
-import brainagator.composeapp.generated.resources.gator_long
 import brainagator.composeapp.generated.resources.number_order_feedback_negative
 import brainagator.composeapp.generated.resources.number_order_feedback_positive
 import brainagator.composeapp.generated.resources.number_order_instruction
@@ -56,7 +53,9 @@ import io.github.karczews.brainagator.Logger
 import io.github.karczews.brainagator.theme.AppTheme
 import io.github.karczews.brainagator.theme.Dimens
 import io.github.karczews.brainagator.theme.GameOcean
-import io.github.karczews.brainagator.ui.elements.InstructionCard
+import io.github.karczews.brainagator.tts.TextToSpeech
+import io.github.karczews.brainagator.tts.speakNow
+import io.github.karczews.brainagator.ui.elements.InstructionHeader
 import io.github.karczews.brainagator.ui.elements.TactileColors
 import io.github.karczews.brainagator.ui.elements.TactileDefaults
 import io.github.karczews.brainagator.ui.elements.TactileSurface
@@ -69,8 +68,9 @@ import io.github.karczews.brainagator.ui.screens.games.GameScreenScaffold
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import kotlin.random.Random
+
+private const val NUMBER_TILES_PER_ROW = 3
 
 val NumberOrderGameInfo =
     GameInfo(
@@ -157,8 +157,9 @@ fun NumberOrderGameScreen(
         NumberOrderBoard(
             gameNumbers = gameNumbers,
             correctNextNumber = correctNextNumber,
-            accentColor = gameInfo.accentColor,
             onNumberClick = onNumberClick,
+            tts = tts,
+            accentColor = gameInfo.accentColor,
             modifier =
                 Modifier
                     .fillMaxSize()
@@ -168,117 +169,122 @@ fun NumberOrderGameScreen(
 }
 
 /**
- * Layout of the Number Order game on the shared [GameBoardLayout]: the instruction, then the gator above the
- * row of number tiles. On short landscape screens the instruction moves beside the board (or everything
+ * Layout of the Number Order game on the shared [GameBoardLayout]: big number tiles, three to a row, with the
+ * speaking gator below them. On short landscape screens the gator moves beside the board (or everything
  * stacks), so the tiles always stay on screen.
  */
 @Composable
 private fun NumberOrderBoard(
     gameNumbers: List<GameNumber>,
     correctNextNumber: Int,
-    accentColor: Color,
     onNumberClick: (GameNumber) -> Unit,
+    tts: TextToSpeech,
+    accentColor: Color,
     modifier: Modifier = Modifier,
 ) {
+    val instructionText = stringResource(Res.string.number_order_instruction)
     GameBoardLayout(
-        // Narrow outer margin so five 64dp tiles fit on 360dp phones; the instruction adds its own inset.
-        modifier = modifier.padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceMd),
-        boardMinWidth = Dimens.touchTarget * gameNumbers.size + Dimens.spaceXs * (gameNumbers.size - 1).coerceAtLeast(0),
+        modifier = modifier.padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
+        boardMinWidth = Dimens.touchTarget * NUMBER_TILES_PER_ROW + Dimens.answerTileGap * (NUMBER_TILES_PER_ROW - 1),
         instruction = {
-            InstructionCard(
-                text = stringResource(Res.string.number_order_instruction),
+            InstructionHeader(
+                text = instructionText,
+                onGatorClick = { tts.speakNow(instructionText) },
                 accent = accentColor,
-                modifier = Modifier.padding(horizontal = Dimens.spaceSm),
             )
         },
         progress = {},
     ) { _, boardModifier ->
-        Column(
+        NumberTilesGrid(
+            gameNumbers = gameNumbers,
+            correctNextNumber = correctNextNumber,
+            accentColor = accentColor,
+            onNumberClick = onNumberClick,
             modifier = boardModifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg, Alignment.CenterVertically),
-        ) {
-            Image(
-                modifier =
-                    Modifier
-                        .weight(1f, fill = false)
-                        .padding(horizontal = Dimens.spaceMd)
-                        .heightIn(max = Dimens.illustrationMaxHeight),
-                imageVector = vectorResource(Res.drawable.gator_long),
-                contentDescription = null,
-            )
-
-            NumberBoxesRow(
-                gameNumbers = gameNumbers,
-                correctNextNumber = correctNextNumber,
-                accentColor = accentColor,
-                onNumberClick = onNumberClick,
-            )
-        }
+        )
     }
 }
 
 /**
- * Displays a horizontal row of number boxes for the Number Order game.
+ * Number tiles, three to a row and as big as the board allows (up to [Dimens.numberTileMaxSize]); a shorter last
+ * row is centered. Matched numbers turn green and slide to the front, in order. Wrong taps wiggle.
  *
- * Renders each number as a tactile tile of at least [Dimens.touchTarget], squeezing the gaps
- * first so that all of them fit on screen (they do from 360dp up; narrower screens scroll).
- * The row uses animated placement so matched numbers slide into order. Incorrect selections wiggle.
- *
- * @param gameNumbers List of game numbers to display with their matched state
- * @param correctNextNumber The next number that should be tapped in sequence
- * @param accentColor Color of the numbers that are still to be tapped
- * @param onNumberClick Callback invoked when a number box is tapped
- * @param modifier Modifier for the row
+ * The grid has two columns per tile, so the centered last row is just a one-column spacer in front of it.
  */
 @Composable
-private fun NumberBoxesRow(
+private fun NumberTilesGrid(
     gameNumbers: List<GameNumber>,
     correctNextNumber: Int,
     accentColor: Color,
     onNumberClick: (GameNumber) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val count = gameNumbers.size.coerceAtLeast(1)
-        val gapCount = (count - 1).coerceAtLeast(1)
-        val gap = ((maxWidth - Dimens.touchTarget * count) / gapCount).coerceIn(Dimens.spaceXs, Dimens.spaceSm)
-        val boxSize = ((maxWidth - gap * (count - 1)) / count).coerceIn(Dimens.touchTarget, Dimens.answerTileMaxSize)
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
+    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
+        val gap = Dimens.answerTileGap
+        val rows = (gameNumbers.size + NUMBER_TILES_PER_ROW - 1) / NUMBER_TILES_PER_ROW
+        val tileSize =
+            minOf(
+                (maxWidth - gap * (NUMBER_TILES_PER_ROW - 1)) / NUMBER_TILES_PER_ROW,
+                (maxHeight - gap * (rows - 1)) / rows.coerceAtLeast(1),
+                Dimens.numberTileMaxSize,
+            ).coerceAtLeast(Dimens.touchTarget)
+        val lastRowStart = (rows - 1) * NUMBER_TILES_PER_ROW
+        val lastRowCount = gameNumbers.size - lastRowStart
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(NUMBER_TILES_PER_ROW * 2),
+            modifier = Modifier.width(tileSize * NUMBER_TILES_PER_ROW + gap * (NUMBER_TILES_PER_ROW - 1)),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+            verticalArrangement = Arrangement.spacedBy(gap, Alignment.CenterVertically),
+            // The tiles are floored at touchTarget, so on short stacked layouts the rows can be
+            // taller than the board: let them scroll rather than stranding rows out of reach.
+            userScrollEnabled = true,
         ) {
-            items(
-                items = gameNumbers,
-                key = { it.number },
-            ) { gameNumber ->
-                val shakeState = rememberShakeState()
-                val scope = rememberCoroutineScope()
-                NumberBox(
-                    modifier =
-                        Modifier
-                            .animateItem()
-                            .size(boxSize)
-                            .shake(shakeState),
-                    number = gameNumber.number,
-                    colors =
-                        when {
-                            gameNumber.matched -> TactileDefaults.successColors()
-                            shakeState.isShaking -> TactileDefaults.wrongColors()
-                            else -> TactileDefaults.surfaceColors(content = accentColor)
-                        },
-                    enabled = !gameNumber.matched,
-                    onClick = {
-                        if (gameNumber.number != correctNextNumber) {
-                            scope.launch { shakeState.shake() }
-                        }
-                        onNumberClick(gameNumber)
-                    },
-                )
+            gameNumbers.forEachIndexed { index, gameNumber ->
+                if (index == lastRowStart && lastRowCount < NUMBER_TILES_PER_ROW) {
+                    item(key = "centering-gap", span = { GridItemSpan(NUMBER_TILES_PER_ROW - lastRowCount) }) {}
+                }
+                item(key = gameNumber.number, span = { GridItemSpan(2) }) {
+                    NumberTile(
+                        gameNumber = gameNumber,
+                        isNext = gameNumber.number == correctNextNumber,
+                        accentColor = accentColor,
+                        onClick = { onNumberClick(gameNumber) },
+                        modifier = Modifier.animateItem().size(tileSize),
+                    )
+                }
             }
         }
     }
+}
+
+/** One number tile: accent number on white while open, green once matched, coral and wiggling when wrong. */
+@Composable
+private fun NumberTile(
+    gameNumber: GameNumber,
+    isNext: Boolean,
+    accentColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shakeState = rememberShakeState()
+    val scope = rememberCoroutineScope()
+    NumberBox(
+        modifier = modifier.shake(shakeState),
+        number = gameNumber.number,
+        colors =
+            when {
+                gameNumber.matched -> TactileDefaults.successColors()
+                shakeState.isShaking -> TactileDefaults.wrongColors()
+                else -> TactileDefaults.surfaceColors(content = accentColor)
+            },
+        enabled = !gameNumber.matched,
+        onClick = {
+            if (!isNext) {
+                scope.launch { shakeState.shake() }
+            }
+            onClick()
+        },
+    )
 }
 
 /**
@@ -307,7 +313,7 @@ private fun NumberBox(
     ) {
         Text(
             text = number.toString(),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.displayMedium,
         )
     }
 }

@@ -24,7 +24,7 @@ actual class Platform actual constructor() {
 }
 
 /**
- * For JS, this is set to true for development builds.
- * In production builds, change this to false.
+ * Release-safe default for web builds: there is no build-variant signal on Kotlin/JS,
+ * so this stays false (same as wasmJs). Use desktop/JVM runs for debug affordances.
  */
-actual val isDebugBuild: Boolean = true
+actual val isDebugBuild: Boolean = false

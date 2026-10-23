@@ -52,7 +52,9 @@ class IosTextToSpeech : QueuedTextToSpeech() {
         utterance.setPitchMultiplier(currentPitch)
         utterance.setVolume(1.0f)
 
-        synthesizer.speakUtterance(utterance)
+        // The engine start shares the stop lock: a stop() cannot land between the freshness
+        // check and the engine starting.
+        withSpeakStartLock { synthesizer.speakUtterance(utterance) }
 
         // Wait for the synthesizer to actually start speaking
         // isSpeaking() returns false immediately after speakUtterance() due to async nature

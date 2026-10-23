@@ -26,7 +26,7 @@ actual class Platform actual constructor() {
 }
 
 /**
- * For Android, this is set at compile time based on the build configuration.
- * In debug builds, this is true; in release builds, false.
+ * Default only: KMP library modules generate no BuildConfig and no build variants, so this cannot
+ * reflect the app variant. The Android app entry overrides it at runtime via [LocalIsDebugBuild].
  */
 actual val isDebugBuild: Boolean = true

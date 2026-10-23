@@ -121,7 +121,9 @@ class DesktopTextToSpeech : QueuedTextToSpeech() {
                 val command = buildCommand(text)
                 Logger.d { "TTS executing: $command" }
 
-                val process = ProcessBuilder(command).start()
+                // The engine start shares the stop lock: a stop() cannot land between the freshness
+                // check and the engine starting.
+                val process = withSpeakStartLock { ProcessBuilder(command).start() }
                 currentProcess.value = process
 
                 try {

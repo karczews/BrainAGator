@@ -16,6 +16,8 @@
 
 package io.github.karczews.brainagator
 
+import androidx.compose.runtime.compositionLocalOf
+
 /**
  * Platform information with platform-specific implementation.
  */
@@ -28,3 +30,11 @@ expect class Platform() {
  * Should be true in development/debug builds and false in release builds.
  */
 expect val isDebugBuild: Boolean
+
+/**
+ * Whether debug affordances (coming-soon placeholders, test buttons, build labels) are enabled.
+ *
+ * Defaults to the platform [isDebugBuild] flag. KMP library modules have no build variants, so on
+ * Android the app module (which does) overrides this at its entry point with its own build type.
+ */
+val LocalIsDebugBuild = compositionLocalOf { isDebugBuild }

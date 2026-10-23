@@ -110,7 +110,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                             gameInfoMap[route.gameType]
                                 ?: error("Unknown game type: ${route.gameType}")
                         val onBackClick: () -> Unit = { backStack.removeLastOrNull() }
-                        val onGameWon: () -> Unit = { backStack.add(Route.GameWon) }
+                        val onGameWon: () -> Unit = { backStack.add(Route.GameWon(route.gameType)) }
 
                         CompositionLocalProvider(
                             LocalSharedTransitionContext provides
@@ -127,17 +127,26 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                             }
                         }
                     }
-                    entry<Route.GameWon> {
+                    entry<Route.GameWon> { route ->
                         GameWonScreen(
-                            onBackToMainClick = {
-                                backStack.clear()
-                                backStack.add(Route.GameSelection)
-                            },
+                            onPlayAgainClick = { backStack.playAgain(route.gameType) },
+                            onBackToMainClick = { backStack.goHome() },
                         )
                     }
                 },
         )
     }
+}
+
+private fun MutableList<Route>.goHome() {
+    clear()
+    add(Route.GameSelection)
+}
+
+/** A fresh entry for [gameType] over home: the finished game's state is gone, and back still leads home. */
+private fun MutableList<Route>.playAgain(gameType: GameType) {
+    goHome()
+    add(Route.Game(gameType))
 }
 
 data class SharedTransitionContext(

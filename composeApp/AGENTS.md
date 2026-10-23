@@ -93,7 +93,7 @@ composeApp/src/
 ./gradlew :composeApp:detekt       # Static analysis
 ./gradlew :composeApp:ktlintCheck  # Formatting check
 ./gradlew :composeApp:ktlintFormat # Auto-fix formatting
-./gradlew :composeApp:jvmTest      # Run JVM tests
+./gradlew :composeApp:jvmTest --no-configuration-cache  # Run JVM tests (config cache off: storing the entry trips a pre-existing material-icons-extended variant ambiguity, also on main)
 ```
 
 ## Notes

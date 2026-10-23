@@ -29,4 +29,6 @@ data class GameInfo(
     /** Identity color of the game: its tile, top bar, background tint and highlights. */
     val accentColor: Color,
     val gameType: GameType,
+    /** False for games that only have a "coming soon" placeholder so far. */
+    val isPlayable: Boolean = true,
 )
