@@ -22,6 +22,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -39,6 +40,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import io.github.karczews.brainagator.theme.AppTheme
+import io.github.karczews.brainagator.ui.background.AnimatedShaderBackground
 import io.github.karczews.brainagator.ui.navigation.GameType
 import io.github.karczews.brainagator.ui.navigation.Route
 import io.github.karczews.brainagator.ui.screens.GameSelectionScreen
@@ -59,7 +61,12 @@ fun App() {
         Logger.i { "App composable started" }
     }
     AppTheme {
-        AppNavigation(modifier = Modifier.fillMaxSize())
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Animated shader background
+            AnimatedShaderBackground(modifier = Modifier.fillMaxSize())
+            // App navigation on top
+            AppNavigation(modifier = Modifier.fillMaxSize())
+        }
     }
 }
 
