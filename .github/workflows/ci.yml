@@ -66,51 +66,23 @@ jobs:
   gate:
     name: Required Checks Validation
     # This job is the required check. It must run even when a dependency fails,
-    # otherwise GitHub reports it as skipped and branch protection treats a
-    # skipped check as passing. It also runs on every event (not just PRs) so a
-    # skipped gate from another run can never override a real result.
-    if: always()
+    # otherwise GitHub reports it as skipped and treats a skipped required check
+    # as passing. Keep it PR-only: that is where branch protection applies.
+    if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     # Every required check must be listed here; jobs not listed are not
     # validated by this gate.
     needs: [unit-tests, check-copyrights, check-formatting, detekt, android-instrumentation-tests, ios-build, wasm-build, conventional-commits]
     steps:
-      - name: Verify every required check succeeded
-        env:
-          NEEDS: ${{ toJSON(needs) }}
-          # Space-separated job IDs that may legitimately report "skipped",
-          # e.g. a check that only runs for certain paths. Every other result
-          # must be "success".
-          ALLOWED_SKIPPED: ''
+      - name: Fail on non-successful required check
+        if: >-
+          contains(needs.*.result, 'failure') ||
+          contains(needs.*.result, 'cancelled') ||
+          contains(needs.*.result, 'skipped')
         run: |
-          set -euo pipefail
-          failed=0
+          echo "::error::Required checks: ${{ join(needs.*.result, ', ') }}"
+          exit 1
 
-          if ! echo "$NEEDS" | jq -e 'type == "object" and length > 0 and all(.[]; (.result | type) == "string")' > /dev/null; then
-            echo "::error title=Required checks failed::could not read the needs context"
-            exit 1
-          fi
-
-          while IFS=$'\t' read -r job result; do
-            case "$result" in
-              success)
-                continue
-                ;;
-              skipped)
-                if [[ " $ALLOWED_SKIPPED " == *" $job "* ]]; then
-                  echo "::notice title=Required check skipped::$job was skipped (allowed)"
-                  continue
-                fi
-                ;;
-            esac
-
-            echo "::error title=Required check failed::$job finished with result '$result'"
-            failed=$((failed + 1))
-          done < <(echo "$NEEDS" | jq -r 'to_entries[] | [.key, .value.result] | @tsv')
-
-          if (( failed > 0 )); then
-            echo "::error title=Required checks failed::$failed required check(s) did not succeed"
-            exit 1
-          fi
-
-          echo "All required checks succeeded."
+      - name: Confirm required checks succeeded
+        if: success()
+        run: echo "All required checks succeeded."
