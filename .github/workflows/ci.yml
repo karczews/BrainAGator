@@ -6,6 +6,8 @@ on:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
+    # Do not add `paths:` or other filters here. This workflow owns the required
+    # "Required Checks Validation" check, so it must report on every PR.
 
 permissions:
   contents: read
@@ -63,8 +65,24 @@ jobs:
 
   gate:
     name: Required Checks Validation
-    if: github.event_name == 'pull_request'
+    # This job is the required check. It must run even when a dependency fails,
+    # otherwise GitHub reports it as skipped and treats a skipped required check
+    # as passing. Keep it PR-only: that is where branch protection applies.
+    if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    # Every required check must be listed here; jobs not listed are not
+    # validated by this gate.
     needs: [unit-tests, check-copyrights, check-formatting, detekt, android-instrumentation-tests, ios-build, wasm-build, conventional-commits]
     steps:
-      - run: echo "All required checks passed"
+      - name: Fail on non-successful required check
+        if: >-
+          contains(needs.*.result, 'failure') ||
+          contains(needs.*.result, 'cancelled') ||
+          contains(needs.*.result, 'skipped')
+        run: |
+          echo "::error::Required checks: ${{ join(needs.*.result, ', ') }}"
+          exit 1
+
+      - name: Confirm required checks succeeded
+        if: success()
+        run: echo "All required checks succeeded."
