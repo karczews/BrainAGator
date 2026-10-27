@@ -6,6 +6,8 @@ on:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
+    # Do not add `paths:` or other filters here. This workflow owns the required
+    # "Required Checks Validation" check, so it must report on every PR.
 
 permissions:
   contents: read
@@ -63,8 +65,52 @@ jobs:
 
   gate:
     name: Required Checks Validation
-    if: github.event_name == 'pull_request'
+    # This job is the required check. It must run even when a dependency fails,
+    # otherwise GitHub reports it as skipped and branch protection treats a
+    # skipped check as passing. It also runs on every event (not just PRs) so a
+    # skipped gate from another run can never override a real result.
+    if: always()
     runs-on: ubuntu-latest
+    # Every required check must be listed here; jobs not listed are not
+    # validated by this gate.
     needs: [unit-tests, check-copyrights, check-formatting, detekt, android-instrumentation-tests, ios-build, wasm-build, conventional-commits]
     steps:
-      - run: echo "All required checks passed"
+      - name: Verify every required check succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          # Space-separated job IDs that may legitimately report "skipped",
+          # e.g. a check that only runs for certain paths. Every other result
+          # must be "success".
+          ALLOWED_SKIPPED: ''
+        run: |
+          set -euo pipefail
+          failed=0
+
+          if ! echo "$NEEDS" | jq -e 'type == "object" and length > 0 and all(.[]; (.result | type) == "string")' > /dev/null; then
+            echo "::error title=Required checks failed::could not read the needs context"
+            exit 1
+          fi
+
+          while IFS=$'\t' read -r job result; do
+            case "$result" in
+              success)
+                continue
+                ;;
+              skipped)
+                if [[ " $ALLOWED_SKIPPED " == *" $job "* ]]; then
+                  echo "::notice title=Required check skipped::$job was skipped (allowed)"
+                  continue
+                fi
+                ;;
+            esac
+
+            echo "::error title=Required check failed::$job finished with result '$result'"
+            failed=$((failed + 1))
+          done < <(echo "$NEEDS" | jq -r 'to_entries[] | [.key, .value.result] | @tsv')
+
+          if (( failed > 0 )); then
+            echo "::error title=Required checks failed::$failed required check(s) did not succeed"
+            exit 1
+          fi
+
+          echo "All required checks succeeded."
