@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.0"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.6"
 roborazzi = "1.77.0"
